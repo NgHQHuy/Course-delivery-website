@@ -1,0 +1,79 @@
+
+nav{
+    height: 70px;
+    display: flex;
+    align-items: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.logo{
+    width: fit-content;
+}
+
+.search{
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+.search-group{
+    width: 70%;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid black;
+    border-radius: 25px;
+}
+.search-group .search-icon{
+    opacity: 0.5;
+    margin-right: 3px;
+}
+.search-group input{
+    background-color: transparent;
+    height: max-content;
+    border: none ;
+}
+
+.my-learning{
+    padding: 0 10px 0 10px;
+    font-size: 16px;
+}
+
+.cart{
+    padding: 0 10px 0 10px;
+    border-right: 1px solid grey;
+}
+
+.user{
+    padding: 0 10px 0 10px;
+}
+.user-avatar{
+    background-color: black;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.menu{
+    display: none;
+    padding: 0 5px 0 5px;
+    flex-grow: 1;
+}
+
+@media (max-width: 800px){
+    .search{
+        display: none;
+    }
+    .my-learning{
+        display: none;
+    }
+    .cart{
+        display: none;
+    }
+    .user{
+        display: none;
+    }
+    .menu{
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+    }
+}

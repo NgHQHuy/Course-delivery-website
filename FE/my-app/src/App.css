@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+  overflow-x: hidden;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: rgb(255, 255, 254);
+  position: relative;
+  z-index: 1;
+  height: 70px;
+  padding: 0 24px 0 24px;
+  box-shadow: 0px 5px 8px rgb(192, 192, 192);
+}
+
+.App-body{
+  top: 70px;
+  background-color: rgb(255, 252, 247);
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+}
+
+.App-footer{
+  background-color: grey;
+  height: 200px;
+  width: 100vw;
+}

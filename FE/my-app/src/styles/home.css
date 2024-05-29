@@ -1,0 +1,105 @@
+.home-page{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.billboard{
+    width: 70%;
+    background-image: url("https://img-b.udemycdn.com/notices/web_carousel_slide/image/0661bb90-3d05-4709-95a2-c61f927cf78c.jpg");
+    height: 500px;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.billboard-text{
+    position: relative;
+    left: 250px;
+    width: 350px;
+    padding: 20px;
+    background-color: rgb(255, 252, 243);
+    box-shadow: 5px 5px 12px grey;
+}
+
+.billboard-text .title{
+    float: left;
+    font-size: 46px;
+    font-weight: bold;
+    font-family: cursive;
+    text-align: left;
+}
+.billboard-text .subtitle{
+    float: left;
+    font-size: 20px;
+    text-align: left;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.popular-courses{
+    width: fit-content;
+    margin-bottom: 20px;
+}
+.popular-courses .popular-courses-title{
+    padding-left: 20px;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: left;
+    font-size: 46px;
+    font-weight: 600;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.popular-courses-group{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.card-course{
+    width: 250px;
+    background-color: whitesmoke;
+    text-align: left;
+    padding: 7px;
+    margin: 5px;
+    border-radius: 5px;
+}
+.card-course .card-course-thumnail{
+    height: 130px;
+    background-color: grey;
+}
+.card-course .card-course-title{
+    height: 48px;
+    font-weight: bold;
+    font-size: 18px;
+    display: block;
+    overflow: hidden;
+}
+.card-course .card-course-author{
+    font-size: 13px;
+    color: grey;
+}
+.card-course .card-course-rating{
+    font-weight: bold;
+    font-size: 13px;
+}
+.card-course .card-course-price{
+    font-weight: bold;
+    font-size: 14px;
+}
+.card-course:hover {
+    filter: drop-shadow(8px 8px 10px gray);
+    transform: translateY(5px);
+}
+
+@media (max-width: 800px){
+    .billboard{
+        display: none;
+    }
+}
+
+@media (max-width: 1340px){
+    .popular-courses{
+        width: 100%;
+        padding: 7px;
+    }
+}
