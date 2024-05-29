@@ -1,7 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/home.css"
 
 const HomePage = () => {
+    const navigate = useNavigate()
+    const handleClick = (id) => {
+        navigate(`/courses/${id}`)
+    }
     return (
         <div className="home-page">
             <div className="billboard">
@@ -14,7 +19,7 @@ const HomePage = () => {
             <div className="popular-courses">
                 <div className="popular-courses-title">Popular</div>
                 <div className="popular-courses-group">
-                    <div className="card-course">
+                    <div className="card-course" onClick={() => handleClick(1)}>
                         <div className="card-course-thumnail"></div>
                         <div className="card-course-title">web development</div>
                         <div className="card-course-author">tdtu</div>
