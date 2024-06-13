@@ -11,11 +11,11 @@ const HomePage = () => {
         <div className="home-page">
             <div className="billboard">
                 <div className="billboard-text">
-                    <span className="title">Come learn with us!</span><br/>
+                    <span className="title">Come learn with us!</span><br />
                     <span className="subtitle">Constantly cultivate knowledge and change lives - including your own</span>
                 </div>
             </div>
-            <div className="h-line" style={{width: "60%",height:"1px",backgroundColor: "gray"}}></div>
+            <div className="h-line" style={{ width: "60%", height: "1px", backgroundColor: "gray" }}></div>
             <div className="popular-courses">
                 <div className="popular-courses-title">Popular</div>
                 <div className="popular-courses-group">

@@ -30,6 +30,7 @@ nav{
     background-color: transparent;
     height: max-content;
     border: none ;
+    outline: none;
 }
 
 .my-learning{

@@ -11,7 +11,7 @@ const CourseInfo =() => {
                     <div className="summary">learn about web development!</div>
                     <div className="rating">4.5</div>
                     <div className="author">Created by ABC</div>
-                    <div className="update-time">Last updated 13/05/2024</div>
+                    <div className="update-time">Last updated: 13/05/2024</div>
                 </div>
                 <div className="content">
                     <div className="content-header">Course content</div>
