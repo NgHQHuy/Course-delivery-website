@@ -15,7 +15,7 @@ const HomePage = () => {
                     <span className="subtitle">Constantly cultivate knowledge and change lives - including your own</span>
                 </div>
             </div>
-            <div className="h-line" style={{ width: "60%", height: "1px", backgroundColor: "gray" }}></div>
+            <div className="h-line" style={{ width: "60%", height: "1px", backgroundColor: "gray", marginBottom: "25px"}}></div>
             <div className="popular-courses">
                 <div className="popular-courses-title">Popular</div>
                 <div className="popular-courses-group">
@@ -55,7 +55,48 @@ const HomePage = () => {
                         <div className="card-course-price">100,000</div>
                     </div>
                 </div>
-            </div>
+
+                <div className="featured-free-courses">
+                    <div className="featured-free-courses-title">Featured free courses</div>
+                        <div className="featured-free-courses-group">
+                            <div className="card-course" onClick={() => handleClick(1)}>
+                                <div className="card-course-thumnail"></div>
+                                <div className="card-course-title">web development</div>
+                                <div className="card-course-author">tdtu</div>
+                                <div className="card-course-rating">4.5</div>
+                                <div className="card-course-price">100,000</div>
+                            </div>
+                            <div className="card-course">
+                                <div className="card-course-thumnail"></div>
+                                <div className="card-course-title">web development</div>
+                                <div className="card-course-author">tdtu</div>
+                                <div className="card-course-rating">4.5</div>
+                                <div className="card-course-price">100,000</div>
+                            </div>
+                            <div className="card-course">
+                                <div className="card-course-thumnail"></div>
+                                <div className="card-course-title">web development</div>
+                                <div className="card-course-author">tdtu</div>
+                                <div className="card-course-rating">4.5</div>
+                                <div className="card-course-price">100,000</div>
+                            </div>
+                            <div className="card-course">
+                                <div className="card-course-thumnail"></div>
+                                <div className="card-course-title">web development</div>
+                                <div className="card-course-author">tdtu</div>
+                                <div className="card-course-rating">4.5</div>
+                                <div className="card-course-price">100,000</div>
+                            </div>
+                            <div className="card-course">
+                                <div className="card-course-thumnail"></div>
+                                <div className="card-course-title">web development</div>
+                                <div className="card-course-author">tdtu</div>
+                                <div className="card-course-rating">4.5</div>
+                                <div className="card-course-price">100,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     )
 }

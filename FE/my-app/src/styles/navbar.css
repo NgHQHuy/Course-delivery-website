@@ -53,13 +53,18 @@ nav{
     border-radius: 50%;
 }
 
+.search-responsive{
+    display: none;
+}
 .menu{
     display: none;
     padding: 0 5px 0 5px;
-    flex-grow: 1;
 }
 
 @media (max-width: 800px){
+    .logo{
+        flex-grow: 1;
+    }
     .search{
         display: none;
     }
@@ -71,6 +76,9 @@ nav{
     }
     .user{
         display: none;
+    }
+    .search-responsive{
+        display: flex;
     }
     .menu{
         display: flex;

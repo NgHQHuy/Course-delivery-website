@@ -18,7 +18,6 @@
 }
 
 .App-body{
-  top: 70px;
   background-color: rgb(255, 252, 247);
   display: flex;
   justify-content: center;

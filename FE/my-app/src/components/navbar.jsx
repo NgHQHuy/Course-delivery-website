@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/navbar.css"
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
     return (
@@ -13,7 +12,7 @@ const Navbar = () => {
             <div className="search">
                 <div className="search-group">
                     <div className="search-icon"><BsSearch /></div>
-                    <input type="text" placeholder="Search for anything..." />
+                    <input type="text" placeholder="Search" />
                 </div>
             </div>
             <div className="my-learning">
@@ -26,6 +25,9 @@ const Navbar = () => {
                 <div className="user-avatar"></div>
             </div>
 
+            <div className="search-responsive">
+                    <div className="search-icon-respon"><BsSearch /></div>
+            </div>
             <div className="menu">
                 <div className="menu-icon"><HiOutlineQueueList size={24}/></div>
             </div>
