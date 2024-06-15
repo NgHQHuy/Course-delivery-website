@@ -17,16 +17,18 @@ const Navbar = () => {
             </div>
             <div className="my-learning">
                 <span>My learning</span>
+                <div className="dropdown-learning-menu"></div>
             </div>
             <div className="cart">
                 <div className="cart-icon"><BsCart3 size={24}/></div>
             </div>
             <div className="user">
                 <div className="user-avatar"></div>
+                <div className="dropdown-user-menu"></div>
             </div>
 
             <div className="search-responsive">
-                    <div className="search-icon-respon"><BsSearch /></div>
+                    <div className="search-icon-respon"><BsSearch /></div>   
             </div>
             <div className="menu">
                 <div className="menu-icon"><HiOutlineQueueList size={24}/></div>
