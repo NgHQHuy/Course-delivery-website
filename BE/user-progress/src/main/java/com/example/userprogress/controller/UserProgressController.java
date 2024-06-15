@@ -33,5 +33,13 @@ public class UserProgressController {
         return ResponseEntity.ok(userProgresses);
     }
 
-    // TODO: làm một cái api lấy tiến trình của người dùng đối với khóa học đó.
+    @Operation(summary = "Lấy toàn bộ thông tin về tiến trình học của người dùng trên một khóa học")
+    @GetMapping("{uid}/{courseId}")
+    public ResponseEntity<List<UserProgress>> getAllProgressByUserForCourse(
+            @Parameter(description = "ID của người dùng") @PathVariable("uid") Long uid,
+            @Parameter(description = "ID khóa học") @PathVariable("courseId") Long courseId) {
+        List<UserProgress> userProgresses = userProgressService.getAllProgressByUserForCourse(uid, courseId);
+        return ResponseEntity.ok(userProgresses);
+    }
+
 }

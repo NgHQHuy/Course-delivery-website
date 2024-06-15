@@ -19,4 +19,8 @@ public class UserProgressService {
     public List<UserProgress> getAllProgressByUser(Long uid) {
         return userProgressRepository.findAllByUserId(uid);
     }
+
+    public List<UserProgress> getAllProgressByUserForCourse(Long userId, Long courseId) {
+        return userProgressRepository.findAllByUserIdAndCourseId(userId, courseId);
+    }
 }

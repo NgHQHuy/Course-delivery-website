@@ -1,7 +1,7 @@
 package com.example.video.controller;
 
 import com.example.video.dto.BasicDto;
-import com.example.video.dto.ErrorDto;
+import com.example.video.dto.ResponseDto;
 import com.example.video.dto.UploadDto;
 import com.example.video.entity.Video;
 import com.example.video.service.VideoService;
@@ -16,7 +16,6 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
 
@@ -35,7 +34,7 @@ public class VideoController {
             UploadDto uploadDto = new UploadDto(id);
             return ResponseEntity.ok(uploadDto);
         } catch (IOException e) {
-            ErrorDto errorDto = new ErrorDto(-1, e.getMessage());
+            ResponseDto errorDto = new ResponseDto(-1, e.getMessage());
             return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -83,6 +82,11 @@ public class VideoController {
     }
 
     // TODO: làm api xóa video.
+    @DeleteMapping("video/delete/{id}")
+    public ResponseEntity<ResponseDto> delete(@PathVariable String id) {
+        service.deleteVideo(id);
+        return ResponseEntity.ok(new ResponseDto(0, "Success"));
+    }
 
     private byte[] readByteRange(InputStream is, long start, long end) throws IOException {
         byte[] data = is.readAllBytes();
@@ -98,9 +102,9 @@ public class VideoController {
             IOException.class,
             HttpMessageNotWritableException.class
     })
-    public ResponseEntity<ErrorDto> handle(Exception e) {
+    public ResponseEntity<ResponseDto> handle(Exception e) {
         System.out.println(e.getMessage());
-        ErrorDto errorDto = new ErrorDto(-1, e.getMessage());
+        ResponseDto errorDto = new ResponseDto(-1, e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

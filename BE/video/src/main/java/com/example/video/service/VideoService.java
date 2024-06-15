@@ -45,4 +45,10 @@ public class VideoService {
         video.setStream(gridFsOperations.getResource(file).getInputStream());
         return video;
     }
+
+    public void deleteVideo(String id) {
+        gridFsTemplate.delete(
+                new Query(Criteria.where("_id").is(id))
+        );
+    }
 }
