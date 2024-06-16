@@ -2,8 +2,13 @@ import React from "react";
 import "../styles/navbar.css"
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate()
+    const learningClick = (id) =>{
+        navigate(`/learning`)
+    }
     return (
         <nav>
             <div className="logo"> 
@@ -16,8 +21,7 @@ const Navbar = () => {
                 </div>
             </div>
             <div className="my-learning">
-                <span>My learning</span>
-                <div className="dropdown-learning-menu"></div>
+                <span onClick={() => learningClick(1)}>My learning</span>
             </div>
             <div className="cart">
                 <div className="cart-icon"><BsCart3 size={24}/></div>
@@ -32,6 +36,7 @@ const Navbar = () => {
             </div>
             <div className="menu">
                 <div className="menu-icon"><HiOutlineQueueList size={24}/></div>
+                <div className="dropdown-menu"></div>
             </div>
         </nav>
     );
