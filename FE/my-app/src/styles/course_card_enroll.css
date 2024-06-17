@@ -1,0 +1,103 @@
+.course-card{
+    width: 230px;
+    height: 240px;
+    margin: 5px;
+    text-align: start;
+    cursor: pointer;
+    position: relative;
+}
+.course-card:hover .course-thumnail{
+    filter: brightness(80%);
+}
+
+.course-options{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: whitesmoke;
+    position: absolute;
+    top: 5px;
+    right: 5px; 
+    border-radius: 50%;
+    z-index: 1;
+}
+.course-options:hover .options-icon{
+    transform: rotate(90deg);
+    transition: 0.25s ease;
+}
+
+.options-dropdown{
+    width: 200px;
+    position: absolute;
+    top: 15px;
+    right: 0px;
+    background-color: whitesmoke;
+    opacity: 0;
+    visibility: hidden;
+}
+.options-dropdown div{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    box-sizing: border-box;
+}
+.options-dropdown div span{
+    height: 50px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+}
+.options-dropdown div:hover{
+    background-color: rgb(235, 235, 235);
+}
+
+.course-options:hover .options-dropdown{
+    opacity: 1;
+    visibility: visible;
+    transition: 0.3s ease;
+    box-shadow: 7px 10px 10px -5px rgba(0,0,0,0.2);
+}
+
+.course-thumnail{
+    width: 100%;
+    height: 130px;
+    background-color: grey;
+    margin-bottom: 3px;
+}
+.course-title{
+    width: 100%;
+    height: 40px;
+    font-weight: bold;
+    display: block !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    margin-bottom: 5px;
+}
+.course-author{
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.course-progression{
+    width: 100%;
+}
+.course-progression-bar{
+    width: 100%;
+    height: 3px;
+    background-color: rgb(190, 190, 190);
+}
+.bar-percent{
+    height: 3px;
+    background-color: slateblue;
+}
+.course-progression-text{
+    font-size: 0.8rem;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/learning.css"
+import CourseCardEnroll from "../components/courseCardEnroll";
 
 const Learning = () => {
     const [tabSelected, setTabSelected] = useState("all-courses")
@@ -29,7 +30,19 @@ const Learning = () => {
                 </div>
             </div>
             <div className="tab-content-container">
-                hihihi
+                <div className="tab-content">
+                    {tabSelected === "all-courses" ? 
+                        <div className="all-courses-content">
+                            <CourseCardEnroll/>
+                            <CourseCardEnroll/>
+                            <CourseCardEnroll/>
+                            <CourseCardEnroll/>
+                            <CourseCardEnroll/>
+                        </div>
+                        :
+                        <div className="my-lists-content">hihihi</div>
+                    }
+                </div>
             </div>
         </div>
     )
