@@ -85,3 +85,56 @@
     padding-top: 15px;
 }
 
+.my-lists-content{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.list-container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    margin: 10px 0 10px 0;
+}
+.list-header{
+    height: 30px;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.list-header span{
+    height: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+.btn-edit{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.btn-edit:hover .edit-icon{
+    transform: scale(1.2);
+}
+.btn-delete{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.btn-delete:hover .delete-icon{
+    transform: scale(1.2);
+}
+
+.list-body{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}

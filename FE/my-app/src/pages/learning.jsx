@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/learning.css"
 import CourseCardEnroll from "../components/courseCardEnroll";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 const Learning = () => {
     const [tabSelected, setTabSelected] = useState("all-courses")
@@ -33,14 +34,36 @@ const Learning = () => {
                 <div className="tab-content">
                     {tabSelected === "all-courses" ? 
                         <div className="all-courses-content">
-                            <CourseCardEnroll/>
-                            <CourseCardEnroll/>
-                            <CourseCardEnroll/>
-                            <CourseCardEnroll/>
-                            <CourseCardEnroll/>
+                            <CourseCardEnroll pageView={"all-courses"}/>
+                            <CourseCardEnroll pageView={"all-courses"}/>
+                            <CourseCardEnroll pageView={"all-courses"}/>
+                            <CourseCardEnroll pageView={"all-courses"}/>
+                            <CourseCardEnroll pageView={"all-courses"}/>
                         </div>
                         :
-                        <div className="my-lists-content">hihihi</div>
+                        <div className="my-lists-content">
+                            <div className="list-container">
+                                <div className="list-header">
+                                    <span>list title here</span>
+                                    <div className="btn-edit"><MdEdit className="edit-icon" size={18}/></div>
+                                    <div className="btn-delete"><MdDelete className="delete-icon" size={18}/></div>
+                                </div>
+                                <div className="list-body">
+                                    <CourseCardEnroll pageView={"my-lists"}/>
+                                </div>
+                            </div>
+
+                            <div className="list-container">
+                                <div className="list-header">
+                                    <span>list title here</span>
+                                    <div className="btn-edit"><MdEdit className="edit-icon" size={18}/></div>
+                                    <div className="btn-delete"><MdDelete className="delete-icon" size={18}/></div>
+                                </div>
+                                <div className="list-body">
+                                    <CourseCardEnroll pageView={"my-lists"}/>
+                                </div>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
