@@ -5,6 +5,7 @@ import Navbar from "./components/navbar";
 import CourseInfo from "./pages/courseInfo";
 import HomePage from "./pages/home";
 import Learning from "./pages/learning";
+import CourseContent from "./pages/courseContent";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="courses/*" element={<CourseInfo />} />
             <Route path="learning" element={<Learning />} />
+            <Route path="course/*" element={<CourseContent />} />
           </Routes>
         </div>
         <footer className="App-footer"></footer>

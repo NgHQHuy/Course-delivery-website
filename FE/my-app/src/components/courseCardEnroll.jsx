@@ -3,13 +3,18 @@ import "../styles/course_card_enroll.css";
 import { SlOptionsVertical, SlPlus } from "react-icons/sl";
 import { RiShareForwardFill, RiMenuAddFill } from "react-icons/ri";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 
 const CourseCardEnroll = (props) => {
     const percent = 75
+    const navigate = useNavigate();
+    const courseClick =(id)=>{
+        navigate(`/course/${id}`);
+    }
     console.log(props.pageView);
     return (
-        <div className="course-card">
+        <div className="course-card" onClick={() => courseClick(1)}>
             <div className="course-options">
                 <SlOptionsVertical size={16} className="options-icon"/>
                 <div className="options-dropdown">
