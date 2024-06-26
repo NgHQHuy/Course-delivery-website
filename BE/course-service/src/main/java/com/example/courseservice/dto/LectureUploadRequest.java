@@ -5,18 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CourseUploadRequest {
+public class LectureUploadRequest {
     private Long id;
     private String name;
     private String description;
-
-    private List<SectionUploadRequest> sections;
-//    private List<Agenda> agendas;
-
+    private String link;
+    private int position;
 }

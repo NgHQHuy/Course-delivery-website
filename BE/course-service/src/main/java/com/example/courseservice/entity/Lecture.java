@@ -9,18 +9,16 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "lectures")
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
-public class Course {
+@Setter
+public class Lecture {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
@@ -34,15 +32,10 @@ public class Course {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
-    private double price;
-    private float rating;
-    private String language;
+    private int position;
+    private String type;
 
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Section> sections = new HashSet<>();
-
-    public void setSections(Set<Section> sections) {
-        this.sections.addAll(sections);
-    }
+    @ManyToOne
+    @JoinColumn(name = "sectionId", referencedColumnName = "id")
+    private Section section;
 }

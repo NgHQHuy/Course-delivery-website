@@ -13,5 +13,4 @@ public class CourseDto {
     private String description;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private String type;
 }

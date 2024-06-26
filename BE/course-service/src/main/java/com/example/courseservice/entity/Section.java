@@ -13,14 +13,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "courses")
-@NoArgsConstructor
+@Table(name = "sections")
 @AllArgsConstructor
-@Setter
+@NoArgsConstructor
 @Getter
-public class Course {
+@Setter
+public class Section {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
@@ -34,15 +34,16 @@ public class Course {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
-    private double price;
-    private float rating;
-    private String language;
+    private int position;
 
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Lecture> lectures = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Section> sections = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "courseId", referencedColumnName = "id")
+    private Course course;
 
-    public void setSections(Set<Section> sections) {
-        this.sections.addAll(sections);
+    public void setLectures(Set<Lecture> lectures) {
+        this.lectures.addAll(lectures);
     }
 }

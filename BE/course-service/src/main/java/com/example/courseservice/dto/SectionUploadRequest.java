@@ -11,12 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CourseUploadRequest {
+public class SectionUploadRequest {
     private Long id;
     private String name;
     private String description;
-
-    private List<SectionUploadRequest> sections;
-//    private List<Agenda> agendas;
-
+    private int position;
+    private List<LectureUploadRequest> lectures;
 }
