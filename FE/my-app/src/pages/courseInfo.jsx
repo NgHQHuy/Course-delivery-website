@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/course_info.css"
 import { BsHeart } from "react-icons/bs";
 
-const CourseInfo =() => {
+const CourseInfo = () => {
     return (
         <div className="course-info">
             <div className="course-info-main">

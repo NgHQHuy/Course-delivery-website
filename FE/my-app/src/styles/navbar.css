@@ -36,15 +36,24 @@ nav{
 .my-learning{
     padding: 0 10px 0 10px;
     font-size: 16px;
+    cursor: pointer;
+}
+.my-learning:hover{
+    color: rgb(55, 0, 255);
 }
 
 .cart{
     padding: 0 10px 0 10px;
     border-right: 1px solid grey;
+    cursor: pointer;
+}
+.cart:hover{
+    color: rgb(55, 0, 255);
 }
 
 .user{
     padding: 0 10px 0 10px;
+    cursor: pointer;
 }
 .user-avatar{
     background-color: black;
@@ -52,14 +61,57 @@ nav{
     width: 30px;
     border-radius: 50%;
 }
+.dropdown-user-menu{
+    position: absolute;
+    top: 75px;
+    width: 250px;
+    height: 500px;
+    right: 10px;
+    background-color: white;
+    box-shadow: 5px 8px 10px -5px rgba(0,0,0,0.2);
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+}
+.user:hover .dropdown-user-menu{
+    display: inline-block;
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all .5s, background, 2s .5s linear;
+    transition: all .5s, background 2s .5s linear;
+}
 
+.search-responsive{
+    display: none;
+}
 .menu{
     display: none;
     padding: 0 5px 0 5px;
-    flex-grow: 1;
+}
+.dropdown-menu{
+    position: absolute;
+    top: 75px;
+    width: 250px;
+    height: 500px;
+    right: 10px;
+    background-color: white;
+    box-shadow: 5px 8px 10px -5px rgba(0,0,0,0.2);
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+}
+.menu:hover .dropdown-menu{
+    display: inline-block;
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all .5s, background, 2s .5s linear;
+    transition: all .5s, background 2s .5s linear;
 }
 
 @media (max-width: 800px){
+    .logo{
+        flex-grow: 1;
+    }
     .search{
         display: none;
     }
@@ -71,6 +123,9 @@ nav{
     }
     .user{
         display: none;
+    }
+    .search-responsive{
+        display: flex;
     }
     .menu{
         display: flex;

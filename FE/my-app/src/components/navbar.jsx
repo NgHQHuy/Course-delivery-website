@@ -2,9 +2,13 @@ import React from "react";
 import "../styles/navbar.css"
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate()
+    const learningClick = (id) =>{
+        navigate(`/learning`)
+    }
     return (
         <nav>
             <div className="logo"> 
@@ -13,21 +17,26 @@ const Navbar = () => {
             <div className="search">
                 <div className="search-group">
                     <div className="search-icon"><BsSearch /></div>
-                    <input type="text" placeholder="Search for anything..." />
+                    <input type="text" placeholder="Search" />
                 </div>
             </div>
             <div className="my-learning">
-                <span>My learning</span>
+                <span onClick={() => learningClick(1)}>My learning</span>
             </div>
             <div className="cart">
                 <div className="cart-icon"><BsCart3 size={24}/></div>
             </div>
             <div className="user">
                 <div className="user-avatar"></div>
+                <div className="dropdown-user-menu"></div>
             </div>
 
+            <div className="search-responsive">
+                    <div className="search-icon-respon"><BsSearch /></div>   
+            </div>
             <div className="menu">
                 <div className="menu-icon"><HiOutlineQueueList size={24}/></div>
+                <div className="dropdown-menu"></div>
             </div>
         </nav>
     );

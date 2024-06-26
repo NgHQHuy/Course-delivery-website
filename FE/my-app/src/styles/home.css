@@ -37,23 +37,24 @@
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-.popular-courses{
+.popular-courses ,.featured-free-courses{
     width: fit-content;
     margin-bottom: 20px;
 }
-.popular-courses .popular-courses-title{
+.popular-courses-title ,.featured-free-courses-title{
     padding-left: 20px;
     margin-bottom: 10px;
     width: 100%;
     text-align: left;
-    font-size: 46px;
+    font-size: 36px;
     font-weight: 600;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
-.popular-courses-group{
+.popular-courses-group ,.featured-free-courses-group{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    margin-bottom: 25px;
 }
 .card-course{
     width: 250px;
