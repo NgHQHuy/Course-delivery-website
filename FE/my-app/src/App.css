@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
   overflow-x: hidden;
 }
 
@@ -20,11 +22,11 @@
   background-color: rgb(238, 238, 238);
   display: flex;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
 }
 
 .App-footer{
   background-color: rgb(26, 32, 61);
   height: 200px;
-  width: 100vw;
+  width: 100%;
 }

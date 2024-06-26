@@ -24,8 +24,6 @@ public class UserProgress {
 
     private Long courseId;
 
-    private
-
     private double timestamp;
 
     private UserStatus status;

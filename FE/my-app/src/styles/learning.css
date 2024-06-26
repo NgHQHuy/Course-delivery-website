@@ -22,6 +22,7 @@
     font-size: 3rem;
     font-weight: bold;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    box-sizing: border-box;
 }
 .tab-selection-group{
     height: 50px;

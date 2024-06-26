@@ -12,7 +12,6 @@ const CourseCardEnroll = (props) => {
     const courseClick =(id)=>{
         navigate(`/course/${id}`);
     }
-    console.log(props.pageView);
     return (
         <div className="course-card" onClick={() => courseClick(1)}>
             <div className="course-options">
