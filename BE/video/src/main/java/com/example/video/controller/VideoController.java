@@ -53,6 +53,7 @@ public class VideoController {
             return service.handleStreamVideo(video, request);
         } catch(Exception e) {
             logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 //        response.setStatus(206);
 //        FileCopyUtils.copy(video.getStream(), response.getOutputStream());
@@ -67,6 +68,7 @@ public class VideoController {
             return service.handleStreamVideo(video, request);
         } catch(Exception e) {
             logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 //        response.setStatus(206);
 //        FileCopyUtils.copy(video.getStream(), response.getOutputStream());
