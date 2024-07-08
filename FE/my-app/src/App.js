@@ -6,6 +6,7 @@ import CourseInfo from "./pages/courseInfo";
 import HomePage from "./pages/home";
 import Learning from "./pages/learning";
 import CourseContent from "./pages/courseContent";
+import Cart from "./pages/cart";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="courses/*" element={<CourseInfo />} />
             <Route path="learning" element={<Learning />} />
             <Route path="course/*" element={<CourseContent />} />
+            <Route path="cart/*" element={<Cart />} />
           </Routes>
         </div>
         <footer className="App-footer"></footer>

@@ -9,6 +9,9 @@ const Navbar = () => {
     const learningClick = (id) =>{
         navigate(`/learning`)
     }
+    const openCart =()=> {
+        window.open("/cart/1", '_blank', 'noopener,noreferrer')
+    }
     return (
         <nav>
             <div className="logo"> 
@@ -23,7 +26,7 @@ const Navbar = () => {
             <div className="my-learning">
                 <span onClick={() => learningClick(1)}>My learning</span>
             </div>
-            <div className="cart">
+            <div className="cart" onClick={() => openCart()}>
                 <div className="cart-icon"><BsCart3 size={24}/></div>
             </div>
             <div className="user">

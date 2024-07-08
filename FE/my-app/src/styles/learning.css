@@ -68,7 +68,6 @@
 /* ----------- */
 .tab-content-container{
     width: 100%;
-    min-height: calc(100vh - 471px);
     box-sizing: border-box;
     display: flex;
     justify-content: center;

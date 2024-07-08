@@ -1,6 +1,5 @@
 .course-content{
     width: 100%;
-    min-height: calc(100vh - 271px);
     box-sizing: border-box;
     display: flex;
     flex-wrap: nowrap;

@@ -29,7 +29,9 @@ const CourseContent = () => {
                     <></>
                 }
                 <div className="course-content-media" onContextMenu={(e)=>{e.preventDefault()}}>
-                    <video src="https://media.geeksforgeeks.org/wp-content/uploads/20210314115545/sample-video.mp4" autoPlay muted controls controlsList="nodownload"></video>
+                    <video autoPlay controls controlsList="nodownload">
+                        <source src="http://localhost:8080/videos/stream/668b1c6847bc90315a9e4e8a.mp4" type="video/mp4"/>
+                    </video>
                 </div>
                 <div className="course-content-other">
                     <div className="tab-selection">
