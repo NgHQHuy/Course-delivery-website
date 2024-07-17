@@ -1,24 +1,25 @@
 package com.example.courseservice.controller;
 
 import com.example.courseservice.dto.*;
+import com.example.courseservice.entity.Instructor;
 import com.example.courseservice.entity.Lecture;
 import com.example.courseservice.entity.Section;
 import com.example.courseservice.entity.Course;
+import com.example.courseservice.exception.SearchNotFoundException;
 import com.example.courseservice.response.BaseResponse;
+import com.example.courseservice.service.InstructorService;
 import com.example.courseservice.service.LectureService;
 import com.example.courseservice.service.SectionService;
 import com.example.courseservice.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/course")
@@ -33,10 +34,13 @@ public class CourseController {
     @Autowired
     private LectureService lectureService;
 
+    @Autowired
+    private InstructorService instructorService;
+
     @Operation(summary = "Thêm/sửa thông tin liên quan khóa học")
     @PostMapping
     public ResponseEntity<BaseResponse> saveCourse(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin về khóa học bao gồm khóa học, chương và nội dung từng chương. Thêm id của khóa học, chương hoặc nội dung chương vào để chỉnh sửa thông tin. Bỏ qua id nếu thêm mới")
-            @RequestBody CourseUploadRequest requestBody) {
+            @Valid @RequestBody CourseUploadRequest requestBody) {
         List<SectionUploadRequest> sections = requestBody.getSections();
 
         Course course = null;
@@ -47,8 +51,18 @@ public class CourseController {
         if (course == null) {
             course = new Course();
         }
-        course.setName(requestBody.getName());
+        course.setTitle(requestBody.getTitle());
         course.setDescription(requestBody.getDescription());
+        course.setPrice(requestBody.getPrice());
+        course.setLanguage(requestBody.getLanguage());
+        course.setSummary(requestBody.getSummary());
+        course.setRequirements(requestBody.getRequirements());
+
+        Optional<Instructor> optionalInstructor = instructorService.findOne(requestBody.getInstructorId());
+        if (optionalInstructor.isEmpty()) {
+            throw new SearchNotFoundException("Instructor is not found");
+        }
+        course.setInstructor(optionalInstructor.get());
 
         Set<Section> sectionSet = new HashSet<>();
 
@@ -108,6 +122,7 @@ public class CourseController {
     public ResponseEntity<CourseDto> getOneCourse(@Parameter(description = "id của khóa học")
             @PathVariable Long id) {
         Course course = courseService.getOne(id);
+        if (course == null) return ResponseEntity.status(404).build();
         return ResponseEntity.ok(mappedToCourseDto(course));
     }
 
@@ -140,10 +155,10 @@ public class CourseController {
 
     @Operation(summary = "Xóa khóa học")
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> deleteCourse(@Parameter(description = "id của khóa học")
+    public ResponseEntity<?> deleteCourse(@Parameter(description = "id của khóa học")
             @PathVariable Long id) {
         courseService.delete(id);
-        return ResponseEntity.ok(new MessageResponse(0, "Success"));
+        return ResponseEntity.status(200).build();
     }
 
 
@@ -161,10 +176,15 @@ public class CourseController {
     private CourseDto mappedToCourseDto(Course course) {
         CourseDto dto = new CourseDto();
         dto.setId(course.getId());
-        dto.setName(course.getName());
+        dto.setTitle(course.getTitle());
         dto.setDescription(course.getDescription());
         dto.setCreatedAt(course.getCreatedAt());
         dto.setUpdatedAt(course.getUpdatedAt());
+        dto.setPrice(course.getPrice());
+        dto.setLanguage(course.getLanguage());
+        dto.setSummary(course.getSummary());
+        dto.setRequirements(course.getRequirements());
+        dto.setInstructorId(course.getInstructor().getId());
         return dto;
     }
 }

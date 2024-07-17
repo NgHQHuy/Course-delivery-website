@@ -23,7 +23,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "LONGTEXT")
     private String description;
@@ -35,8 +35,14 @@ public class Course {
     private Timestamp updatedAt;
 
     private double price;
-    private float rating;
     private String language;
+
+    @ManyToOne
+    @JoinColumn(name = "instructorId")
+    private Instructor instructor;
+
+    private String requirements;
+    private String summary;
 
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -9,8 +9,14 @@ import java.sql.Timestamp;
 @Setter
 public class CourseDto {
     private Long id;
-    private String name;
+    private String title;
     private String description;
+    private String summary;
+    private String language;
+    private String requirements;
+    private double price;
+    private Long instructorId;
+
     private Timestamp createdAt;
     private Timestamp updatedAt;
 }

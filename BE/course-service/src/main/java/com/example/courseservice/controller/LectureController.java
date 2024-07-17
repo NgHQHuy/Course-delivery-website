@@ -1,5 +1,6 @@
 package com.example.courseservice.controller;
 
+import com.example.courseservice.dto.LectureDto;
 import com.example.courseservice.entity.Lecture;
 import com.example.courseservice.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/agenda")
+@RequestMapping("api/lecture")
 public class LectureController {
 
     @Autowired
     private LectureService lectureService;
 
-    @GetMapping("{id}/details")
-    public ResponseEntity<Lecture> getOneAgenda(@PathVariable Long id) {
+    @GetMapping("{id}")
+    public ResponseEntity<LectureDto> getOneAgenda(@PathVariable Long id) {
         Lecture lecture = lectureService.getOne(id);
-        return ResponseEntity.ok(lecture);
+        if (lecture == null) {
+            return ResponseEntity.status(404).build();
+        }
+        LectureDto lectureDto = new LectureDto();
+        lectureDto.setId(lecture.getId());
+        lectureDto.setType(lecture.getType());
+        lectureDto.setName(lecture.getName());
+        lectureDto.setPosition(lecture.getPosition());
+        lectureDto.setDescription(lecture.getDescription());
+        lectureDto.setCreatedAt(lecture.getCreatedAt());
+        lectureDto.setUpdatedAt(lecture.getUpdatedAt());
+        return ResponseEntity.ok(lectureDto);
     }
 }

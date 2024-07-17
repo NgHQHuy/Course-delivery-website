@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/user")
@@ -51,7 +52,7 @@ public class UserController {
     public ResponseEntity<User> findUsername(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin tài khoản mà người dùng cần tìm kiếm")
             @RequestBody FindUsernameRequest req) {
         User user = userService.findUsername(req.getUsername());
-        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return ResponseEntity.ok(user);
     }
 
@@ -67,5 +68,11 @@ public class UserController {
         user.setPassword(req.getNewPassword());
         userService.save(user);
         return new ResponseEntity<>(new BaseResponse(0, "Success"), HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> optionalUser = userService.getUser(id);
+        return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).build());
     }
 }
