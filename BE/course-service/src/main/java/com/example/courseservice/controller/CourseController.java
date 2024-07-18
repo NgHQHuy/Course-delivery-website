@@ -6,7 +6,6 @@ import com.example.courseservice.entity.Lecture;
 import com.example.courseservice.entity.Section;
 import com.example.courseservice.entity.Course;
 import com.example.courseservice.exception.SearchNotFoundException;
-import com.example.courseservice.response.BaseResponse;
 import com.example.courseservice.service.InstructorService;
 import com.example.courseservice.service.LectureService;
 import com.example.courseservice.service.SectionService;
@@ -103,7 +102,7 @@ public class CourseController {
         course.setSections(sectionSet);
         courseService.save(course);
 
-        return ResponseEntity.ok(new BaseResponse(0, "Success"));
+        return ResponseEntity.ok(new BaseResponse("Success"));
     }
 
     @Operation(summary = "Lấy thông tin về tất cả khóa học")
