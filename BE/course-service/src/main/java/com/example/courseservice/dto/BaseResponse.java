@@ -9,4 +9,7 @@ import lombok.Setter;
 @Setter
 public class BaseResponse {
     private String message;
+
+    public BaseResponse() {
+    }
 }
