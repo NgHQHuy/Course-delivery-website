@@ -1,0 +1,31 @@
+.manager-page{
+    width: 100%;
+    box-sizing: border-box;
+}
+.tools-group{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: end;
+    background-color: rgb(165, 165, 165);
+    padding: 0 5px;
+}
+.tools-group div{
+    height: 30px;
+    width:75px;
+    color: rgb(75, 75, 75);
+    box-sizing: border-box;
+    padding-top: 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.tools-group div:hover{
+    color: black;
+}
+.tools-group .isActived{
+    color: black;
+    background-color: rgb(238, 238, 238);
+}

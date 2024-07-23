@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const navigate = useNavigate()
-    const learningClick = (id) =>{
+    const learningClick = () =>{
         navigate(`/learning`)
     }
     const openCart =()=> {
@@ -24,7 +24,7 @@ const Navbar = () => {
                 </div>
             </div>
             <div className="my-learning">
-                <span onClick={() => learningClick(1)}>My learning</span>
+                <span onClick={() => learningClick()}>My learning</span>
             </div>
             <div className="cart" onClick={() => openCart()}>
                 <div className="cart-icon"><BsCart3 size={24}/></div>

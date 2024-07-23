@@ -12,10 +12,8 @@ const CourseContent = () => {
     const [tabSelected, setTabSelected] = useState("overview")
 
     const [courseData, setCourseData] = useState({})
-    const [count, setCount] = useState(0)
     const getData =async()=> {
-        const data = await axios.get('http://localhost:8081/api/course/1').then()
-        setCourseData(data.data)
+        // const data = await axios.get('http://localhost:8081/api/course/1').then()
     }
     useEffect(()=>{
         getData()

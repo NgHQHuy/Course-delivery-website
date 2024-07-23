@@ -7,6 +7,9 @@ import HomePage from "./pages/home";
 import Learning from "./pages/learning";
 import CourseContent from "./pages/courseContent";
 import Cart from "./pages/cart";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import ManagerTools from "./pages/managerTools";
 
 function App() {
   return (
@@ -23,6 +26,11 @@ function App() {
             <Route path="learning" element={<Learning />} />
             <Route path="course/*" element={<CourseContent />} />
             <Route path="cart/*" element={<Cart />} />
+
+            <Route path="login" element={<Login />} />
+            <Route path="sign-up" element={<Signup />} />
+
+            <Route path="manager-tools" element={<ManagerTools />} />
           </Routes>
         </div>
         <footer className="App-footer"></footer>
