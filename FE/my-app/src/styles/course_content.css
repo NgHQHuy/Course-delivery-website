@@ -277,10 +277,11 @@
 }
 .grid-grow-1-d{
     font-weight: 600;
+    text-align: start;
 }
 .grid-grow-2-d{
     display: flex;
-    justify-content: center;
+    justify-content: start;
 }
 .description-text{
     width: 50%;

@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/course_content.css"
 import { FaAnglesLeft, FaAngleDown } from "react-icons/fa6";
 import { IoIosClose, IoIosStar, IoIosAlert } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 
+import axios from "axios"
+
 const CourseContent = () => {
     const [menuContent, setMenuContent] = useState("")
     const [sectionShow, setSectionShow] = useState("show")
     const [tabSelected, setTabSelected] = useState("overview")
+
+    const [courseData, setCourseData] = useState({})
+    const [count, setCount] = useState(0)
+    const getData =async()=> {
+        const data = await axios.get('http://localhost:8081/api/course/1').then()
+        setCourseData(data.data)
+    }
+    useEffect(()=>{
+        getData()
+    },[])
+
     const setMenuStatus =()=> {
         menuContent === "" ? setMenuContent("active") : setMenuContent("")
     }
@@ -30,7 +43,7 @@ const CourseContent = () => {
                 }
                 <div className="course-content-media" onContextMenu={(e)=>{e.preventDefault()}}>
                     <video autoPlay controls controlsList="nodownload">
-                        <source src="http://localhost:8080/videos/stream/668b1c6847bc90315a9e4e8a.mp4" type="video/mp4"/>
+                        <source src="http://localhost:8080/videos/stream/6698a6fa1580bb00f93f71ef.mp4" type="video/mp4"/>
                     </video>
                 </div>
                 <div className="course-content-other">
@@ -51,7 +64,7 @@ const CourseContent = () => {
                             <div className="overview-content">
                                 <div className="overview-content-info">
                                     <div className="title">
-                                        Learn web design in 1 hour with 25+ simple-to-use rules and guidelines — tons of amazing web design resources included!
+                                        {courseData.title}
                                     </div>
                                     <div className="by-number">
                                         <div className="rating">
@@ -82,19 +95,7 @@ const CourseContent = () => {
                                     <div className="grid-grow-2-d">
                                         <div className="description-text">
                                             <p>                                  
-                                                IMPORTANT NOTE: The material of this course is also covered in my other course about web design and development with HTML5 & CSS3. Scroll to the bottom of this page to check out that course, too! If you're already taking my other course, you already have all it takes to start designing beautiful websites today!
-                                            </p>
-                                            <p>                                  
-                                                IMPORTANT NOTE: The material of this course is also covered in my other course about web design and development with HTML5 & CSS3. Scroll to the bottom of this page to check out that course, too! If you're already taking my other course, you already have all it takes to start designing beautiful websites today!
-                                            </p>
-                                            <p>                                  
-                                                IMPORTANT NOTE: The material of this course is also covered in my other course about web design and development with HTML5 & CSS3. Scroll to the bottom of this page to check out that course, too! If you're already taking my other course, you already have all it takes to start designing beautiful websites today!
-                                            </p>
-                                            <p>                                  
-                                                IMPORTANT NOTE: The material of this course is also covered in my other course about web design and development with HTML5 & CSS3. Scroll to the bottom of this page to check out that course, too! If you're already taking my other course, you already have all it takes to start designing beautiful websites today!
-                                            </p>
-                                            <p>                                  
-                                                IMPORTANT NOTE: The material of this course is also covered in my other course about web design and development with HTML5 & CSS3. Scroll to the bottom of this page to check out that course, too! If you're already taking my other course, you already have all it takes to start designing beautiful websites today!
+                                                {courseData.description}
                                             </p>
                                         </div>
                                     </div>
