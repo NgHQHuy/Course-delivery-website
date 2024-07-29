@@ -4,13 +4,20 @@ import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
+import { getBaseLoad } from "../redux/baseLoader.slice"; 
+import { useSelector } from 'react-redux'
+
 const Navbar = () => {
+
+    const base_loader = useSelector(getBaseLoad)
+
     const navigate = useNavigate()
     const learningClick = () =>{
         navigate(`/learning`)
     }
     const openCart =()=> {
         window.open("/cart/1", '_blank', 'noopener,noreferrer')
+        console.log(base_loader);
     }
     return (
         <nav>

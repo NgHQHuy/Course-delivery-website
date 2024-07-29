@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 import Navbar from "./components/navbar";
@@ -21,6 +21,8 @@ function App() {
         <div className="App-body">
           <Routes>
             <Route index element={<HomePage />} />
+            <Route path="/*" element={<Navigate to={"/"} replace={true} />} />
+
             <Route path="/" element={<HomePage />} />
             <Route path="courses/*" element={<CourseInfo />} />
             <Route path="learning" element={<Learning />} />
