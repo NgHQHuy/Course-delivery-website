@@ -26,4 +26,8 @@ public class SectionService {
     public List<Section> getByCourseId(Long courseId) {
         return repository.findByCourseId(courseId);
     }
+
+    public void delete(Section s) {
+        repository.delete(s);
+    }
 }

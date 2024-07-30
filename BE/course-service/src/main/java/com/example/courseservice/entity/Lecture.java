@@ -21,7 +21,7 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "LONGTEXT")
     private String description;
@@ -34,6 +34,9 @@ public class Lecture {
 
     private int position;
     private String type;
+    private String value;
+    private double length;
+
 
     @ManyToOne
     @JoinColumn(name = "sectionId", referencedColumnName = "id")

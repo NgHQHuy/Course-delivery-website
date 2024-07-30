@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class BaseResponse {
-    private int code;
+    private String message;
 }

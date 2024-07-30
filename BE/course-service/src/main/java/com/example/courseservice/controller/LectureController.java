@@ -18,7 +18,7 @@ public class LectureController {
     private LectureService lectureService;
 
     @GetMapping("{id}")
-    public ResponseEntity<LectureDto> getOneAgenda(@PathVariable Long id) {
+    public ResponseEntity<LectureDto> getOne(@PathVariable Long id) {
         Lecture lecture = lectureService.getOne(id);
         if (lecture == null) {
             return ResponseEntity.status(404).build();

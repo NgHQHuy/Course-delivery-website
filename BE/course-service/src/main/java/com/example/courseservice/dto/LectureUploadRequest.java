@@ -11,8 +11,11 @@ import lombok.Setter;
 @Setter
 public class LectureUploadRequest {
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private String link;
     private int position;
+    private double length;
+    private String value;
+    private String type;
 }

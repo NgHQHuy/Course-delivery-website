@@ -17,13 +17,8 @@ public class CourseUploadRequest {
 
     @NotBlank(message = "Missing title")
     private String title;
-    @NotBlank(message = "Missing description")
     private String description;
-    @NotBlank(message = "Missing summary")
     private String summary;
-    @NotBlank(message = "Missing language")
-    private String language;
-    @NotBlank(message = "Missing requirement")
     private String requirements;
     @Positive(message = "Invalid price")
     private double price;

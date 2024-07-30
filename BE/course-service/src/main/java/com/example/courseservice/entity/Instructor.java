@@ -1,11 +1,11 @@
 package com.example.courseservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,4 +18,7 @@ public class Instructor {
     private String name;
 
     private String description;
+
+    @OneToMany(mappedBy = "instructor")
+    private Set<Course> courses;
 }

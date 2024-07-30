@@ -13,8 +13,10 @@ import java.util.List;
 @Setter
 public class SectionUploadRequest {
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private int position;
+    private double length;
+    private int totalLectures;
     private List<LectureUploadRequest> lectures;
 }

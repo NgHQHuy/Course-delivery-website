@@ -35,7 +35,6 @@ public class Course {
     private Timestamp updatedAt;
 
     private double price;
-    private String language;
 
     @ManyToOne
     @JoinColumn(name = "instructorId")

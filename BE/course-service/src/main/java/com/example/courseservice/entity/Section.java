@@ -23,7 +23,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "LONGTEXT")
     private String description;
@@ -35,6 +35,9 @@ public class Section {
     private Timestamp updatedAt;
 
     private int position;
+    private int totalLectures;
+    private double length;
+
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Lecture> lectures = new HashSet<>();

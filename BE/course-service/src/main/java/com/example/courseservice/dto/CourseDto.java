@@ -12,7 +12,6 @@ public class CourseDto {
     private String title;
     private String description;
     private String summary;
-    private String language;
     private String requirements;
     private double price;
     private Long instructorId;

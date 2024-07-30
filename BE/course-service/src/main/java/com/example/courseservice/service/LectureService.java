@@ -1,6 +1,7 @@
 package com.example.courseservice.service;
 
 import com.example.courseservice.entity.Lecture;
+import com.example.courseservice.entity.Section;
 import com.example.courseservice.repository.LectureRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,9 @@ public class LectureService {
     public Lecture getOne(Long id) {
         if (repository.findById(id).isPresent()) return repository.findById(id).get();
         return null;
+    }
+
+    public void delete(Lecture l) {
+        repository.deleteById(l.getId());
     }
 }

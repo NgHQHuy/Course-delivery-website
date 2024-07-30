@@ -61,13 +61,13 @@ public class UserController {
     public ResponseEntity<BaseResponse> changePassword(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin liên quan đến việc đổi mật khẩu")
             @RequestBody ChangePasswordRequest req) {
         User user = userService.findUsername(req.getUsername());
-        if (user == null) return new ResponseEntity<>(new BaseResponse(-1, "Account not found"), HttpStatus.NOT_FOUND);
+        if (user == null) return new ResponseEntity<>(new BaseResponse("Account not found"), HttpStatus.NOT_FOUND);
         if (!user.getPassword().equals(req.getPassword())) {
-            return new ResponseEntity<>(new BaseResponse(-1, "Password is mismatch"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new BaseResponse("Password is mismatch"), HttpStatus.UNAUTHORIZED);
         }
         user.setPassword(req.getNewPassword());
         userService.save(user);
-        return new ResponseEntity<>(new BaseResponse(0, "Success"), HttpStatus.OK);
+        return new ResponseEntity<>(new BaseResponse("Success"), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
