@@ -13,9 +13,8 @@ public class LectureUploadRequest {
     private Long id;
     private String title;
     private String description;
-    private String link;
     private int position;
-    private double length;
+    private Long length;
     private String value;
     private String type;
 }

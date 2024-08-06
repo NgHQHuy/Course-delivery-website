@@ -19,6 +19,6 @@ public class SectionDto {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private int position;
-    private double length;
+    private long length;
     private int totalLectures;
 }

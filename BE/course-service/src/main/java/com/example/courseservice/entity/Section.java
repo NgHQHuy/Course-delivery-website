@@ -35,8 +35,8 @@ public class Section {
     private Timestamp updatedAt;
 
     private int position;
-    private int totalLectures;
-    private double length;
+    private int totalLectures = 0;
+    private Long length = 0L;
 
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)

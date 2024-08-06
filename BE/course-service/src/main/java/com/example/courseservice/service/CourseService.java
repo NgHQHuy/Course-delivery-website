@@ -63,7 +63,14 @@ public class CourseService {
 
     public void deleteSection(Long courseId, Long sectionId) {
         Course course = getOne(courseId);
-        course.getSections().removeIf(s -> s.getId().equals(sectionId));
+        for (Section s : course.getSections()) {
+            if (s.getId().equals(sectionId)) {
+                course.getCourseNumber().setTotalSections(course.getCourseNumber().getTotalSections() - 1);
+                course.getCourseNumber().setLength(course.getCourseNumber().getLength() - s.getLength());
+                course.getSections().remove(s);
+                break;
+            }
+        }
         courseRepository.save(course);
     }
 
@@ -75,7 +82,15 @@ public class CourseService {
 
         for (Section s : course.getSections()) {
             if (s.getId().equals(sectionId)) {
-                s.getLectures().removeIf(l -> l.getId().equals(lectureId));
+                for (Lecture l : s.getLectures()) {
+                    if (l.getId().equals(lectureId)) {
+                        s.setTotalLectures(s.getTotalLectures() - 1);
+                        s.setLength(s.getLength() - l.getLength());
+                        course.getCourseNumber().setLength(course.getCourseNumber().getLength() - l.getLength());
+                        s.getLectures().remove(l);
+                        break;
+                    }
+                }
             }
         }
         save(course);

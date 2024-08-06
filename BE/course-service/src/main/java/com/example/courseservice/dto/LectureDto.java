@@ -19,7 +19,7 @@ public class LectureDto {
     private Timestamp updatedAt;
     private int position;
     private String type;
-    private double length;
+    private Long length;
     private String value;
     @Positive(message = "Invalid section id")
     @NotNull(message = "Section id is mandatory")

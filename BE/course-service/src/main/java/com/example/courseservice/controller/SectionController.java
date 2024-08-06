@@ -23,7 +23,7 @@ public class SectionController {
         Section section = sectionService.getOne(id);
         if (section == null) return ResponseEntity.status(404).build();
         sectionDto.setId(section.getId());
-        sectionDto.setName(section.getName());
+        sectionDto.setTitle(section.getTitle());
         sectionDto.setDescription(section.getDescription());
         sectionDto.setCreatedAt(section.getCreatedAt());
         sectionDto.setUpdatedAt(section.getUpdatedAt());

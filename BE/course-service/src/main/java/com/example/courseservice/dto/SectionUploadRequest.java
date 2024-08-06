@@ -1,5 +1,7 @@
 package com.example.courseservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,5 @@ public class SectionUploadRequest {
     private String title;
     private String description;
     private int position;
-    private double length;
-    private int totalLectures;
     private List<LectureUploadRequest> lectures;
 }

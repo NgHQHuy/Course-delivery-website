@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +25,7 @@ public class CourseUploadRequest {
     private double price;
     @Positive(message = "Invalid instructor")
     private Long instructorId;
+    private Set<Long> categoryIds;
 
     private List<SectionUploadRequest> sections;
 //    private List<Agenda> agendas;

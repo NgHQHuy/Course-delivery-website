@@ -26,7 +26,7 @@ public class LectureController {
         LectureDto lectureDto = new LectureDto();
         lectureDto.setId(lecture.getId());
         lectureDto.setType(lecture.getType());
-        lectureDto.setName(lecture.getName());
+        lectureDto.setTitle(lecture.getTitle());
         lectureDto.setPosition(lecture.getPosition());
         lectureDto.setDescription(lecture.getDescription());
         lectureDto.setCreatedAt(lecture.getCreatedAt());

@@ -35,7 +35,7 @@ public class Lecture {
     private int position;
     private String type;
     private String value;
-    private double length;
+    private Long length = 0L;
 
 
     @ManyToOne

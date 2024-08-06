@@ -1,15 +1,9 @@
 package com.example.courseservice.controller;
 
 import com.example.courseservice.dto.*;
-import com.example.courseservice.entity.Instructor;
-import com.example.courseservice.entity.Lecture;
-import com.example.courseservice.entity.Section;
-import com.example.courseservice.entity.Course;
+import com.example.courseservice.entity.*;
 import com.example.courseservice.exception.SearchNotFoundException;
-import com.example.courseservice.service.InstructorService;
-import com.example.courseservice.service.LectureService;
-import com.example.courseservice.service.SectionService;
-import com.example.courseservice.service.CourseService;
+import com.example.courseservice.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -19,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.*;
+
+import static com.example.courseservice.mapper.CourseMapper.*;
 
 @RestController
 @RequestMapping("api/course")
@@ -35,6 +31,9 @@ public class CourseController {
 
     @Autowired
     private InstructorService instructorService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Operation(summary = "Thêm/sửa thông tin liên quan khóa học")
     @PostMapping
@@ -62,7 +61,14 @@ public class CourseController {
         }
         course.setInstructor(optionalInstructor.get());
 
+        for (Long categoryId : requestBody.getCategoryIds()) {
+            Category category = categoryService.getCategory(categoryId);
+            course.getCategories().add(category);
+            category.getCourses().add(course);
+        }
+
         Set<Section> sectionSet = new HashSet<>();
+        Long courseLength = 0L;
 
         for (SectionUploadRequest sectionDto : sections) {
             Section section = null;
@@ -80,7 +86,8 @@ public class CourseController {
 
             Set<Lecture> lectureSet = new HashSet<>();
             List<LectureUploadRequest> lectureDtos = sectionDto.getLectures() == null ? new ArrayList<>() : sectionDto.getLectures();
-
+            Long sectionLength = 0L;
+            section.setTotalLectures(lectureDtos.size());
             for (LectureUploadRequest lectureDto : lectureDtos) {
                 Lecture lecture = null;
                 if (lectureDto.getId() != null) {
@@ -93,16 +100,71 @@ public class CourseController {
                 lecture.setDescription(lectureDto.getDescription());
                 lecture.setPosition(lectureDto.getPosition());
                 lecture.setSection(section);
-                lecture.setType("video");
+                lecture.setType(lectureDto.getType());
+                lecture.setValue(lectureDto.getValue());
+                sectionLength += lectureDto.getLength();
+                lecture.setLength(lectureDto.getLength());
                 lectureSet.add(lecture);
             }
+            section.setLength(sectionLength);
+            courseLength += sectionLength;
             section.setLectures(lectureSet);
             sectionSet.add(section);
         }
         course.setSections(sectionSet);
+        course.getCourseNumber().setTotalSections(sections.size());
+        course.getCourseNumber().setLength(courseLength);
         courseService.save(course);
 
         return ResponseEntity.ok(new BaseResponse("Success"));
+    }
+
+    @PostMapping("{courseId}/addSection")
+    public ResponseEntity<List<SectionDto>> addSection(@PathVariable Long courseId, @Valid @RequestBody AddSectionRequest request) {
+        Course course = courseService.getOne(courseId);
+        if (course == null) throw new SearchNotFoundException("Course not found");
+        int currentTotal = course.getCourseNumber().getTotalSections();
+        Section section = new Section();
+        section.setTitle(request.getTitle());
+        section.setDescription(request.getDescription());
+        section.setPosition(currentTotal + 1);
+        section.setCourse(course);
+        course.getSections().add(section);
+        course.getCourseNumber().setTotalSections(currentTotal + 1);
+        Course saved = courseService.save(course);
+
+        List<SectionDto> dto = new ArrayList<>();
+        for (Section s : saved.getSections()) {
+            dto.add(mappedToSectionDto(s));
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("{courseId}/{sectionId}/addLecture")
+    public ResponseEntity<List<LectureDto>> addLecture(@PathVariable("courseId") Long courseId, @PathVariable("sectionId") Long sectionId, @Valid @RequestBody AddLectureRequest request) {
+        Section section = courseService.getSection(courseId, sectionId);
+        if (section == null) throw new SearchNotFoundException("Section not found");
+        int currentTotal = section.getTotalLectures();
+        Long lectureLength = request.getLength();
+        Lecture lecture = new Lecture();
+        lecture.setTitle(request.getTitle());
+        lecture.setDescription(request.getDescription());
+        lecture.setType(request.getType());
+        lecture.setLength(lectureLength);
+        lecture.setValue(request.getValue());
+        lecture.setPosition(currentTotal + 1);
+        lecture.setSection(section);
+        section.getLectures().add(lecture);
+        section.setLength(section.getLength() + lectureLength);
+        section.setTotalLectures(currentTotal + 1);
+        section.getCourse().getCourseNumber().setLength(section.getCourse().getCourseNumber().getLength() + lectureLength);
+        section.getCourse().getCourseNumber().setTotalSections(section.getCourse().getCourseNumber().getTotalSections() + 1);
+        Section saved = sectionService.save(section);
+        List<LectureDto> dto = new ArrayList<>();
+        for (Lecture l : saved.getLectures()) {
+            dto.add(mappedToLectureDto(l));
+        }
+        return ResponseEntity.ok(dto);
     }
 
     @Operation(summary = "Lấy thông tin về tất cả khóa học")
@@ -153,7 +215,7 @@ public class CourseController {
     }
 
     @Operation(summary = "Xóa khóa học")
-    @DeleteMapping("{id}")
+    @DeleteMapping("{id}/delete")
     public ResponseEntity<?> deleteCourse(@Parameter(description = "id của khóa học")
             @PathVariable Long id) {
         courseService.delete(id);
@@ -186,9 +248,6 @@ public class CourseController {
         if (sectionDto.getDescription() != null) {
             section.setDescription(sectionDto.getDescription());
         }
-        if (sectionDto.getPosition() > 0) {
-            section.setPosition(sectionDto.getPosition());
-        }
         Section saved = sectionService.save(section);
         return ResponseEntity.ok(mappedToSectionDto(saved));
     }
@@ -205,9 +264,14 @@ public class CourseController {
         if (lectureDto.getDescription() != null) {
             lecture.setDescription(lectureDto.getDescription());
         }
-        if (lectureDto.getPosition() > 0) {
-            lecture.setPosition(lectureDto.getPosition());
+        if (lectureDto.getLength() != null) {
+            lecture.setLength(lectureDto.getLength());
         }
+        if (lectureDto.getType() != null) {
+            lecture.setType(lectureDto.getType());
+        }
+
+        lecture.setValue(lectureDto.getValue());
         Lecture saved = lectureService.save(lecture);
         return ResponseEntity.ok(mappedToLectureDto(saved));
     }
@@ -232,6 +296,17 @@ public class CourseController {
         return ResponseEntity.status(200).build();
     }
 
+    @GetMapping("{courseId}/addSubmission")
+    public ResponseEntity<?> addOneToNumberOfStudent(@PathVariable("courseId") Long courseId) {
+        Course course = courseService.getOne(courseId);
+
+        if (course == null) throw new SearchNotFoundException("Course not found");
+
+        Long currentNumOfStudent = course.getCourseNumber().getNumOfStudent();
+        course.getCourseNumber().setNumOfStudent(currentNumOfStudent + 1);
+        return ResponseEntity.status(200).build();
+    }
+
 
 //    private List<CourseDto> mappedToParentCourse(List<CourseDto> courses) {
 //        List<CourseDto> temp = new ArrayList<>();
@@ -243,41 +318,4 @@ public class CourseController {
 //        }
 //        return temp;
 //    }
-
-    private CourseDto mappedToCourseDto(Course course) {
-        CourseDto dto = new CourseDto();
-        dto.setId(course.getId());
-        dto.setTitle(course.getTitle());
-        dto.setDescription(course.getDescription());
-        dto.setCreatedAt(course.getCreatedAt());
-        dto.setUpdatedAt(course.getUpdatedAt());
-        dto.setPrice(course.getPrice());
-        dto.setSummary(course.getSummary());
-        dto.setRequirements(course.getRequirements());
-        dto.setInstructorId(course.getInstructor().getId());
-        return dto;
-    }
-
-    private SectionDto mappedToSectionDto(Section section) {
-        SectionDto sectionDto = new SectionDto();
-        sectionDto.setId(section.getId());
-        sectionDto.setTitle(section.getTitle());
-        sectionDto.setDescription(section.getDescription());
-        sectionDto.setCreatedAt(section.getCreatedAt());
-        sectionDto.setUpdatedAt(section.getUpdatedAt());
-        sectionDto.setPosition(section.getPosition());
-        return sectionDto;
-    }
-
-    private LectureDto mappedToLectureDto(Lecture lecture) {
-        LectureDto lectureDto = new LectureDto();
-        lectureDto.setId(lecture.getId());
-        lectureDto.setTitle(lecture.getTitle());
-        lectureDto.setType(lecture.getType());
-        lectureDto.setDescription(lecture.getDescription());
-        lectureDto.setCreatedAt(lecture.getCreatedAt());
-        lectureDto.setUpdatedAt(lecture.getUpdatedAt());
-        lectureDto.setPosition(lecture.getPosition());
-        return lectureDto;
-    }
 }

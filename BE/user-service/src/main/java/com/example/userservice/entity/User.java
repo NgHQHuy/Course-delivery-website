@@ -27,11 +27,20 @@ public class User {
 
     private String email;
 
-    private String name;
+    private boolean locked;
+    private boolean enabled;
 
     @CreationTimestamp(source = SourceType.DB)
     private Timestamp createdAt;
 
     @UpdateTimestamp(source = SourceType.DB)
     private Timestamp updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "roleId")
+    private Role role;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn(name = "userId")
+    private UserProfile profile = new UserProfile();
 }
