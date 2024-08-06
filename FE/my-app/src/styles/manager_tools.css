@@ -249,6 +249,9 @@
     color: grey;
     cursor: pointer;
 }
+._close-popup-icon svg{
+    pointer-events: none;
+}
 ._close-popup-icon:hover{
     color: black;
 }

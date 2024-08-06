@@ -4,6 +4,7 @@ import { BsSearch } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { SlPlus } from "react-icons/sl";
 import { IoIosClose } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
@@ -133,14 +134,25 @@ const ManagerTools = () => {
           </div>
         )}
       </div>
-      <div className="tool-popup" style={{ display: popupDisplay.display }}>
+      <div
+        className="tool-popup"
+        style={{ display: popupDisplay.display }}
+        onClick={(e) => {
+          if (e.target.matches("._close-popup-icon")) {
+            setPopupDisplay({ display: "none", type: "" });
+          } else if (
+            !e.target.classList.contains("_popup-create-course") &&
+            !e.target.classList.contains("_popup-create-user") &&
+            !e.target.classList.contains("_close-popup")
+          ) {
+            toast.warn("Close the form first!");
+          }
+        }}
+      >
         {popupDisplay.type === "create-course" ? (
           <div className="_popup-create-course">
             <div className="_close-popup">
-              <div
-                className="_close-popup-icon"
-                onClick={() => setPopupDisplay({ display: "none", type: "" })}
-              >
+              <div className="_close-popup-icon">
                 <IoIosClose size={28} />
               </div>
             </div>
@@ -148,10 +160,7 @@ const ManagerTools = () => {
         ) : (
           <div className="_popup-create-user">
             <div className="_close-popup">
-              <div
-                className="_close-popup-icon"
-                onClick={() => setPopupDisplay({ display: "none", type: "" })}
-              >
+              <div className="_close-popup-icon">
                 <IoIosClose size={28} />
               </div>
             </div>
