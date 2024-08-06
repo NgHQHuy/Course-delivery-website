@@ -7,7 +7,10 @@ import { IoIosClose } from "react-icons/io";
 
 const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
-  const [popupDisplay, setPopupDisplay] = useState({ display: "none" });
+  const [popupDisplay, setPopupDisplay] = useState({
+    display: "none",
+    type: "",
+  });
   const toolClick = (tool) => {
     setToolSelected(tool);
   };
@@ -62,7 +65,12 @@ const ManagerTools = () => {
               </div>
             </div>
             <div className="btn-tool-group">
-              <div className="_btn-create">
+              <div
+                className="_btn-create"
+                onClick={() =>
+                  setPopupDisplay({ display: "", type: "create-course" })
+                }
+              >
                 <SlPlus />
                 <span>New</span>
               </div>
@@ -112,7 +120,12 @@ const ManagerTools = () => {
               </div>
             </div>
             <div className="btn-tool-group">
-              <div className="_btn-create" onClick={() => setPopupDisplay({})}>
+              <div
+                className="_btn-create"
+                onClick={() =>
+                  setPopupDisplay({ display: "", type: "create-user" })
+                }
+              >
                 <SlPlus />
                 <span>New</span>
               </div>
@@ -120,43 +133,56 @@ const ManagerTools = () => {
           </div>
         )}
       </div>
-      <div className="tool-popup" style={popupDisplay}>
-        <div className="_popup-create-user">
-          <div className="_close-popup">
-            <div
-              className="_close-popup-icon"
-              onClick={() => setPopupDisplay({ display: "none" })}
-            >
-              <IoIosClose size={28} />
+      <div className="tool-popup" style={{ display: popupDisplay.display }}>
+        {popupDisplay.type === "create-course" ? (
+          <div className="_popup-create-course">
+            <div className="_close-popup">
+              <div
+                className="_close-popup-icon"
+                onClick={() => setPopupDisplay({ display: "none", type: "" })}
+              >
+                <IoIosClose size={28} />
+              </div>
             </div>
           </div>
-          <div className="_popup-title">
-            <span>Create user</span>
+        ) : (
+          <div className="_popup-create-user">
+            <div className="_close-popup">
+              <div
+                className="_close-popup-icon"
+                onClick={() => setPopupDisplay({ display: "none", type: "" })}
+              >
+                <IoIosClose size={28} />
+              </div>
+            </div>
+            <div className="_popup-title">
+              <span>Create user</span>
+            </div>
+            <div className="_popup-form-user">
+              <form action="">
+                <div className="username">
+                  <input type="text" placeholder="username" />
+                </div>
+                <div className="password">
+                  <input type="text" placeholder="password" />
+                </div>
+                <div className="email">
+                  <input type="text" placeholder="email" />
+                </div>
+                <div className="role">
+                  <span>Role: </span>
+                  <select id="">
+                    <option value="manager">manager</option>
+                    <option value="admin">admin</option>
+                  </select>
+                </div>
+                <div className="_btn-popup-create">
+                  <button type="submit">Create</button>
+                </div>
+              </form>
+            </div>
           </div>
-          <div className="_popup-form-user">
-            <form action="">
-              <div className="username">
-                <input type="text" placeholder="username" />
-              </div>
-              <div className="password">
-                <input type="text" placeholder="password" />
-              </div>
-              <div className="email">
-                <input type="text" placeholder="email" />
-              </div>
-              <div className="role">
-                <span>Role: </span>
-                <select id="">
-                  <option value="manager">manager</option>
-                  <option value="admin">admin</option>
-                </select>
-              </div>
-              <div className="_btn-popup-create">
-                <button type="submit">Create</button>
-              </div>
-            </form>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
