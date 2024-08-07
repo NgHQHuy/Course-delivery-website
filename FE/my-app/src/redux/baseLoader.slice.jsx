@@ -8,7 +8,10 @@ const initialState = {
     lists: [],
     list_courses: [],
   },
-  cart: [],
+  cart: {
+    cartID: "",
+    cartItems: [],
+  },
 };
 
 const baseLoaderSlice = createSlice({
