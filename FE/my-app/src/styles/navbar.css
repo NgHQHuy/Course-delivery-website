@@ -52,6 +52,9 @@ nav{
 }
 
 .user{
+    height: 100%;
+    display: flex;
+    align-items: center;
     padding: 0 10px 0 10px;
     cursor: pointer;
 }
@@ -61,19 +64,60 @@ nav{
     width: 30px;
     border-radius: 50%;
 }
-.dropdown-user-menu{
+.nav-signin{
+    width: 80px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    border-right: 1px solid rgb(200, 200, 200);
+    cursor: pointer;
+}
+.nav-signin:hover{
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.nav-signup{
+    width: 80px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    cursor: pointer;
+}
+.nav-signup:hover{
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.dropdown-menu{
     position: absolute;
-    top: 75px;
-    width: 250px;
-    height: 500px;
+    top: 65px;
+    padding-top: 10px;
+    width: 150px;
     right: 10px;
-    background-color: white;
     box-shadow: 5px 8px 10px -5px rgba(0,0,0,0.2);
     z-index: 2;
-    opacity: 0;
+    opacity: 0; 
     visibility: hidden;
 }
-.user:hover .dropdown-user-menu{
+.dropdown-menu ul:not(:first-child){
+    border-top: 1px solid rgb(200, 200, 200);
+}
+.dropdown-menu ul{
+    background-color: white;
+    list-style-type: none;
+    margin: 0;
+    padding: 5px 0;
+}
+.dropdown-menu li{
+    padding: 5px 10px;
+    text-align: start;
+    font-size: 0.9rem;
+}
+.dropdown-menu li:hover{
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: rgb(55, 0, 255);
+}
+.user:hover .dropdown-menu{
     display: inline-block;
     opacity: 1;
     visibility: visible;
@@ -83,23 +127,19 @@ nav{
 
 .search-responsive{
     display: none;
+    cursor: pointer;
 }
 .menu{
     display: none;
+    height: 100%;
     padding: 0 5px 0 5px;
+    cursor: pointer;
 }
-.dropdown-menu{
-    position: absolute;
-    top: 75px;
-    width: 250px;
-    height: 500px;
-    right: 10px;
-    background-color: white;
-    box-shadow: 5px 8px 10px -5px rgba(0,0,0,0.2);
-    z-index: 2;
-    opacity: 0;
-    visibility: hidden;
+
+.learning-n-cart{
+    display: none;
 }
+
 .menu:hover .dropdown-menu{
     display: inline-block;
     opacity: 1;
@@ -131,5 +171,11 @@ nav{
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
+    }
+    .learning-n-cart{
+        display: block;
+    }
+    .nav-signin, .nav-signup{
+        display: none;
     }
 }

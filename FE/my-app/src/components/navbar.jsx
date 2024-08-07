@@ -1,23 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/navbar.css";
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
-import { getBaseLoad } from "../redux/baseLoader.slice";
-import { useSelector } from "react-redux";
+import {
+  getBaseLoad,
+  cleanBaseLoad,
+  setBaseLoad,
+} from "../redux/baseLoader.slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Navbar = () => {
   const base_loader = useSelector(getBaseLoad);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    base_loader.user.userID ? setLogged(true) : setLogged(false);
+  }, [base_loader]);
+
   const learningClick = () => {
     navigate(`/learning`);
   };
   const openCart = () => {
     window.open("/cart", "_blank", "noopener,noreferrer");
-    console.log(base_loader);
+    console.log(logged);
   };
+  const logout = () => {
+    dispatch(cleanBaseLoad());
+    console.log(base_loader);
+    navigate("/");
+  };
+
   return (
     <nav>
       <div className="logo">
@@ -47,10 +65,29 @@ const Navbar = () => {
           <BsCart3 size={24} />
         </div>
       </div>
-      <div className="user">
-        <div className="user-avatar"></div>
-        <div className="dropdown-user-menu"></div>
-      </div>
+      {logged ? (
+        <div className="user">
+          <div className="user-avatar"></div>
+          <div className="dropdown-menu">
+            <ul className="profile-n-account">
+              <li>Edit profile</li>
+              <li>Account settings</li>
+            </ul>
+            <ul className="logout">
+              <li onClick={() => logout()}>Log out</li>
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="nav-signin" onClick={() => navigate("/login")}>
+            Sign in
+          </div>
+          <div className="nav-signup" onClick={() => navigate("/sign-up")}>
+            Sign up
+          </div>
+        </>
+      )}
 
       <div className="search-responsive">
         <div className="search-icon-respon">
@@ -61,7 +98,35 @@ const Navbar = () => {
         <div className="menu-icon">
           <HiOutlineQueueList size={24} />
         </div>
-        <div className="dropdown-menu"></div>
+        <div className="dropdown-menu">
+          {logged ? (
+            <>
+              <ul className="profile-n-account">
+                <li>Edit profile</li>
+                <li>Account settings</li>
+              </ul>
+              <ul className="learning-n-cart">
+                <li onClick={() => learningClick()}>My learning</li>
+                <li onClick={() => openCart()}>Cart</li>
+              </ul>
+              <ul className="logout">
+                <li onClick={() => logout()}>Log out</li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <ul className="signin-n-signup">
+                <li
+                  style={{ borderBottom: "1px solid rgb(200, 200, 200)" }}
+                  onClick={() => navigate("/login")}
+                >
+                  Sign in
+                </li>
+                <li onClick={() => navigate("/sign-up")}>Sign up</li>
+              </ul>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
