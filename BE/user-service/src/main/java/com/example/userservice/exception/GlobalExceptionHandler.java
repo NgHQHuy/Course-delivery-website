@@ -31,6 +31,8 @@ public class GlobalExceptionHandler {
         } else if (exception instanceof MethodArgumentNotValidException) {
             String message = ((MethodArgumentNotValidException) exception).getAllErrors().get(0).getDefaultMessage();
             response = new ResponseEntity<>(new BaseResponse(message), HttpStatus.BAD_REQUEST);
+        } else if (exception instanceof AuthErrorException) {
+            response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.UNAUTHORIZED);
         }
 
         if (response == null) {

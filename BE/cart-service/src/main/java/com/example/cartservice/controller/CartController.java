@@ -56,8 +56,8 @@ public class CartController {
         item.setCourseId(courseDto.getId());
         item.setPrice(courseDto.getPrice());
         cart.getItems().add(item);
-        double updatedTotal = cart.getTotal() + courseDto.getPrice();
-        cart.setTotal(updatedTotal);
+        double updatedTotal = cart.getTotalPrice() + courseDto.getPrice();
+        cart.setTotalPrice(updatedTotal);
 
         Cart savedCart = cartService.save(cart);
         return ResponseEntity.ok(savedCart);

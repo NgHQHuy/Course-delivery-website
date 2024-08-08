@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -21,6 +23,25 @@ public class Util {
             //https://stackoverflow.com/a/68168585
             webClient.get()
                     .uri(uri)
+                    .retrieve()
+                    .toBodilessEntity().block();
+            isValid.set(true);
+        } catch (Exception ex) {
+            logger = LoggerFactory.getLogger(ex.getClass());
+            logger.error("Response from remote server: " + ex.getMessage());
+        }
+
+        return isValid.get();
+    }
+
+    public boolean checkPostRequest(String uri, Map<String, String> body) {
+        AtomicBoolean isValid = new AtomicBoolean(false);
+
+        try {
+            //https://stackoverflow.com/a/68168585
+            webClient.post()
+                    .uri(uri)
+                    .body(BodyInserters.fromValue(body))
                     .retrieve()
                     .toBodilessEntity().block();
             isValid.set(true);

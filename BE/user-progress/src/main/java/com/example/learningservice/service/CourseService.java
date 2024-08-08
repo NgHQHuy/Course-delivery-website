@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -27,5 +29,12 @@ public class CourseService {
     public boolean isValidLecture(Long courseId, Long sectionId, Long lectureId) {
         String uri = "http://localhost:8081/api/course/" + courseId + "/" + sectionId + "/" + lectureId;
         return util.checkForResponse(uri);
+    }
+
+    public boolean updateNumberofStudent(Long courseId, Long numberOfStudent) {
+        String uri = "http://localhost:8081/api/course/" + courseId + "/updateNumOfStudent";
+        Map<String, String> body = new HashMap<>();
+        body.put("numOfStudent", String.valueOf(numberOfStudent));
+        return util.checkPostRequest(uri, body);
     }
 }

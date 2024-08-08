@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @AllArgsConstructor
 public class UserCourseService {
     private UserCourseRepository repository;
+    private CourseService courseService;
     private WebClient webClient;
     private static Logger logger = LoggerFactory.getLogger(UserCourseService.class);
 
@@ -44,6 +45,11 @@ public class UserCourseService {
         }
 
         return isValid.get();
+    }
+
+    public void updateCourseNumOfStudent(Long courseId) {
+        Long numberOfStudent = repository.countAllByCourseId(courseId);
+        courseService.updateNumberofStudent(courseId, numberOfStudent);
     }
 
     public boolean isUserRegisteredCourse(Long userId, Long courseId) {

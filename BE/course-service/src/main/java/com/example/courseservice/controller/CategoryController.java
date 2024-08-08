@@ -1,8 +1,6 @@
 package com.example.courseservice.controller;
 
-import com.example.courseservice.dto.CategoryDto;
-import com.example.courseservice.dto.CourseCategoryDto;
-import com.example.courseservice.dto.CourseDto;
+import com.example.courseservice.dto.*;
 import com.example.courseservice.entity.Category;
 import com.example.courseservice.entity.Course;
 import com.example.courseservice.mapper.CourseMapper;
@@ -34,15 +32,15 @@ public class CategoryController {
     }
 
     @PostMapping("addCourse")
-    public ResponseEntity<?> addCourseToCategory(@Valid @RequestBody CourseCategoryDto dto) {
+    public ResponseEntity<BaseResponse> addCourseToCategory(@Valid @RequestBody CourseCategoryDto dto) {
         categoryService.addCourse(dto.getCategoryId(), dto.getCourseId());
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.ok(new BaseResponse("Success"));
     }
 
     @PostMapping("removeCourse")
     public ResponseEntity<?> removeCourseFromCategory(@Valid @RequestBody CourseCategoryDto dto) {
         categoryService.removeCourse(dto.getCategoryId(), dto.getCourseId());
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.ok(new BaseResponse("Success"));
     }
 
     @GetMapping("{categoryId}")
@@ -73,6 +71,12 @@ public class CategoryController {
         Category category = categoryService.getCategory(categoryId);
         categoryService.delete(category);
         return ResponseEntity.status(200).build();
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<List<CategorySearchResponse>> search(@RequestParam("keyword") String keyword) {
+        List<CategorySearchResponse> responses = categoryService.search(keyword);
+        return ResponseEntity.ok(responses);
     }
 
     private CategoryDto mapToCategoryDto(Category c) {

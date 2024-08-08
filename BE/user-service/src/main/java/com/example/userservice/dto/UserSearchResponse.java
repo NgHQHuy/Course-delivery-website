@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserSearchResponse {
-    private Long id;
-    private String username;
-    private String email;
+    private Long userId;
+    private String name;
     private RoleEnum role;
 }

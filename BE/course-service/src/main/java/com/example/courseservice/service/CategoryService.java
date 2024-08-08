@@ -1,14 +1,19 @@
 package com.example.courseservice.service;
 
 import com.example.courseservice.dto.CategoryDto;
+import com.example.courseservice.dto.CategorySearchResponse;
+import com.example.courseservice.dto.CourseDto;
 import com.example.courseservice.entity.Category;
 import com.example.courseservice.entity.Course;
 import com.example.courseservice.exception.CourseAlreadyAddedException;
 import com.example.courseservice.exception.SearchNotFoundException;
+import com.example.courseservice.mapper.CourseMapper;
 import com.example.courseservice.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,6 +65,18 @@ public class CategoryService {
         Category category = getCategory(categoryId);
         category.setName(dto.getName());
         return save(category);
+    }
+
+    public List<CategorySearchResponse> search(String keyword) {
+        List<Category> categories = categoryRepository.search(keyword);
+        List<CategorySearchResponse> responses = new ArrayList<>();
+        for (Category category : categories) {
+            CategorySearchResponse response = new CategorySearchResponse();
+            response.setCategoryId(category.getId());
+            response.setName(category.getName());
+            responses.add(response);
+        }
+        return responses;
     }
 
     public void delete(Category c) {

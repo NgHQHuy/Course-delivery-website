@@ -42,6 +42,8 @@ public class Course {
 
     private String requirements;
     private String summary;
+    @Column(columnDefinition = "LONGTEXT")
+    private String thumbnail;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Section> sections = new HashSet<>();

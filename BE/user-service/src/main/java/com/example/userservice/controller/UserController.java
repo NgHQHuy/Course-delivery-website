@@ -22,12 +22,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Thêm thông tin người dùng")
     @PostMapping("create")
-    public ResponseEntity<UserDto> save(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin người dùng. Bổ sung id của người dùng để chỉnh sửa thông tin. Nhập sai id người dùng hoặc bỏ qua id sẽ thêm mới vào CSDL.")
-            @RequestBody UserDto u) {
-        User savedUser = userService.addUser(u);
-        return ResponseEntity.ok(mapToUserDto(savedUser));
+    public ResponseEntity<BaseResponse> createUser(@RequestBody RegisterRequest request) {
+        userService.addUser(request);
+        return ResponseEntity.ok(new BaseResponse("Success"));
     }
 
     @PostMapping("profile/update")
@@ -44,9 +42,9 @@ public class UserController {
 
     @Operation(summary = "Lấy thông tin của tất cả người dùng")
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAll() {
+    public ResponseEntity<List<RegisterRequest>> getAll() {
         List<User> users = userService.getAll();
-        List<UserDto> userDtos = new ArrayList<>();
+        List<RegisterRequest> userDtos = new ArrayList<>();
         for (User u : users) {
             userDtos.add(mapToUserDto(u));
         }
@@ -82,18 +80,25 @@ public class UserController {
         return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).build());
     }
 
-    @PostMapping("search")
-    public ResponseEntity<List<UserSearchResponse>> search(@RequestBody UserSearchRequest request) {
-        List<User> result = userService.search(request.getKeyword());
+    @GetMapping("search")
+    public ResponseEntity<List<UserSearchResponse>> search(@RequestParam("keyword") String keyword) {
+        List<UserProfile> result = userService.search(keyword);
         List<UserSearchResponse> responses = new ArrayList<>();
-        for (User u : result) {
+        for (UserProfile u : result) {
+            Optional<User> optionalUser = userService.getUser(u.getUserId());
+            User user = optionalUser.get();
             UserSearchResponse response = new UserSearchResponse();
-            response.setId(u.getId());
-            response.setUsername(u.getUsername());
-            response.setEmail(u.getEmail());
-            response.setRole(u.getRole().getName());
+            response.setUserId(u.getUserId());
+            response.setName(u.getName());
+            response.setRole(user.getRole().getName());
             responses.add(response);
         }
         return ResponseEntity.ok(responses);
+    }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<BaseResponse> deleteUser(@RequestParam("user") Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok(new BaseResponse("Success"));
     }
 }

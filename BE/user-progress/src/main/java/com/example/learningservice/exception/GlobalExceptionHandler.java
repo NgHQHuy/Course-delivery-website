@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
         logger = LoggerFactory.getLogger(exception.getClass());
         
         logger.error(exception.getMessage());
+//        exception.printStackTrace();
         
         ResponseEntity<BaseResponse> response = null;
         
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
             response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
         } else if (exception instanceof HttpMessageNotReadableException) {
             response = new ResponseEntity<>(new BaseResponse("Missing request body or body is not format correctly"), HttpStatus.INTERNAL_SERVER_ERROR);
-        } else if (exception instanceof BodyParameterMissingException || exception instanceof ListAlreadyAddedCourseException) {
+        } else if (exception instanceof BodyParameterMissingException || exception instanceof ListAlreadyAddedCourseException || exception instanceof CourseAlreadyRegisteredException) {
             response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
         } else if (exception instanceof CourseNotRegisteredException) {
             response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.UNAUTHORIZED);

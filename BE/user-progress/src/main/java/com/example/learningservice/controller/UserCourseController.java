@@ -2,6 +2,7 @@ package com.example.learningservice.controller;
 
 import com.example.learningservice.dto.CheckRegisteredRequest;
 import com.example.learningservice.entity.UserCourse;
+import com.example.learningservice.exception.CourseAlreadyRegisteredException;
 import com.example.learningservice.exception.SearchNotFoundException;
 import com.example.learningservice.service.CourseService;
 import com.example.learningservice.service.UserCourseService;
@@ -34,8 +35,9 @@ public class UserCourseController {
         UserCourse saved;
         if (service.isUserRegisteredCourse(uc.getUserId(), uc.getCourseId())) {
 //            logger.info("Find out user has registered this course");
-            saved = service.findOne(uc.getUserId(), uc.getCourseId());
+            throw new CourseAlreadyRegisteredException("User already registered this course");
         } else saved = service.save(uc);
+        service.updateCourseNumOfStudent(uc.getCourseId());
         return ResponseEntity.ok(saved);
     }
 

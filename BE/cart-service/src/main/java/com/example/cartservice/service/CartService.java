@@ -36,6 +36,8 @@ public class CartService {
 
         for (CartItem item : cart.getItems()) {
             if (item.getCourseId().equals(request.getCourseId())) {
+                double updatedTotal = cart.getTotalPrice() - item.getPrice();
+                cart.setTotalPrice(updatedTotal);
                 cart.getItems().remove(item);
                 break;
             }

@@ -20,7 +20,7 @@ public class Cart {
 
     private Long userId;
 
-    private double total = 0;
+    private double totalPrice = 0;
 
     @CreationTimestamp
     private Timestamp createdAt;

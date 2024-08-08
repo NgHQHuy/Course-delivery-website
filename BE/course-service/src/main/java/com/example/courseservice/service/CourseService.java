@@ -1,15 +1,20 @@
 package com.example.courseservice.service;
 
+import com.example.courseservice.dto.AddCourseRequest;
+import com.example.courseservice.dto.CourseDto;
+import com.example.courseservice.dto.CourseSearchResponse;
 import com.example.courseservice.dto.SectionDto;
-import com.example.courseservice.entity.Course;
-import com.example.courseservice.entity.Lecture;
-import com.example.courseservice.entity.Section;
+import com.example.courseservice.entity.*;
 import com.example.courseservice.exception.SearchNotFoundException;
+import com.example.courseservice.mapper.CourseMapper;
+import com.example.courseservice.repository.CategoryRepository;
 import com.example.courseservice.repository.CourseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,9 +23,48 @@ public class CourseService {
     private CourseRepository courseRepository;
     private SectionService sectionService;
     private LectureService lectureService;
+    private InstructorService instructorService;
+    private CategoryRepository categoryRepository;
 
     public Course save(Course data) {
         return courseRepository.save(data);
+    }
+
+    public Course addCourse(AddCourseRequest requestBody) {
+        Optional<Instructor> optionalInstructor = instructorService.findOne(requestBody.getInstructorId());
+        if (optionalInstructor.isEmpty()) throw new SearchNotFoundException("Instructor not found");
+        Instructor instructor = optionalInstructor.get();
+
+        Course course = new Course();
+        course.setTitle(requestBody.getTitle());
+        course.setDescription(requestBody.getDescription());
+        course.setSummary(requestBody.getSummary());
+        course.setRequirements(requestBody.getRequirements());
+        course.setPrice(requestBody.getPrice());
+        course.setInstructor(instructor);
+        course.setThumbnail(requestBody.getThumbnail());
+        for (Long categoryId : requestBody.getCategoryIds()) {
+            Category category = categoryRepository.findById(categoryId).get();
+            course.getCategories().add(category);
+        }
+        return save(course);
+    }
+
+    public void updateCourse(CourseDto dto) {
+        Course course = getOne(dto.getId());
+        if (course == null) throw new SearchNotFoundException("Course not found");
+        course.setTitle(dto.getTitle());
+        course.setDescription(dto.getDescription());
+        course.setPrice(dto.getPrice());
+        course.setRequirements(dto.getRequirements());
+        course.setSummary(dto.getSummary());
+        course.setThumbnail(dto.getThumbnails());
+
+        Optional<Instructor> optionalInstructor = instructorService.findOne(dto.getInstructorId());
+        if (optionalInstructor.isEmpty()) throw new SearchNotFoundException("Instructor not found");
+        Instructor instructor = optionalInstructor.get();
+        course.setInstructor(instructor);
+        save(course);
     }
 
 
@@ -94,5 +138,17 @@ public class CourseService {
             }
         }
         save(course);
+    }
+
+    public List<CourseSearchResponse> search(String keyword) {
+        List<Course> courses = courseRepository.search(keyword);
+        List<CourseSearchResponse> responses = new ArrayList<>();
+        for (Course course : courses) {
+            CourseSearchResponse response = new CourseSearchResponse();
+            response.setCourseId(course.getId());
+            response.setTitle(course.getTitle());
+            responses.add(response);
+        }
+        return responses;
     }
 }

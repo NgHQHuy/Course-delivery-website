@@ -1,11 +1,11 @@
 package com.example.userservice.mapper;
 
-import com.example.userservice.dto.UserDto;
+import com.example.userservice.dto.RegisterRequest;
 import com.example.userservice.entity.User;
 
 public class UserMapper {
-    public static UserDto mapToUserDto(User u) {
-        UserDto userDto = new UserDto();
+    public static RegisterRequest mapToUserDto(User u) {
+        RegisterRequest userDto = new RegisterRequest();
         userDto.setId(u.getId());
         userDto.setEmail(u.getEmail());
         userDto.setPassword(u.getPassword());

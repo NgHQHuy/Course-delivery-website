@@ -1,6 +1,7 @@
 package com.example.courseservice.controller;
 
 import com.example.courseservice.dto.InstructorDto;
+import com.example.courseservice.dto.InstructorSearchResponse;
 import com.example.courseservice.entity.Course;
 import com.example.courseservice.entity.Instructor;
 import com.example.courseservice.exception.BodyParameterMissingException;
@@ -48,6 +49,19 @@ public class InstructorController {
     public ResponseEntity<?> deleteInstructor(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.status(200).build();
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<List<InstructorSearchResponse>> search(@RequestParam("keyword") String keyword) {
+        List<Instructor> instructors = service.search(keyword);
+        List<InstructorSearchResponse> responses = new ArrayList<>();
+        for (Instructor instructor : instructors) {
+            InstructorSearchResponse response = new InstructorSearchResponse();
+            response.setInstructorId(instructor.getId());
+            response.setName(instructor.getName());
+            responses.add(response);
+        }
+        return ResponseEntity.ok(responses);
     }
 
     private InstructorDto mapToInstructorDto(Instructor i) {

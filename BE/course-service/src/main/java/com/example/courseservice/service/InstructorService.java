@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,5 +33,9 @@ public class InstructorService {
         Instructor instructor = optionalInstructor.get();
         courseRepository.deleteAll(instructor.getCourses());
         instructorRepository.deleteById(instructorId);
+    }
+
+    public List<Instructor> search(String keyword) {
+        return instructorRepository.search(keyword);
     }
 }
