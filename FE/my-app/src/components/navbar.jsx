@@ -3,12 +3,9 @@ import "../styles/navbar.css";
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import {
-  getBaseLoad,
-  cleanBaseLoad,
-  setBaseLoad,
-} from "../redux/baseLoader.slice";
+import { getBaseLoad, cleanBaseLoad } from "../redux/baseLoader.slice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Navbar = () => {
@@ -27,8 +24,11 @@ const Navbar = () => {
     navigate(`/learning`);
   };
   const openCart = () => {
-    window.open("/cart", "_blank", "noopener,noreferrer");
-    console.log(logged);
+    if (logged) {
+      window.open("/cart", "_blank", "noopener,noreferrer");
+    } else {
+      toast.warn("Sign-in or Sign-up first!");
+    }
   };
   const logout = () => {
     dispatch(cleanBaseLoad());
@@ -57,7 +57,7 @@ const Navbar = () => {
           <input type="text" placeholder="Search" />
         </div>
       </div>
-      <div className="my-learning">
+      <div className="my-learning" style={!logged ? { display: "none" } : {}}>
         <span onClick={() => learningClick()}>My learning</span>
       </div>
       <div className="cart" onClick={() => openCart()}>
