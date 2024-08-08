@@ -224,10 +224,12 @@
 ._popup-create-course{
     width: 60%;
     min-width: 375px;
-    height: 700px;
+    height: fit-content;
+    max-height: 700px;
     background-color: white;
     box-shadow: 5px 10px 10px rgb(61, 61, 61);
     border-radius: 10px;
+    padding-bottom: 10px;
 }
 ._popup-create-user{
     width: 375px;
@@ -287,6 +289,180 @@
 }
 ._btn-popup-create button:hover{
     background-color: rgb(103, 194, 0);
+}
+
+/* popup-course-container */
+._popup-course-container{
+    width: 100%;
+    height: fit-content;
+    max-height: 600px;
+    display: block;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+._popup-course-container-title{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 15px;
+}
+._course-form-overview{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+._popup-create-course form{
+    width: 100%;
+    height: fit-content;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+._popup-create-course form div{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    margin-bottom: 5px;
+}
+._popup-create-course form div span{
+    width: 100px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-align: start;
+}
+._popup-create-course form div input{
+    width: 100%;
+    outline: none;
+}
+._popup-create-course form div textarea{
+    width: 100%;
+    outline: none;
+    resize: none;
+}
+._popup-course-form-btn{
+    width: 90% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin: auto;
+}
+._popup-course-form-btn span{
+    line-height: 30px;
+    font-weight: lighter !important;
+    font-size: 0.9rem !important;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: blue;
+    cursor: pointer;
+}
+._popup-course-form-btn span:hover{
+    font-weight: 500 !important;
+}
+._popup-course-form-btn button{
+    width: 80px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* _course-form-section */
+._course-form-sections{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+.form-sections-input{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.form-sections-input ._section{
+    height: 30px;
+}
+.form-sections-input ._section span{
+    line-height: 30px;
+    font-size: 1rem;
+}
+.form-sections-input ._section ._section-btn-remove{
+    height: 30px;
+    width: 30px !important;
+    color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.form-sections-add{
+    height: 25px;
+    width: 80px !important;
+    background-color: rgb(123, 206, 0);
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.form-sections-add:hover{
+    background-color: rgb(110, 184, 0);
+}
+.form-sections-add span{
+    font-size: 1em !important;
+    line-height: 25px !important;
+    margin-left: 5px;
+}
+
+/* courese-form-lectures */
+._course-form-lectures{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+._section-lectures-input{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgb(205, 205, 205);
+}
+._lecture-section-title{
+    width: 100% !important;
+    font-weight: 500;
+}
+._lecture-input{
+    width: 100% !important;
+    display: flex;
+    flex-wrap: wrap;
+}
+._lecture-input-header{
+    display: flex !important;
+    justify-content: space-between !important;
+}
+._lecture-input-header svg{
+    cursor: pointer;
+    color: red;
+}
+._section-lectures-add{
+    width: fit-content !important;
+    height: 20px;
+    box-sizing: content-box;
+    background-color: rgb(255, 194, 26);
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+}
+._section-lectures-add:hover{
+    background-color: rgb(224, 168, 12);
+}
+._section-lectures-add span{
+    width: fit-content !important;
+    line-height: 20px;
+    margin-left: 5px;
+    font-size: 1rem;
+    font-weight: bold !important;
 }
 
 @media (max-width: 800px) {
