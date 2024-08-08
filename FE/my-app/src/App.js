@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import Navbar from "./components/navbar";
 import CourseInfo from "./pages/courseInfo";
 import HomePage from "./pages/home";
@@ -37,6 +39,7 @@ function App() {
         </div>
         <footer className="App-footer"></footer>
       </div>
+      <ToastContainer autoClose={1200} style={{ fontWeight: "600" }} />
     </BrowserRouter>
   );
 }
