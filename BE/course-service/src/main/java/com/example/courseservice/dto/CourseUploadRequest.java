@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class AddCourseRequest {
+public class CourseUploadRequest {
     @NotBlank(message = "Missing title")
     private String title;
     @NotBlank(message = "Missing description")
@@ -27,4 +27,5 @@ public class AddCourseRequest {
     private Long instructorId;
     private String thumbnail;
     private Set<Long> categoryIds;
+    private Set<SectionUploadRequest> sections;
 }

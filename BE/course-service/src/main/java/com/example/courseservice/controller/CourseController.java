@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 import static com.example.courseservice.mapper.CourseMapper.*;
@@ -37,7 +36,7 @@ public class CourseController {
 
     @Operation(summary = "Thêm thông tin liên quan khóa học")
     @PostMapping("create")
-    public ResponseEntity<BaseResponse> createCourse(@Valid @RequestBody AddCourseRequest requestBody) {
+    public ResponseEntity<BaseResponse> createCourse(@Valid @RequestBody CourseUploadRequest requestBody) {
         courseService.addCourse(requestBody);
         return ResponseEntity.ok(new BaseResponse("Success"));
     }

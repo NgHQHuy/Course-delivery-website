@@ -1,20 +1,14 @@
 package com.example.courseservice.service;
 
-import com.example.courseservice.dto.AddCourseRequest;
-import com.example.courseservice.dto.CourseDto;
-import com.example.courseservice.dto.CourseSearchResponse;
-import com.example.courseservice.dto.SectionDto;
+import com.example.courseservice.dto.*;
 import com.example.courseservice.entity.*;
 import com.example.courseservice.exception.SearchNotFoundException;
-import com.example.courseservice.mapper.CourseMapper;
 import com.example.courseservice.repository.CategoryRepository;
 import com.example.courseservice.repository.CourseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -30,23 +24,65 @@ public class CourseService {
         return courseRepository.save(data);
     }
 
-    public Course addCourse(AddCourseRequest requestBody) {
-        Optional<Instructor> optionalInstructor = instructorService.findOne(requestBody.getInstructorId());
-        if (optionalInstructor.isEmpty()) throw new SearchNotFoundException("Instructor not found");
-        Instructor instructor = optionalInstructor.get();
+    public Course addCourse(CourseUploadRequest requestBody) {
+        Set<SectionUploadRequest> sections = requestBody.getSections() == null ? new HashSet<>() : requestBody.getSections();
 
         Course course = new Course();
         course.setTitle(requestBody.getTitle());
         course.setDescription(requestBody.getDescription());
+        course.setPrice(requestBody.getPrice());
         course.setSummary(requestBody.getSummary());
         course.setRequirements(requestBody.getRequirements());
-        course.setPrice(requestBody.getPrice());
-        course.setInstructor(instructor);
-        course.setThumbnail(requestBody.getThumbnail());
-        for (Long categoryId : requestBody.getCategoryIds()) {
-            Category category = categoryRepository.findById(categoryId).get();
-            course.getCategories().add(category);
+
+        Optional<Instructor> optionalInstructor = instructorService.findOne(requestBody.getInstructorId());
+        if (optionalInstructor.isEmpty()) {
+            throw new SearchNotFoundException("Instructor is not found");
         }
+        course.setInstructor(optionalInstructor.get());
+
+        for (Long categoryId : requestBody.getCategoryIds()) {
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if (optionalCategory.isPresent()) {
+                Category category = optionalCategory.get();
+                course.getCategories().add(category);
+                category.getCourses().add(course);
+            }
+        }
+
+        Set<Section> sectionSet = new HashSet<>();
+        Long courseLength = 0L;
+
+        for (SectionUploadRequest sectionDto : sections) {
+            Section section = new Section();
+            section.setTitle(sectionDto.getTitle());
+            section.setDescription(sectionDto.getDescription());
+            section.setPosition(sectionDto.getPosition());
+            section.setCourse(course);
+
+            Set<Lecture> lectureSet = new HashSet<>();
+            Set<LectureUploadRequest> lectureDtos = sectionDto.getLectures() == null ? new HashSet<>() : sectionDto.getLectures();
+            Long sectionLength = 0L;
+            section.setTotalLectures(lectureDtos.size());
+            for (LectureUploadRequest lectureDto : lectureDtos) {
+                Lecture lecture = new Lecture();
+                lecture.setTitle(lectureDto.getTitle());
+                lecture.setDescription(lectureDto.getDescription());
+                lecture.setPosition(lectureDto.getPosition());
+                lecture.setSection(section);
+                lecture.setType(lectureDto.getType());
+                lecture.setValue(lectureDto.getValue());
+                sectionLength += lectureDto.getLength();
+                lecture.setLength(lectureDto.getLength());
+                lectureSet.add(lecture);
+            }
+            section.setLength(sectionLength);
+            courseLength += sectionLength;
+            section.setLectures(lectureSet);
+            sectionSet.add(section);
+        }
+        course.setSections(sectionSet);
+        course.getCourseNumber().setTotalSections(sections.size());
+        course.getCourseNumber().setLength(courseLength);
         return save(course);
     }
 
