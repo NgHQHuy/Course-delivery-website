@@ -29,10 +29,9 @@ public class VideoService {
 
     @Autowired
     private GridFsOperations gridFsOperations;
-    public String addVideo(String title, MultipartFile file) throws IOException {
+    public String addVideo(MultipartFile file) throws IOException {
         DBObject metaData = new BasicDBObject();
         metaData.put("type", "video");
-        metaData.put("title", title);
         ObjectId id = gridFsTemplate.store(
                 file.getInputStream(), file.getName(), file.getContentType(), metaData
         );
@@ -44,7 +43,6 @@ public class VideoService {
                 new Query(Criteria.where("_id").is(id))
         );
         Video video = new Video();
-        video.setTitle(file.getMetadata().get("title").toString());
         video.setLength(file.getLength());
         video.setChunkLength(file.getChunkSize());
         video.setContentType(file.getMetadata().get("_contentType").toString());

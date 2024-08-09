@@ -35,8 +35,8 @@ public class CourseController {
     private CategoryService categoryService;
 
     @Operation(summary = "Thêm thông tin liên quan khóa học")
-    @PostMapping("create")
-    public ResponseEntity<BaseResponse> createCourse(@Valid @RequestBody CourseUploadRequest requestBody) {
+    @PostMapping("save")
+    public ResponseEntity<BaseResponse> saveCourse(@Valid @RequestBody CourseUploadRequest requestBody) {
         courseService.saveCourse(requestBody);
         return ResponseEntity.ok(new BaseResponse("Success"));
     }

@@ -27,7 +27,14 @@ public class CourseService {
     public Course saveCourse(CourseUploadRequest requestBody) {
         Set<SectionUploadRequest> sections = requestBody.getSections() == null ? new HashSet<>() : requestBody.getSections();
 
-        Course course = new Course();
+        Course course = null;
+        if (requestBody.getId() != null) {
+            course = getOne(requestBody.getId());
+        }
+
+        if (course == null) {
+            course = new Course();
+        }
         course.setTitle(requestBody.getTitle());
         course.setDescription(requestBody.getDescription());
         course.setPrice(requestBody.getPrice());
@@ -55,7 +62,14 @@ public class CourseService {
         int totalLectures = 0;
 
         for (SectionUploadRequest sectionDto : sections) {
-            Section section = new Section();
+            Section section = null;
+            if (sectionDto.getId() != null) {
+                section = sectionService.getOne(sectionDto.getId());
+            }
+
+            if (section == null) {
+                section = new Section();
+            }
             section.setTitle(sectionDto.getTitle());
             section.setDescription(sectionDto.getDescription());
             section.setPosition(sectionDto.getPosition());
@@ -67,7 +81,13 @@ public class CourseService {
             section.setTotalLectures(lectureDtos.size());
             totalLectures += lectureDtos.size();
             for (LectureUploadRequest lectureDto : lectureDtos) {
-                Lecture lecture = new Lecture();
+                Lecture lecture = null;
+                if (lectureDto.getId() != null) {
+                    lecture = lectureService.getOne(lectureDto.getId());
+                }
+                if (lecture == null) {
+                    lecture = new Lecture();
+                }
                 lecture.setTitle(lectureDto.getTitle());
                 lecture.setDescription(lectureDto.getDescription());
                 lecture.setPosition(lectureDto.getPosition());

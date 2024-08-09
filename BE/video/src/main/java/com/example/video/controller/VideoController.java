@@ -32,9 +32,9 @@ public class VideoController {
     @Operation(summary = "Upload video")
     @PostMapping("/videos/add")
     public ResponseEntity<BasicDto> addVideos(@Parameter(description = "Tựa đề của video")
-            @RequestParam("title") String title, @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file")MultipartFile file) {
+            @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file")MultipartFile file) {
         try {
-            String id = service.addVideo(title, file);
+            String id = service.addVideo(file);
             UploadDto uploadDto = new UploadDto(id);
             return ResponseEntity.ok(uploadDto);
         } catch (IOException e) {
