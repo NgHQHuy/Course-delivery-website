@@ -10,7 +10,22 @@ const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
   const [popupDisplay, setPopupDisplay] = useState("");
   const [courseForm, setCourseForm] = useState("overview");
-  const [overview, setOverview] = useState();
+  const [instructor, setInstructor] = useState({
+    instrcutorID: null,
+    name: "",
+  });
+  const [overview, setOverview] = useState({
+    courseID: null,
+    title: "",
+    description: "",
+    price: 0,
+    intructorID: instructor.instrcutorID,
+    thumbnail: "",
+    requirement: "",
+    summary: "",
+    updateAt: "",
+    createAt: "",
+  });
   const [sections, setSections] = useState([]);
   const [lectures, setLectures] = useState([]);
 
@@ -70,6 +85,33 @@ const ManagerTools = () => {
     setPopupDisplay("");
   };
 
+  // handle course overview
+  const courseOverviewOnChange = (e, type) => {
+    switch (type) {
+      case "title":
+        setOverview({ ...overview, title: e.target.value });
+        break;
+      case "description":
+        setOverview({ ...overview, description: e.target.value });
+        break;
+      case "price":
+        setOverview({ ...overview, price: e.target.value });
+        break;
+      case "instructor":
+        setInstructor({ ...instructor, name: e.target.value });
+        break;
+      case "thumbnail":
+        console.log(e.target);
+        break;
+      case "requirement":
+        setOverview({ ...overview, requirement: e.target.value });
+        break;
+      case "summary":
+        setOverview({ ...overview, summary: e.target.value });
+        break;
+      default:
+    }
+  };
   // handle sections
   const addSectionClick = () => {
     let section = {
@@ -144,13 +186,13 @@ const ManagerTools = () => {
   // handle lectures
   const addLectureClick = (section_position) => {
     const tmpLecture = {
-      lectureID: "",
+      lectureID: null,
       title: "",
       type: "",
       value: "",
       length: null,
       position: null,
-      sectionID: "",
+      sectionID: null,
     };
 
     const _lectures = [...lectures];
@@ -180,15 +222,25 @@ const ManagerTools = () => {
     let _lecs = _lectures.filter(
       (item) => item.section_position == section_position
     );
-    _lecs = _lecs[0].lectures.filter((lec) => lec.position !== position);
-    _lecs.map((lec, index) => {
-      if (lec.position !== index + 1) {
-        lec.position = index + 1;
-      }
-    });
-    _lectures.map((item) =>
-      item.section_position == section_position ? (item.lectures = _lecs) : item
-    );
+    if (_lecs.length > 0) {
+      _lecs = _lecs[0].lectures.filter((lec) => lec.position !== position);
+      _lecs.map((lec, index) => {
+        if (lec.position !== index + 1) {
+          lec.position = index + 1;
+        }
+      });
+    }
+    if (_lecs.length === 0) {
+      _lectures.map((item) =>
+        item.section_position == section_position ? (item.lectures = []) : item
+      );
+    } else {
+      _lectures.map((item) =>
+        item.section_position == section_position
+          ? (item.lectures = _lecs)
+          : item
+      );
+    }
     setLectures(_lectures);
   };
   return (
@@ -352,16 +404,18 @@ const ManagerTools = () => {
                     <span>Title</span>
                     <input
                       type="text"
-                      onChange={() => {}}
+                      value={overview.title}
                       placeholder="title"
+                      onChange={(e) => courseOverviewOnChange(e, "title")}
                     />
                   </div>
                   <div>
                     <span>Description</span>
                     <input
                       type="text"
-                      onChange={() => {}}
+                      value={overview.description}
                       placeholder="description"
+                      onChange={(e) => courseOverviewOnChange(e, "description")}
                     />
                   </div>
                   <div>
@@ -370,34 +424,45 @@ const ManagerTools = () => {
                       type="number"
                       min={0}
                       step={1000}
-                      onChange={() => {}}
+                      value={overview.price}
                       placeholder="price"
+                      onChange={(e) => courseOverviewOnChange(e, "price")}
                     />
                   </div>
                   <div>
                     <span>Instructor</span>
                     <input
                       type="text"
-                      onChange={() => {}}
+                      value={overview.intructorID}
                       placeholder="instructor"
+                      onChange={(e) => courseOverviewOnChange(e, "instructor")}
                     />
                   </div>
                   <div>
                     <span>Thumbnail</span>
-                    <input type="file" id="thumbnail" accept="image/*" />
+                    <input
+                      type="file"
+                      id="thumbnail"
+                      accept="image/*"
+                      onChange={(e) => courseOverviewOnChange(e, "thumbnail")}
+                    />
                   </div>
                   <div>
                     <span>Requirement</span>
                     <textarea
+                      value={overview.requirement}
                       placeholder="requirement"
                       style={{ height: "100px" }}
+                      onChange={(e) => courseOverviewOnChange(e, "requirement")}
                     ></textarea>
                   </div>
                   <div>
                     <span>Summary</span>
                     <textarea
+                      value={overview.summary}
                       placeholder="summary"
                       style={{ height: "200px" }}
+                      onChange={(e) => courseOverviewOnChange(e, "summary")}
                     ></textarea>
                   </div>
                 </div>

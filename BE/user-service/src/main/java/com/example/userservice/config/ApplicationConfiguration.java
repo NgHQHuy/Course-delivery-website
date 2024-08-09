@@ -1,4 +1,4 @@
-package com.example.userservice.configuration;
+package com.example.userservice.config;
 
 import com.example.userservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
