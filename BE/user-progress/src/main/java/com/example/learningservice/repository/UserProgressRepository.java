@@ -12,5 +12,5 @@ public interface UserProgressRepository extends JpaRepository<UserProgress, Long
 
     boolean existsByUserIdAndCourseId(Long userId, Long courseId);
 
-    UserProgress findByUserIdAndCourseId(Long userId, Long courseId);
+    UserProgress findByUserIdAndLectureId(Long userId, Long lectureId);
 }

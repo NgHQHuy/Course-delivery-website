@@ -1,8 +1,7 @@
 package com.example.learningservice.enums;
 
 public enum UserStatus {
-    NOT_STARTED,
-    STARTED,
+    NONE,
     ON_GOING,
-    ENDED
+    DONE
 }

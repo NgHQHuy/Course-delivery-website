@@ -78,7 +78,7 @@ public class UserProgressService {
         return userProgressRepository.existsByUserIdAndCourseId(userId, courseId);
     }
 
-    public UserProgress findOne(Long userId, Long courseId) {
-        return userProgressRepository.findByUserIdAndCourseId(userId, courseId);
+    public UserProgress findOne(Long userId, Long lectureId) {
+        return userProgressRepository.findByUserIdAndLectureId(userId, lectureId);
     }
 }

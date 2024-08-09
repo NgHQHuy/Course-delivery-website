@@ -3,6 +3,10 @@ package com.example.learningservice.service;
 import com.example.learningservice.util.Util;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.stylesheets.LinkStyle;
+import com.example.learningservice.dto.SectionSyllabus;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor

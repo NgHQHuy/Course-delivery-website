@@ -28,8 +28,6 @@ public class UserProgress {
     @Positive(message = "Invalid courseId")
     private Long courseId;
 
-    @NotNull(message = "Missing sectionId")
-    @Positive(message = "Invalid sectionId")
     private Long sectionId;
 
     @NotNull(message = "Missing lectureId")

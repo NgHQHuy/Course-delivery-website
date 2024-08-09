@@ -38,7 +38,7 @@ public class UserProgressController {
 
     @Operation(summary = "Thêm/sửa thông tin về tiến trình khóa học")
     @PostMapping
-    public ResponseEntity<BaseResponse> saveProgress(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin tiến trình. Bổ sung id định danh cho các tiến trình để chỉnh sửa. Bỏ qua hoặc nhập sai id sẽ thêm mới vào CSDL.")
+    public ResponseEntity<UserProgress> saveProgress(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin tiến trình. Bổ sung id định danh cho các tiến trình để chỉnh sửa. Bỏ qua hoặc nhập sai id sẽ thêm mới vào CSDL.")
             @Valid @RequestBody UserProgress userProgress) {
         if (!courseService.isValidCourse(userProgress.getCourseId())) throw new SearchNotFoundException("Course is not found");
         else if (!userService.isValidUser(userProgress.getUserId())) throw new SearchNotFoundException("User is not found");
@@ -49,12 +49,12 @@ public class UserProgressController {
             throw new CourseNotRegisteredException("User has not registered this course");
         }
 
-        if (userProgress.getId() == null && userProgressService.isProgressAlreadyInDB(userProgress.getUserId(), userProgress.getCourseId())) {
-            UserProgress inDB = userProgressService.findOne(userProgress.getUserId(), userProgress.getCourseId());
-            userProgress.setId(inDB.getId());
-        }
-        UserProgress savedProgress = userProgressService.save(userProgress);
-        return ResponseEntity.ok(new BaseResponse("Success"));
+        UserProgress inDB = userProgressService.findOne(userProgress.getUserId(), userProgress.getLectureId());
+        inDB.setTimestamp(userProgress.getTimestamp());
+        inDB.setStatus(userProgress.getStatus());
+
+        UserProgress savedProgress = userProgressService.save(inDB);
+        return ResponseEntity.ok(savedProgress);
     }
 
     @Operation(summary = "Lấy toàn bộ thông tin về tiến trình học của người dùng")

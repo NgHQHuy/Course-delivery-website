@@ -32,9 +32,9 @@ public class VideoController {
     @Operation(summary = "Upload video")
     @PostMapping("/videos/add")
     public ResponseEntity<BasicDto> addVideos(@Parameter(description = "Tựa đề của video")
-            @RequestParam("title") String title, @RequestParam("lectureId") Long lectureId, @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file")MultipartFile file) {
+            @RequestParam("title") String title, @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file")MultipartFile file) {
         try {
-            String id = service.addVideo(title, file, lectureId);
+            String id = service.addVideo(title, file);
             UploadDto uploadDto = new UploadDto(id);
             return ResponseEntity.ok(uploadDto);
         } catch (IOException e) {
@@ -49,21 +49,6 @@ public class VideoController {
     public ResponseEntity<?> streamVideo(@Parameter(description = "ID của video")
             @PathVariable("id") String id, HttpServletRequest request) throws IOException {
         Video video = service.getVideo(id);
-        try {
-            return service.handleStreamVideo(video, request);
-        } catch(Exception e) {
-            logger.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-//        response.setStatus(206);
-//        FileCopyUtils.copy(video.getStream(), response.getOutputStream());
-    }
-
-    @CrossOrigin
-    @GetMapping("/videos/stream/lecture/{id}.mp4")
-    public ResponseEntity<?> streamVideoWithLectureId(@Parameter(description = "ID của video")
-                                         @PathVariable("id") Long id, HttpServletRequest request) throws IOException {
-        Video video = service.getVideoWithLectureId(id);
         try {
             return service.handleStreamVideo(video, request);
         } catch(Exception e) {

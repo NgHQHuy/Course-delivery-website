@@ -33,6 +33,7 @@ public class CourseService {
         course.setPrice(requestBody.getPrice());
         course.setSummary(requestBody.getSummary());
         course.setRequirements(requestBody.getRequirements());
+        course.setThumbnail(requestBody.getThumbnail());
 
         Optional<Instructor> optionalInstructor = instructorService.findOne(requestBody.getInstructorId());
         if (optionalInstructor.isEmpty()) {

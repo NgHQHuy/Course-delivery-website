@@ -52,4 +52,8 @@ public class Util {
 
         return isValid.get();
     }
+
+    public WebClient.RequestHeadersSpec<?> createGETRequest(String uri) {
+        return webClient.get().uri(uri);
+    }
 }
