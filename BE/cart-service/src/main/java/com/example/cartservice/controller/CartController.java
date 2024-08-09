@@ -55,6 +55,7 @@ public class CartController {
         cart.setUserId(request.getUserId());
         item.setCourseId(courseDto.getId());
         item.setPrice(courseDto.getPrice());
+        item.setTitle(courseDto.getTitle());
         cart.getItems().add(item);
         double updatedTotal = cart.getTotalPrice() + courseDto.getPrice();
         cart.setTotalPrice(updatedTotal);

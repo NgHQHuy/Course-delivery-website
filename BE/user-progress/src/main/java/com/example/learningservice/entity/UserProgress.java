@@ -35,7 +35,6 @@ public class UserProgress {
     private Long lectureId;
 
     @NotNull(message = "Missing timestamp")
-    @Positive(message = "Invalid timestamp")
     private double timestamp;
 
     @Enumerated(EnumType.STRING)

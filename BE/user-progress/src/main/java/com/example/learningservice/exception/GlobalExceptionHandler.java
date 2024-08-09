@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         logger = LoggerFactory.getLogger(exception.getClass());
         
         logger.error(exception.getMessage());
-//        exception.printStackTrace();
+        exception.printStackTrace();
         
         ResponseEntity<BaseResponse> response = null;
         

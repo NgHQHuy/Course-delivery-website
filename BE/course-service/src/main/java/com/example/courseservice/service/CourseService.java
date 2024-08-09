@@ -24,7 +24,7 @@ public class CourseService {
         return courseRepository.save(data);
     }
 
-    public Course addCourse(CourseUploadRequest requestBody) {
+    public Course saveCourse(CourseUploadRequest requestBody) {
         Set<SectionUploadRequest> sections = requestBody.getSections() == null ? new HashSet<>() : requestBody.getSections();
 
         Course course = new Course();
@@ -52,6 +52,7 @@ public class CourseService {
 
         Set<Section> sectionSet = new HashSet<>();
         Long courseLength = 0L;
+        int totalLectures = 0;
 
         for (SectionUploadRequest sectionDto : sections) {
             Section section = new Section();
@@ -64,6 +65,7 @@ public class CourseService {
             Set<LectureUploadRequest> lectureDtos = sectionDto.getLectures() == null ? new HashSet<>() : sectionDto.getLectures();
             Long sectionLength = 0L;
             section.setTotalLectures(lectureDtos.size());
+            totalLectures += lectureDtos.size();
             for (LectureUploadRequest lectureDto : lectureDtos) {
                 Lecture lecture = new Lecture();
                 lecture.setTitle(lectureDto.getTitle());
@@ -82,7 +84,7 @@ public class CourseService {
             sectionSet.add(section);
         }
         course.setSections(sectionSet);
-        course.getCourseNumber().setTotalSections(sections.size());
+        course.getCourseNumber().setTotalLectures(totalLectures);
         course.getCourseNumber().setLength(courseLength);
         return save(course);
     }
@@ -146,7 +148,7 @@ public class CourseService {
         Course course = getOne(courseId);
         for (Section s : course.getSections()) {
             if (s.getId().equals(sectionId)) {
-                course.getCourseNumber().setTotalSections(course.getCourseNumber().getTotalSections() - 1);
+                course.getCourseNumber().setTotalLectures(course.getCourseNumber().getTotalLectures() - s.getTotalLectures());
                 course.getCourseNumber().setLength(course.getCourseNumber().getLength() - s.getLength());
                 course.getSections().remove(s);
                 break;
@@ -167,6 +169,7 @@ public class CourseService {
                     if (l.getId().equals(lectureId)) {
                         s.setTotalLectures(s.getTotalLectures() - 1);
                         s.setLength(s.getLength() - l.getLength());
+                        course.getCourseNumber().setTotalLectures(course.getCourseNumber().getTotalLectures() - 1);
                         course.getCourseNumber().setLength(course.getCourseNumber().getLength() - l.getLength());
                         s.getLectures().remove(l);
                         break;

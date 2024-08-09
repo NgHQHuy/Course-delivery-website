@@ -1,11 +1,13 @@
 package com.example.learningservice.controller;
 
 import com.example.learningservice.dto.CheckRegisteredRequest;
+import com.example.learningservice.dto.SectionSyllabus;
 import com.example.learningservice.entity.UserCourse;
 import com.example.learningservice.exception.CourseAlreadyRegisteredException;
 import com.example.learningservice.exception.SearchNotFoundException;
 import com.example.learningservice.service.CourseService;
 import com.example.learningservice.service.UserCourseService;
+import com.example.learningservice.service.UserProgressService;
 import com.example.learningservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.List;
 public class UserCourseController {
 
     private UserCourseService service;
+    private UserProgressService userProgressService;
 
     private CourseService courseService;
     private UserService userService;
@@ -38,6 +41,8 @@ public class UserCourseController {
             throw new CourseAlreadyRegisteredException("User already registered this course");
         } else saved = service.save(uc);
         service.updateCourseNumOfStudent(uc.getCourseId());
+        List<SectionSyllabus> sections = courseService.getCourseSyllabus(uc.getCourseId());
+        userProgressService.createUserProgressEntryForCourse(uc.getUserId(), uc.getCourseId(), sections);
         return ResponseEntity.ok(saved);
     }
 

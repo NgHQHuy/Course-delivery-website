@@ -12,7 +12,7 @@ public class CourseNumber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
-    private int totalSections = 0;
+    private int totalLectures = 0;
 
     private Long length = 0L;
 

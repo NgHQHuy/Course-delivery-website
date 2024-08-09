@@ -15,7 +15,7 @@ public class InstructorDto {
     @NotBlank(message = "Missing name")
     private String name;
 
-    private String description;
+    private String avatar;
 
     private List<Long> courses = new ArrayList<>();
 

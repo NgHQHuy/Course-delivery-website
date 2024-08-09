@@ -11,6 +11,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class CourseUploadRequest {
+    private Long id;
+
     @NotBlank(message = "Missing title")
     private String title;
     @NotBlank(message = "Missing description")
@@ -25,6 +27,8 @@ public class CourseUploadRequest {
     @NotNull(message = "Missing instructor")
     @Positive(message = "Invalid instructor")
     private Long instructorId;
+
+    @NotBlank(message = "Missing thumbnail")
     private String thumbnail;
     private Set<Long> categoryIds;
     private Set<SectionUploadRequest> sections;

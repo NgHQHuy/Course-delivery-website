@@ -37,7 +37,7 @@ public class CourseController {
     @Operation(summary = "Thêm thông tin liên quan khóa học")
     @PostMapping("create")
     public ResponseEntity<BaseResponse> createCourse(@Valid @RequestBody CourseUploadRequest requestBody) {
-        courseService.addCourse(requestBody);
+        courseService.saveCourse(requestBody);
         return ResponseEntity.ok(new BaseResponse("Success"));
     }
 
@@ -51,14 +51,12 @@ public class CourseController {
     public ResponseEntity<List<SectionDto>> addSection(@PathVariable Long courseId, @Valid @RequestBody AddSectionRequest request) {
         Course course = courseService.getOne(courseId);
         if (course == null) throw new SearchNotFoundException("Course not found");
-        int currentTotal = course.getCourseNumber().getTotalSections();
         Section section = new Section();
         section.setTitle(request.getTitle());
         section.setDescription(request.getDescription());
-        section.setPosition(currentTotal + 1);
+        section.setPosition(course.getSections().size() + 1);
         section.setCourse(course);
         course.getSections().add(section);
-        course.getCourseNumber().setTotalSections(currentTotal + 1);
         Course saved = courseService.save(course);
 
         List<SectionDto> dto = new ArrayList<>();
@@ -86,7 +84,7 @@ public class CourseController {
         section.setLength(section.getLength() + lectureLength);
         section.setTotalLectures(currentTotal + 1);
         section.getCourse().getCourseNumber().setLength(section.getCourse().getCourseNumber().getLength() + lectureLength);
-        section.getCourse().getCourseNumber().setTotalSections(section.getCourse().getCourseNumber().getTotalSections() + 1);
+        section.getCourse().getCourseNumber().setTotalLectures(section.getCourse().getCourseNumber().getTotalLectures() + 1);
         Section saved = sectionService.save(section);
         List<LectureDto> dto = new ArrayList<>();
         for (Lecture l : saved.getLectures()) {
@@ -225,7 +223,7 @@ public class CourseController {
         detail.setRequirements(course.getRequirements());
         detail.setPrice(course.getPrice());
         detail.setInstructorId(course.getInstructor().getId());
-        detail.setTotalSections(course.getCourseNumber().getTotalSections());
+        detail.setTotalLectures(course.getCourseNumber().getTotalLectures());
         detail.setLength(course.getCourseNumber().getLength());
         detail.setNumOfStudent(course.getCourseNumber().getNumOfStudent());
         detail.setCreatedAt(course.getCreatedAt());

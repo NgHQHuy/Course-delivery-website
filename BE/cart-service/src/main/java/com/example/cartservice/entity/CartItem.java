@@ -19,6 +19,8 @@ public class CartItem {
     private Long id;
 
     private Long courseId;
+
+    private String title;
     private double price;
 
     @CreationTimestamp

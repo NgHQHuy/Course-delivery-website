@@ -68,7 +68,7 @@ public class InstructorController {
         InstructorDto dto = new InstructorDto();
         dto.setId(i.getId());
         dto.setName(i.getName());
-        dto.setDescription(i.getDescription());
+        dto.setAvatar(i.getAvatar());
         List<Long> courses = new ArrayList<>();
         for (Course course : i.getCourses()) {
             courses.add(course.getId());
@@ -80,7 +80,7 @@ public class InstructorController {
     private Instructor mapToInstructorEntity(InstructorDto idto) {
         Instructor instructor = new Instructor();
         instructor.setId(idto.getId());
-        instructor.setDescription(idto.getDescription());
+        instructor.setAvatar(idto.getAvatar());
         instructor.setName(idto.getName());
         Set<Course> courses = new HashSet<>();
 

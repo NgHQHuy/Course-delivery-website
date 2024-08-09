@@ -15,7 +15,7 @@ public class CourseDetail {
     private String requirements;
     private double price;
     private Long instructorId;
-    private int totalSections;
+    private int totalLectures;
     private Long length;
     private Long numOfStudent;
 

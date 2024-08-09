@@ -1,6 +1,9 @@
 package com.example.learningservice.service;
 
+import com.example.learningservice.dto.LectureSyllabus;
+import com.example.learningservice.dto.SectionSyllabus;
 import com.example.learningservice.entity.UserProgress;
+import com.example.learningservice.enums.UserStatus;
 import com.example.learningservice.repository.UserProgressRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -64,6 +67,21 @@ public class UserProgressService {
         }
 
         return isValid.get();
+    }
+
+    public void createUserProgressEntryForCourse(Long userId, Long courseId, List<SectionSyllabus> syllabus) {
+        for (SectionSyllabus section : syllabus) {
+            for (LectureSyllabus lecture : section.getLectures()) {
+                UserProgress userProgress = new UserProgress();
+                userProgress.setUserId(userId);
+                userProgress.setCourseId(courseId);
+                userProgress.setSectionId(section.getId());
+                userProgress.setLectureId(lecture.getId());
+                userProgress.setStatus(UserStatus.NONE);
+                userProgress.setTimestamp(0);
+                save(userProgress);
+            }
+        }
     }
 
 //    public boolean isUserRegisteredCourse(Long userId, Long courseId) {
