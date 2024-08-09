@@ -33,18 +33,23 @@ const ManagerTools = () => {
       setCourseForm("section");
     }
     if (courseForm === "section") {
-      const sc = sections.filter((section) => section.title === "");
-      if (sc.length > 0) {
-        toast.warn("Fill title for section!");
+      if (sections.length === 0) {
+        toast.warn("Have no section!");
       } else {
-        if (lectures.length === 0) {
-          const _lectures = sections.map((section) => ({
-            section_position: section.position,
-            lectures: [],
-          }));
-          setLectures(_lectures);
+        const sc = sections.filter((section) => section.title === "");
+        if (sc.length > 0) {
+          toast.warn("Fill title for section!");
+        } else {
+          if (lectures.length === 0) {
+            const _lectures = sections.map((section) => ({
+              section_position: section.position,
+              section_title: section.title,
+              lectures: [],
+            }));
+            setLectures(_lectures);
+          }
+          setCourseForm("lecture");
         }
-        setCourseForm("lecture");
       }
     }
     if (courseForm === "lecture") {
@@ -58,6 +63,11 @@ const ManagerTools = () => {
     if (courseForm === "lecture") {
       setCourseForm("section");
     }
+  };
+  const courseFormBtnDoneClick = (e) => {
+    e.preventDefault();
+    setCourseForm("overview");
+    setPopupDisplay("");
   };
 
   // handle sections
@@ -76,6 +86,15 @@ const ManagerTools = () => {
     } else {
       section.position = sections.length + 1;
       const tmpSections = [...sections, section];
+      if (lectures.length > 0) {
+        const tmpLectures = {
+          section_position: tmpSections[tmpSections.length - 1].position,
+          section_title: tmpSections[tmpSections.length - 1].title,
+          lectures: [],
+        };
+        let _lectures = [...lectures, tmpLectures];
+        setLectures(_lectures);
+      }
       setSections(tmpSections);
     }
   };
@@ -84,51 +103,93 @@ const ManagerTools = () => {
     tmpSections.map((sc) =>
       sc.position == position ? (sc.title = e.target.value) : sc
     );
+    let _lectures = [...lectures];
+    _lectures.map((item) =>
+      item.section_position === position
+        ? (item.section_title = e.target.value)
+        : item
+    );
+    setLectures(_lectures);
     setSections(tmpSections);
   };
   const removeSectionClick = (position) => {
     const tmpSections = sections.filter(
       (section) => section.position !== position
     );
-    tmpSections.map((section, index) => {
-      if (section.position !== index + 1) {
-        section.position = index + 1;
-      }
-    });
-    const tmpLectures = lectures.filter(
-      (lecture) => lecture.section_position !== position
-    );
-    tmpLectures.map((lecture, index) => {
-      if (lecture.section_position !== index + 1) {
-        lecture.section_position = index + 1;
-      }
-    });
+    if (tmpSections.length === 0) {
+      setSections([]);
+    } else {
+      tmpSections.map((section, index) => {
+        if (section.position !== index + 1) {
+          section.position = index + 1;
+        }
+      });
+    }
     setSections(tmpSections);
-    setLectures(tmpLectures);
+    if (sections.length === 0) {
+      setLectures([]);
+    } else {
+      const tmpLectures = lectures.filter(
+        (lecture) => lecture.section_position !== position
+      );
+      tmpLectures.map((lecture, index) => {
+        if (lecture.section_position !== index + 1) {
+          lecture.section_position = index + 1;
+        }
+      });
+      setLectures(tmpLectures);
+    }
   };
 
   // handle lectures
   const addLectureClick = (section_position) => {
-    console.log(lectures);
-    // const tmpLecture = {
-    //   lectureID: "",
-    //   title: "",
-    //   type: "",
-    //   value: "",
-    //   length: null,
-    //   position: null,
-    //   sectionID: "",
-    // };
-    // if (lectures.length === 0) {
-    //   tmpLecture.position = 1;
-    //   const tmpLectures = {
-    //     section_position: section_position,
-    //     lectures: [{ ...tmpLecture }],
-    //   };
-    //   const _lectures = [tmpLectures];
-    //   setLectures(_lectures);
-    // }
-    // console.log(lectures);
+    const tmpLecture = {
+      lectureID: "",
+      title: "",
+      type: "",
+      value: "",
+      length: null,
+      position: null,
+      sectionID: "",
+    };
+
+    const _lectures = [...lectures];
+    _lectures.map((lec) => {
+      if (lec.section_position === section_position) {
+        if (lec.lectures.length === 0) {
+          tmpLecture.position = 1;
+          let lts = [tmpLecture];
+          lec.lectures = lts;
+        } else {
+          tmpLecture.position = lec.lectures.length + 1;
+          let lts = [...lec.lectures, tmpLecture];
+          lec.lectures = lts;
+        }
+      }
+    });
+    setLectures(_lectures);
+  };
+  const removeLectureClick = (e, position) => {
+    let parent_node = e.target.parentNode;
+    for (let i = 0; i < 3; i++) {
+      parent_node = parent_node.parentNode;
+    }
+    let section_position = parent_node.title;
+
+    let _lectures = [...lectures];
+    let _lecs = _lectures.filter(
+      (item) => item.section_position == section_position
+    );
+    _lecs = _lecs[0].lectures.filter((lec) => lec.position !== position);
+    _lecs.map((lec, index) => {
+      if (lec.position !== index + 1) {
+        lec.position = index + 1;
+      }
+    });
+    _lectures.map((item) =>
+      item.section_position == section_position ? (item.lectures = _lecs) : item
+    );
+    setLectures(_lectures);
   };
   return (
     <div className="manager-page">
@@ -384,48 +445,63 @@ const ManagerTools = () => {
                   className="_course-form-lectures"
                   style={courseForm !== "lecture" ? { display: "none" } : {}}
                 >
-                  {sections.map((section) => (
+                  {lectures.map((item) => (
                     <div
                       className="_section-lectures-input"
-                      key={section.position}
+                      key={item.section_position}
+                      title={item.section_position}
                     >
                       <div className="_lecture-section-title">
-                        {`Section ${section.position}: ${section.title}`}
+                        {`Section ${item.section_position}: ${item.section_title}`}
                       </div>
-                      <div className="_lecture-input">
-                        <div className="_lecture-input-header">
-                          <span>- Lecture</span>
-                          <MdDelete title="remove this lecture" />
+                      {item.lectures.map((lec) => (
+                        <div className="_lecture-input" key={lec.position}>
+                          <div className="_lecture-input-header">
+                            <span
+                              style={{
+                                textDecoration: "underline",
+                                textUnderlineOffset: "4px",
+                              }}
+                            >
+                              - Lecture {lec.position}
+                            </span>
+                            <MdDelete
+                              title="remove this lecture"
+                              onClick={(e) =>
+                                removeLectureClick(e, lec.position)
+                              }
+                            />
+                          </div>
+                          <div>
+                            <span>Title</span>
+                            <input type="text" placeholder="title" />
+                          </div>
+                          <div>
+                            <span>Type</span>
+                            <select>
+                              <option value="lecture-type-video">Video</option>
+                              <option value="lecture-type-text">Text</option>
+                            </select>
+                          </div>
+                          <div>
+                            <span>Source</span>
+                            <input
+                              type="file"
+                              name=""
+                              id="lecture-source"
+                              accept=".mp4,.pdf"
+                            />
+                          </div>
+                          <div>
+                            <span>Length</span>
+                            <input type="number" min={0.05} step={0.05} />
+                          </div>
                         </div>
-                        <div>
-                          <span>Title</span>
-                          <input type="text" placeholder="title" />
-                        </div>
-                        <div>
-                          <span>Type</span>
-                          <select>
-                            <option value="lecture-type-text">Text</option>
-                            <option value="lecture-type-video">Video</option>
-                          </select>
-                        </div>
-                        <div>
-                          <span>Source</span>
-                          <input
-                            type="file"
-                            name=""
-                            id="lecture-source"
-                            accept=".mp4,.pdf"
-                          />
-                        </div>
-                        <div>
-                          <span>Length</span>
-                          <input type="number" min={0.05} step={0.05} />
-                        </div>
-                      </div>
+                      ))}
 
                       <div
                         className="_section-lectures-add"
-                        onClick={() => addLectureClick(section.position)}
+                        onClick={() => addLectureClick(item.section_position)}
                       >
                         <SlPlus />
                         <span>lecture</span>
@@ -443,7 +519,13 @@ const ManagerTools = () => {
                   >
                     Back
                   </span>
-                  <button onClick={(e) => courseFormBtnClick(e)}>Next</button>
+                  {courseForm !== "lecture" ? (
+                    <button onClick={(e) => courseFormBtnClick(e)}>Next</button>
+                  ) : (
+                    <button onClick={(e) => courseFormBtnDoneClick(e)}>
+                      Done
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
