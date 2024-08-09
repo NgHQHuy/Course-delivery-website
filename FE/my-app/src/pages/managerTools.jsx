@@ -101,10 +101,22 @@ const ManagerTools = () => {
         setInstructor({ ...instructor, name: e.target.value });
         break;
       case "thumbnail":
-        console.log(e.target);
+        let mineType =
+          "data:image/" + e.target.value.split(".")[1] + ";base64, ";
+        console.log(typeof mineType);
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        if (file) {
+          reader.onload = () => {
+            let base64string = reader.result.split(",")[1];
+            setOverview({ ...overview, thumbnail: mineType + base64string });
+          };
+          reader.readAsDataURL(file);
+        }
         break;
       case "requirement":
         setOverview({ ...overview, requirement: e.target.value });
+        console.log(overview.thumbnail);
         break;
       case "summary":
         setOverview({ ...overview, summary: e.target.value });
