@@ -19,7 +19,7 @@ const ManagerTools = () => {
   const [users, setUsers] = useState([]);
   const [courseForm, setCourseForm] = useState("overview");
   const [instructor, setInstructor] = useState({
-    id: null,
+    id: 1,
     name: "",
   });
   const [overview, setOverview] = useState({
@@ -27,10 +27,11 @@ const ManagerTools = () => {
     title: "",
     description: "",
     price: 0,
-    intructorId: instructor.id,
+    instructorId: instructor.id,
     instructorName: instructor.name,
     thumbnail: "",
-    requirement: "",
+    categoryIds: [1],
+    requirements: "",
     summary: "",
     updateAt: "",
     createAt: "",
@@ -59,7 +60,7 @@ const ManagerTools = () => {
         overview.description === "" ||
         overview.instructorName === "" ||
         overview.thumbnail === "" ||
-        overview.requirement === "" ||
+        overview.requirements === "" ||
         overview.summary === ""
       ) {
         toast.warn("Misssing course information!");
@@ -149,16 +150,16 @@ const ManagerTools = () => {
         setOverview({ ...overview, price: e.target.valueAsNumber });
         break;
       case "instructor":
-        if (e.target.value[e.target.value.length - 1] === " ") {
-          try {
-            const instructorRes = await axios.get(
-              `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
-            );
-            if (instructorRes && instructorRes.data) {
-              console.log(instructorRes.data);
-            }
-          } catch (error) {}
-        }
+        // if (e.target.value[e.target.value.length - 1] === " ") {
+        //   try {
+        //     const instructorRes = await axios.get(
+        //       `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
+        //     );
+        //     if (instructorRes && instructorRes.data) {
+        //       console.log(instructorRes.data);
+        //     }
+        //   } catch (error) {}
+        // }
 
         setInstructor({ ...instructor, name: e.target.value });
         setOverview({ ...overview, instructorName: e.target.value });
@@ -176,8 +177,8 @@ const ManagerTools = () => {
           reader.readAsDataURL(file);
         }
         break;
-      case "requirement":
-        setOverview({ ...overview, requirement: e.target.value });
+      case "requirements":
+        setOverview({ ...overview, requirements: e.target.value });
         break;
       case "summary":
         setOverview({ ...overview, summary: e.target.value });
@@ -682,12 +683,14 @@ const ManagerTools = () => {
                     />
                   </div>
                   <div>
-                    <span>Requirement</span>
+                    <span>Requirements</span>
                     <textarea
-                      value={overview.requirement}
-                      placeholder="requirement"
+                      value={overview.requirements}
+                      placeholder="requirements"
                       style={{ height: "100px" }}
-                      onChange={(e) => courseOverviewOnChange(e, "requirement")}
+                      onChange={(e) =>
+                        courseOverviewOnChange(e, "requirements")
+                      }
                     ></textarea>
                   </div>
                   <div>

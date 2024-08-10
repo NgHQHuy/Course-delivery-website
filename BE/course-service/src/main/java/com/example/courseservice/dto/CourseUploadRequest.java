@@ -3,6 +3,7 @@ package com.example.courseservice.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +23,7 @@ public class CourseUploadRequest {
     @NotBlank(message = "Missing requirement")
     private String requirements;
     @NotNull(message = "Missing price")
-    @Positive(message = "Invalid price")
+    @PositiveOrZero(message = "Invalid price")
     private double price;
     @NotNull(message = "Missing instructor")
     @Positive(message = "Invalid instructor")
