@@ -53,19 +53,21 @@ public class UserController {
 
     @Operation(summary = "Tìm thông tin người dùng theo tài khoản")
     @PostMapping("findUsername")
-    public ResponseEntity<User> findUsername(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin tài khoản mà người dùng cần tìm kiếm")
-            @RequestBody UsernameRequest req) {
+    public ResponseEntity<User> findUsername(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin tài khoản mà người dùng cần tìm kiếm") @RequestBody UsernameRequest req) {
         User user = userService.findUsername(req.getUsername());
-        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Đổi mật khẩu")
     @PostMapping("changePassword")
-    public ResponseEntity<BaseResponse> changePassword(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin liên quan đến việc đổi mật khẩu")
-            @RequestBody ChangePasswordRequest req) {
+    public ResponseEntity<BaseResponse> changePassword(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Thông tin liên quan đến việc đổi mật khẩu") @RequestBody ChangePasswordRequest req) {
         User user = userService.findUsername(req.getUsername());
-        if (user == null) return new ResponseEntity<>(new BaseResponse("Account not found"), HttpStatus.NOT_FOUND);
+        if (user == null)
+            return new ResponseEntity<>(new BaseResponse("Account not found"), HttpStatus.NOT_FOUND);
         if (!user.getPassword().equals(req.getPassword())) {
             return new ResponseEntity<>(new BaseResponse("Password is mismatch"), HttpStatus.UNAUTHORIZED);
         }
@@ -97,6 +99,7 @@ public class UserController {
     }
 
     @DeleteMapping("delete")
+    @CrossOrigin
     public ResponseEntity<BaseResponse> deleteUser(@RequestParam("user") Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok(new BaseResponse("Success"));

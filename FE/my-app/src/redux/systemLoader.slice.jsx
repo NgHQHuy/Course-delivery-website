@@ -10,9 +10,15 @@ const systemLoaderSlice = createSlice({
   name: "systemLoader",
   initialState,
   reducers: {
-    setCourses: (state, action) => action.payload,
-    setCategories: (state, action) => action.payload,
-    setUsers: (state, action) => action.payload,
+    setAllCourses: (state, action) => {
+      state.courses = action.payload;
+    },
+    setAllCategories: (state, action) => {
+      state.categories = action.payload;
+    },
+    setAllUsers: (state, action) => {
+      state.users = action.payload;
+    },
   },
   selectors: {
     getAllCourses: (state) => state.courses,
@@ -21,9 +27,9 @@ const systemLoaderSlice = createSlice({
   },
 });
 
-export const { setCourses, setCategories, setUsers } =
+export const { setAllCourses, setAllCategories, setAllUsers } =
   systemLoaderSlice.actions;
 export const { getAllCourses, getAllCategories, getAllUsers } =
-  systemLoaderSlice.selector;
+  systemLoaderSlice.selectors;
 
 export default systemLoaderSlice.reducer;

@@ -2,14 +2,30 @@ import React, { useEffect, useState } from "react";
 import "../styles/manager_tools.css";
 import { BsSearch } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { SlClose, SlPlus } from "react-icons/sl";
+import { SlPlus } from "react-icons/sl";
 import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setAllCourses,
+  setAllCategories,
+  setAllUsers,
+  getAllCourses,
+  getAllCategories,
+  getAllUsers,
+} from "../redux/systemLoader.slice";
+
 const ManagerTools = () => {
+  const dispatch = useDispatch();
+  const allCourses = useSelector(getAllCourses);
+  const allCategories = useSelector(getAllCategories);
+  const allUsers = useSelector(getAllUsers);
+
   const [toolSeleted, setToolSelected] = useState("course");
   const [popupDisplay, setPopupDisplay] = useState("");
+  const [searchBy, setSearchBy] = useState("");
   const [userForm, setUserForm] = useState({
     username: "",
     password: "",
@@ -49,14 +65,47 @@ const ManagerTools = () => {
   const [sections, setSections] = useState([]);
   const [lectures, setLectures] = useState([]);
 
-  // useEffect(async () => {
-  //   try {
-  //     const coursesRes = await axios.get('http://localhost:8081/api/course')
-  //     const categoriesRes = ""
-  //   } catch (error) {
-
-  //   }
-  // },[])
+  const fetchData = async () => {
+    let data = { courses: [], categories: [], users: [] };
+    try {
+      const coursesRes = await axios.get("http://localhost:8081/api/course");
+      coursesRes && coursesRes.data
+        ? dispatch(setAllCourses(coursesRes.data))
+        : toast.error("Something wrong!");
+      const categoriesRes = "";
+      const usersRes = await axios.get("http://localhost:8082/api/user");
+      if (usersRes.data) {
+        let _userIds = usersRes.data.map((item) => item.id);
+        let _allUsers = [];
+        _userIds.map(async (id) => {
+          let _user = [];
+          const _userRes = await axios.get(
+            `http://localhost:8082/api/user/${id}`
+          );
+          _user = _userRes.data;
+          let _role = _user.role.name;
+          delete _user.role;
+          delete _user.createdAt;
+          delete _user.updatedAt;
+          delete _user.authorities;
+          delete _user.accountNonExpired;
+          delete _user.accountNonLocked;
+          delete _user.credentialsNonExpired;
+          delete _user.enabled;
+          delete _user.locked;
+          _user.role = _role;
+          _allUsers = [..._allUsers, _user];
+          dispatch(setAllUsers(_allUsers));
+        });
+      } else {
+        console.log("fetch data khong thanh cong");
+      }
+    } catch (error) {}
+    return data;
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   const toolClick = (tool) => {
     setToolSelected(tool);
   };
@@ -69,7 +118,32 @@ const ManagerTools = () => {
   const editBtnClick = (type) => {
     setPopupDisplay(type);
   };
-  const deleteBtnClick = (type) => {};
+  const deleteBtnClick = async (type, id) => {
+    try {
+      if (type === "delete-course") {
+        const res = await axios.delete(
+          `http://localhost:8081/api/course/${id}/delete`
+        );
+        if (res) {
+          dispatch(setAllCourses(allCourses.filter((item) => item.id != id)));
+          toast.success("Course deleted!");
+        } else toast.warn("Something wrong!");
+      } else {
+        const res = await axios.delete(
+          `http://localhost:8082/api/user/delete`,
+          { params: { user: id } }
+        );
+        if (res.data && res.data.message === "Success") {
+          dispatch(setAllUsers(allUsers.filter((item) => item.id != id)));
+          toast.success("User deleted!");
+        } else {
+          toast.warn("Something wrong!");
+        }
+      }
+    } catch (error) {
+      toast.error("Something wrong!");
+    }
+  };
   const courseFormBtnClick = (e) => {
     e.preventDefault();
     if (courseForm === "overview") {
@@ -535,9 +609,12 @@ const ManagerTools = () => {
             <div className="search-tool-container">
               <div className="_search-by">
                 <span>Search by</span>
-                <select className="_search-by-selection">
-                  <option value="_id">ID</option>
-                  <option value="_name">Name</option>
+                <select
+                  className="_search-by-selection"
+                  onChange={(e) => setSearchBy(e.target.value)}
+                >
+                  <option value="course-id">ID</option>
+                  <option value="course-name">Name</option>
                 </select>
               </div>
               <input type="text" name="_search-box" placeholder="Input here" />
@@ -546,28 +623,34 @@ const ManagerTools = () => {
               </div>
             </div>
             <div className="board">
-              <div className="board-item">
-                <div className="_item-id">
-                  <span>1</span>
-                </div>
-                <div className="_item-name">
-                  <span>course title</span>
-                </div>
-                <div className="_item-btn-group">
-                  <div
-                    className="_btn-edit-item"
-                    onClick={() => editBtnClick("edit-course")}
-                  >
-                    <MdEdit />
+              {allCourses && allCourses.length > 0 ? (
+                allCourses.map((item) => (
+                  <div className="board-item" key={item.id}>
+                    <div className="_item-id">
+                      <span>{item.id}</span>
+                    </div>
+                    <div className="_item-name">
+                      <span>{item.title}</span>
+                    </div>
+                    <div className="_item-btn-group">
+                      <div
+                        className="_btn-edit-item"
+                        onClick={() => editBtnClick("edit-course")}
+                      >
+                        <MdEdit />
+                      </div>
+                      <div
+                        className="_btn-delete-item"
+                        onClick={() => deleteBtnClick("delete-course", item.id)}
+                      >
+                        <MdDelete />
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className="_btn-delete-item"
-                    onClick={() => deleteBtnClick("delete-course")}
-                  >
-                    <MdDelete />
-                  </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <>Empty</>
+              )}
             </div>
             <div className="btn-tool-group">
               <div
@@ -604,31 +687,41 @@ const ManagerTools = () => {
               </select>
             </div>
             <div className="board">
-              <div className="board-item">
-                <div className="_item-id">
-                  <span>1</span>
-                </div>
-                <div className="_item-name">
-                  <span>user name</span>
-                </div>
-                <div className="_item-role">
-                  <span>manager</span>
-                </div>
-                <div className="_item-btn-group">
-                  <div
-                    className="_btn-edit-item"
-                    onClick={() => editBtnClick("edit-user")}
-                  >
-                    <MdEdit />
+              {allUsers && allUsers.length > 0 ? (
+                allUsers.map((item) => (
+                  <div className="board-item" key={item.id}>
+                    <div className="_item-id">
+                      <span>{item.id}</span>
+                    </div>
+                    <div className="_item-name">
+                      <span>
+                        {item.profile && item.profile.name
+                          ? item.profile.name
+                          : "Empty"}
+                      </span>
+                    </div>
+                    <div className="_item-role">
+                      <span>{item.role}</span>
+                    </div>
+                    <div className="_item-btn-group">
+                      <div
+                        className="_btn-edit-item"
+                        onClick={() => editBtnClick("edit-user", item.id)}
+                      >
+                        <MdEdit />
+                      </div>
+                      <div
+                        className="_btn-delete-item"
+                        onClick={() => deleteBtnClick("delete-user", item.id)}
+                      >
+                        <MdDelete />
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className="_btn-delete-item"
-                    onClick={() => deleteBtnClick("delete-user")}
-                  >
-                    <MdDelete />
-                  </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <>Empty</>
+              )}
             </div>
             <div className="btn-tool-group">
               <div
