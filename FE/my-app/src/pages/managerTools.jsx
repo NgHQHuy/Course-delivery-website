@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/manager_tools.css";
 import { BsSearch } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { SlPlus } from "react-icons/sl";
+import { SlClose, SlPlus } from "react-icons/sl";
 import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -18,17 +18,27 @@ const ManagerTools = () => {
   });
   const [users, setUsers] = useState([]);
   const [courseForm, setCourseForm] = useState("overview");
+  const [findInstructor, setFindInstructor] = useState([]);
   const [instructor, setInstructor] = useState({
     id: 1,
     name: "",
   });
+  const [categories, setCategories] = useState([
+    { id: 3, name: "name3" },
+    { id: 4, name: "name4" },
+  ]);
+  const [categoriesShow, setCategoriesShow] = useState([
+    { id: 1, name: "name1" },
+    { id: 2, name: "name2" },
+  ]);
+  const [categorySelected, setCategorySelected] = useState();
   const [overview, setOverview] = useState({
     id: null,
     title: "",
     description: "",
     price: 0,
-    instructorId: instructor.id,
-    instructorName: instructor.name,
+    instructorId: null,
+    instructorName: "",
     thumbnail: "",
     categoryIds: [1],
     requirements: "",
@@ -39,6 +49,14 @@ const ManagerTools = () => {
   const [sections, setSections] = useState([]);
   const [lectures, setLectures] = useState([]);
 
+  // useEffect(async () => {
+  //   try {
+  //     const coursesRes = await axios.get('http://localhost:8081/api/course')
+  //     const categoriesRes = ""
+  //   } catch (error) {
+
+  //   }
+  // },[])
   const toolClick = (tool) => {
     setToolSelected(tool);
   };
@@ -61,7 +79,8 @@ const ManagerTools = () => {
         overview.instructorName === "" ||
         overview.thumbnail === "" ||
         overview.requirements === "" ||
-        overview.summary === ""
+        overview.summary === "" ||
+        categoriesShow.length == 0
       ) {
         toast.warn("Misssing course information!");
       } else {
@@ -104,39 +123,57 @@ const ManagerTools = () => {
   const courseFormBtnDoneClick = async (e) => {
     e.preventDefault();
 
-    let _lectures = [...lectures];
-    _lectures.map((item) => item.lectures.map((lec) => delete lec.sectionId));
-    let _sections = [
-      ...sections.map((item) => ({
-        id: item.id,
-        title: item.title,
-        position: item.position,
-        lectures: _lectures.filter(
-          (i) => i.section_position === item.position
-        )[0].lectures,
-      })),
-    ];
-    let _overview = { ...overview };
-    delete _overview.instructorName;
-    let courseData = { ..._overview, sections: _sections };
-    console.log(courseData);
-    try {
-      const res = await axios.post(
-        "http://localhost:8081/api/course/save",
-        courseData
-      );
-      if (res && res.data && res.data.message == "Success") {
-        toast.success("Create success!");
-        setCourseForm("overview");
-        setPopupDisplay("");
-      } else {
+    if (lectures.filter((item) => item.lectures.length == 0).length != 0) {
+      toast.warn("Section need some lectures!");
+    } else {
+      let _lectures = [...lectures];
+      _lectures.map((item) => item.lectures.map((lec) => delete lec.sectionId));
+      let _sections = [
+        ...sections.map((item) => ({
+          id: item.id,
+          title: item.title,
+          position: item.position,
+          lectures: _lectures.filter(
+            (i) => i.section_position === item.position
+          )[0].lectures,
+        })),
+      ];
+      let _categoryIds = categoriesShow.map((item) => item.id);
+      let _overview = { ...overview, categoryIds: _categoryIds };
+      delete _overview.instructorName;
+      let courseData = { ..._overview, sections: _sections };
+      console.log(courseData);
+      try {
+        const res = await axios.post(
+          "http://localhost:8081/api/course/save",
+          courseData
+        );
+        if (res && res.data && res.data.message == "Success") {
+          toast.success("Create success!");
+          setCourseForm("overview");
+          setPopupDisplay("");
+        } else {
+        }
+      } catch (e) {
+        toast.error("Create failed!");
+        console.log(e);
       }
-    } catch (e) {
-      toast.error("Create failed!");
-      console.log(e);
+      console.log(courseData);
     }
   };
 
+  const categorySelectedOnChange = (id) => {
+    if (id == "none") {
+      setCategorySelected("none");
+    } else {
+      let _cate = categories.filter((item) => item.id == id)[0];
+      setCategorySelected(_cate);
+    }
+  };
+  const removeCategoryFromShow = (id) => {
+    let _categories = categoriesShow.filter((item) => item.id !== id);
+    setCategoriesShow(_categories);
+  };
   // handle course overview
   const courseOverviewOnChange = async (e, type) => {
     switch (type) {
@@ -150,18 +187,16 @@ const ManagerTools = () => {
         setOverview({ ...overview, price: e.target.valueAsNumber });
         break;
       case "instructor":
-        // if (e.target.value[e.target.value.length - 1] === " ") {
-        //   try {
-        //     const instructorRes = await axios.get(
-        //       `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
-        //     );
-        //     if (instructorRes && instructorRes.data) {
-        //       console.log(instructorRes.data);
-        //     }
-        //   } catch (error) {}
-        // }
+        try {
+          setOverview({ ...overview, instructorName: e.target.value });
+          const instructorRes = await axios.get(
+            `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
+          );
+          if (instructorRes && instructorRes.data) {
+            setFindInstructor(instructorRes.data);
+          }
+        } catch (error) {}
 
-        setInstructor({ ...instructor, name: e.target.value });
         setOverview({ ...overview, instructorName: e.target.value });
         break;
       case "thumbnail":
@@ -658,7 +693,6 @@ const ManagerTools = () => {
                     <input
                       type="number"
                       min={0}
-                      step={1000}
                       value={overview.price}
                       placeholder="price"
                       onChange={(e) => courseOverviewOnChange(e, "price")}
@@ -666,12 +700,75 @@ const ManagerTools = () => {
                   </div>
                   <div>
                     <span>Instructor</span>
-                    <input
-                      type="text"
-                      value={overview.instructorName}
-                      placeholder="instructor"
-                      onChange={(e) => courseOverviewOnChange(e, "instructor")}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        position: "relative",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        value={overview.instructorName}
+                        placeholder="instructor"
+                        onChange={(e) =>
+                          courseOverviewOnChange(e, "instructor")
+                        }
+                      />
+                      <div
+                        style={
+                          findInstructor.length > 0
+                            ? {
+                                maxWidth: "375px",
+                                marginTop: "3px",
+                                height: "fit-content !important",
+                                position: "absolute",
+                                zIndex: "1",
+                                top: "20px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                backgroundColor: "white",
+                                border: "1px solid grey",
+                              }
+                            : { display: "none" }
+                        }
+                      >
+                        {findInstructor.length > 0 ? (
+                          findInstructor.map((i) => (
+                            <div
+                              key={i.instructorId}
+                              style={{
+                                height: "20px",
+                                paddingLeft: "5px",
+                                borderBottom: "1px solid grey",
+                                margin: "0",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                setOverview({
+                                  ...overview,
+                                  instructorId: i.instructorId,
+                                  instructorName: i.name,
+                                });
+                                setFindInstructor([]);
+                              }}
+                            >
+                              <span
+                                style={{
+                                  width: "fit-content",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                {i.instructorId} :
+                              </span>
+                              <span>{i.name}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <span>Thumbnail</span>
@@ -681,6 +778,71 @@ const ManagerTools = () => {
                       accept="image/*"
                       onChange={(e) => courseOverviewOnChange(e, "thumbnail")}
                     />
+                  </div>
+                  <div>
+                    <span>Categories</span>
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
+                      {categoriesShow.length > 0 ? (
+                        categoriesShow.map((item) => (
+                          <div key={item.id}>
+                            <span style={{ width: "fit-content" }}>
+                              {item.name}
+                            </span>
+                            <IoIosClose
+                              size={18}
+                              title="remove this category"
+                              style={{ cursor: "pointer" }}
+                              onClick={() => removeCategoryFromShow(item.id)}
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        <span>none</span>
+                      )}
+                      <div>
+                        <select
+                          style={{ width: "150px" }}
+                          onChange={(e) => {
+                            categorySelectedOnChange(e.target.value);
+                          }}
+                        >
+                          <option value={"none"}>none</option>
+                          {categories && categories.length > 0 ? (
+                            categories.map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.name}
+                              </option>
+                            ))
+                          ) : (
+                            <></>
+                          )}
+                        </select>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "5px",
+                            marginLeft: "5px",
+                            cursor: "pointer",
+                          }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (categorySelected !== "none") {
+                              categoriesShow.filter(
+                                (item) => item.id == categorySelected.id
+                              ).length > 0
+                                ? toast.warn("Category has been added")
+                                : setCategoriesShow([
+                                    ...categoriesShow,
+                                    categorySelected,
+                                  ]);
+                            }
+                          }}
+                        >
+                          <SlPlus size={18} />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <span>Requirements</span>
