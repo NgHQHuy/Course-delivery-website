@@ -180,7 +180,6 @@ const ManagerTools = () => {
         break;
       case "instructor":
         if (e.target.value[e.target.value.length - 1] === " ") {
-          console.log("ok");
           try {
             const instructorRes = await axios.get(
               `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
@@ -383,7 +382,9 @@ const ManagerTools = () => {
         break;
       case "length":
         _lecs.map((lec) =>
-          lec.position == position ? (lec[`length`] = e.target.value) : lec
+          lec.position == position
+            ? (lec[`length`] = e.target.valueAsNumber)
+            : lec
         );
         _lectures.map((item) =>
           item.section_position == section_position
