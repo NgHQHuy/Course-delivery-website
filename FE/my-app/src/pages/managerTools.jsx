@@ -19,15 +19,16 @@ const ManagerTools = () => {
   const [users, setUsers] = useState([]);
   const [courseForm, setCourseForm] = useState("overview");
   const [instructor, setInstructor] = useState({
-    instrcutorID: null,
+    id: null,
     name: "",
   });
   const [overview, setOverview] = useState({
-    courseID: null,
+    id: null,
     title: "",
     description: "",
     price: 0,
-    intructorID: instructor.instrcutorID,
+    intructorId: instructor.id,
+    instructorName: instructor.name,
     thumbnail: "",
     requirement: "",
     summary: "",
@@ -87,10 +88,82 @@ const ManagerTools = () => {
       setCourseForm("section");
     }
   };
-  const courseFormBtnDoneClick = (e) => {
+  const courseFormBtnDoneClick = async (e) => {
     e.preventDefault();
-    setCourseForm("overview");
-    setPopupDisplay("");
+
+    let _lectures = [...lectures];
+    _lectures.map((item) => item.lectures.map((lec) => delete lec.sectionId));
+    let _sections = [
+      ...sections.map((item) => ({
+        id: item.id,
+        title: item.title,
+        position: item.position,
+        lectures: _lectures.filter(
+          (i) => i.section_position === item.position
+        )[0].lectures,
+      })),
+    ];
+    let _overview = { ...overview };
+    delete _overview.instructorName;
+    let courseData = { ..._overview, sections: _sections };
+    courseData = {
+      // "id": 1 //Uncomment this and provided a valid id to do update
+      title: "test course",
+      description: "test",
+      summary: "test",
+      requirements: "test",
+      price: 100000,
+      instructorId: 1,
+      categoryIds: [1],
+      thumbnail: "abc",
+      sections: [
+        {
+          // "id": 1 //Uncomment this and provided a valid id to do update
+          title: "test section",
+          description: "test",
+          position: 1,
+          lectures: [
+            {
+              // "id": 1 //Uncomment this and provided a valid id to do update
+              title: "test lecture",
+              description: "test",
+              position: 1,
+              type: "video",
+              value: "a",
+              length: 400,
+            },
+            {
+              // "id": 1 //Uncomment this and provided a valid id to do update
+              title: "test lecture",
+              description: "test",
+              position: 2,
+              type: "video",
+              value: "b",
+              length: 400,
+            },
+          ],
+        },
+        {
+          // "id": 1 //Uncomment this and provided a valid id to do update
+          title: "test section",
+          description: "test",
+          position: 2,
+        },
+      ],
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8081/api/course/save",
+        courseData
+      );
+      if (res && res.message && res.message == "Success") {
+        setCourseForm("overview");
+        setPopupDisplay("");
+      } else {
+        console.log("khong thanh cong");
+      }
+    } catch (e) {}
   };
 
   // handle course overview
@@ -103,10 +176,11 @@ const ManagerTools = () => {
         setOverview({ ...overview, description: e.target.value });
         break;
       case "price":
-        setOverview({ ...overview, price: e.target.value });
+        setOverview({ ...overview, price: e.target.valueAsNumber });
         break;
       case "instructor":
         setInstructor({ ...instructor, name: e.target.value });
+        setOverview({ ...overview, instructorName: e.target.value });
         break;
       case "thumbnail":
         let mineType =
@@ -133,11 +207,11 @@ const ManagerTools = () => {
   // handle sections
   const addSectionClick = () => {
     let section = {
-      sectionID: null,
+      id: null,
       title: "",
       totalLectures: null,
       position: null,
-      courseID: "",
+      courseId: null,
     };
     if (sections.length === 0) {
       section.position = 1;
@@ -204,13 +278,13 @@ const ManagerTools = () => {
   // handle lectures
   const addLectureClick = (section_position) => {
     const tmpLecture = {
-      lectureID: null,
+      id: null,
       title: "",
       type: "",
       value: "",
       length: null,
       position: null,
-      sectionID: null,
+      sectionId: null,
     };
 
     const _lectures = [...lectures];
@@ -304,7 +378,6 @@ const ManagerTools = () => {
             ? (item.lectures = _lecs)
             : item
         );
-        console.log(_lectures);
         setLectures(_lectures);
         break;
       default:
@@ -314,9 +387,7 @@ const ManagerTools = () => {
   //handle video iput
   const handleVideoChange = async (e) => {
     let formData = new FormData();
-    formData.append("title", "hihi");
     formData.append("file", e.target.files[0]);
-    console.log(formData);
     const res = await axios
       .post("http://localhost:8080/videos/add", formData)
       .then((res) => console.log(res));
@@ -546,7 +617,7 @@ const ManagerTools = () => {
                     <span>Instructor</span>
                     <input
                       type="text"
-                      value={overview.intructorID}
+                      value={overview.instructorName}
                       placeholder="instructor"
                       onChange={(e) => courseOverviewOnChange(e, "instructor")}
                     />
