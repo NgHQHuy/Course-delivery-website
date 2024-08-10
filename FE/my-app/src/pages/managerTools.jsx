@@ -157,7 +157,7 @@ const ManagerTools = () => {
         "http://localhost:8081/api/course/save",
         courseData
       );
-      if (res && res.message && res.message == "Success") {
+      if (res && res.data && res.data.message == "Success") {
         setCourseForm("overview");
         setPopupDisplay("");
       } else {
@@ -167,7 +167,7 @@ const ManagerTools = () => {
   };
 
   // handle course overview
-  const courseOverviewOnChange = (e, type) => {
+  const courseOverviewOnChange = async (e, type) => {
     switch (type) {
       case "title":
         setOverview({ ...overview, title: e.target.value });
@@ -179,6 +179,18 @@ const ManagerTools = () => {
         setOverview({ ...overview, price: e.target.valueAsNumber });
         break;
       case "instructor":
+        if (e.target.value[e.target.value.length - 1] === " ") {
+          console.log("ok");
+          try {
+            const instructorRes = await axios.get(
+              `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
+            );
+            if (instructorRes && instructorRes.data) {
+              console.log(instructorRes.data);
+            }
+          } catch (error) {}
+        }
+
         setInstructor({ ...instructor, name: e.target.value });
         setOverview({ ...overview, instructorName: e.target.value });
         break;
