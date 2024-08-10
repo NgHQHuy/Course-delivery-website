@@ -10,6 +10,13 @@ import axios from "axios";
 const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
   const [popupDisplay, setPopupDisplay] = useState("");
+  const [userForm, setUserForm] = useState({
+    username: "",
+    password: "",
+    email: "",
+    role: "",
+  });
+  const [users, setUsers] = useState([]);
   const [courseForm, setCourseForm] = useState("overview");
   const [instructor, setInstructor] = useState({
     instrcutorID: null,
@@ -313,6 +320,41 @@ const ManagerTools = () => {
     const res = await axios
       .post("http://localhost:8080/videos/add", formData)
       .then((res) => console.log(res));
+  };
+
+  //----------------------------------
+  //user form handle
+  const userFormOnchange = (e, type) => {
+    let _userForm = { ...userForm };
+    switch (type) {
+      case "username":
+        _userForm.username = e.target.value;
+        setUserForm(_userForm);
+        break;
+      case "password":
+        _userForm.password = e.target.value;
+        setUserForm(_userForm);
+        break;
+      case "email":
+        _userForm.email = e.target.value;
+        setUserForm(_userForm);
+        break;
+      case "role":
+        _userForm.role = e.target.value;
+        setUserForm(_userForm);
+        break;
+    }
+  };
+  const userFormBtnOnClick = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8082/api/user/save",
+        userForm
+      );
+      res && res.message
+        ? console.log(res.message)
+        : console.log("khong thanh cong");
+    } catch (error) {}
   };
   return (
     <div className="manager-page">
@@ -703,23 +745,44 @@ const ManagerTools = () => {
             <div className="_popup-form-user">
               <form action="">
                 <div className="username">
-                  <input type="text" placeholder="username" />
+                  <input
+                    type="text"
+                    placeholder="username"
+                    value={userForm.username}
+                    onChange={(e) => userFormOnchange(e, "username")}
+                  />
                 </div>
                 <div className="password">
-                  <input type="text" placeholder="password" />
+                  <input
+                    type="text"
+                    placeholder="password"
+                    value={userForm.password}
+                    onChange={(e) => userFormOnchange(e, "password")}
+                  />
                 </div>
                 <div className="email">
-                  <input type="text" placeholder="email" />
+                  <input
+                    type="text"
+                    placeholder="email"
+                    value={userForm.email}
+                    onChange={(e) => userFormOnchange(e, "email")}
+                  />
                 </div>
                 <div className="role">
                   <span>Role: </span>
-                  <select id="">
+                  <select
+                    id=""
+                    value={userForm.role}
+                    onChange={(e) => userFormOnchange(e, "role")}
+                  >
                     <option value="manager">manager</option>
                     <option value="admin">admin</option>
                   </select>
                 </div>
                 <div className="_btn-popup-create">
-                  <button type="submit">Create</button>
+                  <button type="submit">
+                    {popupDisplay === "create-user" ? "Create" : "Save"}
+                  </button>
                 </div>
               </form>
             </div>
