@@ -2,6 +2,7 @@ package com.example.courseservice.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,6 @@ public class SetRatingRequest {
     @Positive(message = "Invalid courseId")
     private Long courseId;
     @NotNull(message = "Missing rating")
-    @Positive(message = "Invalid rating")
+    @PositiveOrZero(message = "Missing rating")
     private double rating;
 }
