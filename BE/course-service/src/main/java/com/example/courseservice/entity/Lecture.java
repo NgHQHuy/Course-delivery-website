@@ -31,6 +31,8 @@ public class Lecture {
 
     private int position;
     private String type;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String value;
     private Long length = 0L;
 
