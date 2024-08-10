@@ -5,6 +5,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import { SlPlus } from "react-icons/sl";
 import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
@@ -103,7 +104,6 @@ const ManagerTools = () => {
       case "thumbnail":
         let mineType =
           "data:image/" + e.target.value.split(".")[1] + ";base64, ";
-        console.log(typeof mineType);
         let reader = new FileReader();
         let file = e.target.files[0];
         if (file) {
@@ -116,7 +116,6 @@ const ManagerTools = () => {
         break;
       case "requirement":
         setOverview({ ...overview, requirement: e.target.value });
-        console.log(overview.thumbnail);
         break;
       case "summary":
         setOverview({ ...overview, summary: e.target.value });
@@ -254,6 +253,66 @@ const ManagerTools = () => {
       );
     }
     setLectures(_lectures);
+  };
+  const handleLectureOnchange = (e, position, type) => {
+    let parent_node = e.target.parentNode;
+    for (let i = 0; i < 2; i++) {
+      parent_node = parent_node.parentNode;
+    }
+    let section_position = parent_node.title;
+
+    let _lectures = [...lectures];
+    let _lecs = _lectures.filter(
+      (item) => item.section_position == section_position
+    )[0].lectures;
+    switch (type) {
+      case "title":
+        _lecs.map((lec) =>
+          lec.position == position ? (lec.title = e.target.value) : lec
+        );
+        _lectures.map((item) =>
+          item.section_position == section_position
+            ? (item.lectures = _lecs)
+            : item
+        );
+        setLectures(_lectures);
+        break;
+      case "type":
+        _lecs.map((lec) =>
+          lec.position == position ? (lec.type = e.target.value) : lec
+        );
+        _lectures.map((item) =>
+          item.section_position == section_position
+            ? (item.lectures = _lecs)
+            : item
+        );
+        setLectures(_lectures);
+        break;
+      case "length":
+        _lecs.map((lec) =>
+          lec.position == position ? (lec[`length`] = e.target.value) : lec
+        );
+        _lectures.map((item) =>
+          item.section_position == section_position
+            ? (item.lectures = _lecs)
+            : item
+        );
+        console.log(_lectures);
+        setLectures(_lectures);
+        break;
+      default:
+    }
+  };
+
+  //handle video iput
+  const handleVideoChange = async (e) => {
+    let formData = new FormData();
+    formData.append("title", "hihi");
+    formData.append("file", e.target.files[0]);
+    console.log(formData);
+    const res = await axios
+      .post("http://localhost:8080/videos/add", formData)
+      .then((res) => console.log(res));
   };
   return (
     <div className="manager-page">
@@ -551,13 +610,24 @@ const ManagerTools = () => {
                           </div>
                           <div>
                             <span>Title</span>
-                            <input type="text" placeholder="title" />
+                            <input
+                              type="text"
+                              placeholder="title"
+                              value={lec.title}
+                              onChange={(e) =>
+                                handleLectureOnchange(e, lec.position, "title")
+                              }
+                            />
                           </div>
                           <div>
                             <span>Type</span>
-                            <select>
-                              <option value="lecture-type-video">Video</option>
-                              <option value="lecture-type-text">Text</option>
+                            <select
+                              onChange={(e) =>
+                                handleLectureOnchange(e, lec.position, "type")
+                              }
+                            >
+                              <option value="video">Video</option>
+                              <option value="text">Text</option>
                             </select>
                           </div>
                           <div>
@@ -567,11 +637,19 @@ const ManagerTools = () => {
                               name=""
                               id="lecture-source"
                               accept=".mp4,.pdf"
+                              onChange={(e) => handleVideoChange(e)}
                             />
                           </div>
                           <div>
                             <span>Length</span>
-                            <input type="number" min={0.05} step={0.05} />
+                            <input
+                              type="number"
+                              min={0.05}
+                              step={0.05}
+                              onChange={(e) =>
+                                handleLectureOnchange(e, lec.position, "length")
+                              }
+                            />
                           </div>
                         </div>
                       ))}
