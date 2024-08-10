@@ -31,8 +31,8 @@ public class VideoController {
 
     @Operation(summary = "Upload video")
     @PostMapping("/videos/add")
-    public ResponseEntity<BasicDto> addVideos(@Parameter(description = "Tựa đề của video")
-            @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file")MultipartFile file) {
+    public ResponseEntity<BasicDto> addVideos(
+            @Parameter(description = "Tựa đề của video") @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file") MultipartFile file) {
         try {
             String id = service.addVideo(file);
             UploadDto uploadDto = new UploadDto(id);
@@ -46,21 +46,22 @@ public class VideoController {
     @Operation(summary = "Phát video")
     @CrossOrigin
     @GetMapping("/videos/stream/{id}.mp4")
-    public ResponseEntity<?> streamVideo(@Parameter(description = "ID của video")
-            @PathVariable("id") String id, HttpServletRequest request) throws IOException {
+    public ResponseEntity<?> streamVideo(@Parameter(description = "ID của video") @PathVariable("id") String id,
+            HttpServletRequest request) throws IOException {
         Video video = service.getVideo(id);
         try {
             return service.handleStreamVideo(video, request);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-//        response.setStatus(206);
-//        FileCopyUtils.copy(video.getStream(), response.getOutputStream());
+        // response.setStatus(206);
+        // FileCopyUtils.copy(video.getStream(), response.getOutputStream());
     }
 
     // TODO: làm api xóa video.
-    @DeleteMapping("video/delete/{id}")
+    @DeleteMapping("videos/delete/{id}")
+    @CrossOrigin
     public ResponseEntity<ResponseDto> delete(@PathVariable String id) {
         service.deleteVideo(id);
         return ResponseEntity.ok(new ResponseDto(0, "Success"));

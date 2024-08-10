@@ -54,7 +54,19 @@ const ManagerTools = () => {
   const courseFormBtnClick = (e) => {
     e.preventDefault();
     if (courseForm === "overview") {
-      setCourseForm("section");
+      if (
+        overview.title === "" ||
+        overview.description === "" ||
+        overview.instructorName === "" ||
+        overview.thumbnail === "" ||
+        overview.requirement === "" ||
+        overview.summary === ""
+      ) {
+        toast.warn("Misssing course information!");
+      } else {
+        console.log(overview);
+        setCourseForm("section");
+      }
     }
     if (courseForm === "section") {
       if (sections.length === 0) {
@@ -106,64 +118,22 @@ const ManagerTools = () => {
     let _overview = { ...overview };
     delete _overview.instructorName;
     let courseData = { ..._overview, sections: _sections };
-    courseData = {
-      // "id": 1 //Uncomment this and provided a valid id to do update
-      title: "test course",
-      description: "test",
-      summary: "test",
-      requirements: "test",
-      price: 100000,
-      instructorId: 1,
-      categoryIds: [1],
-      thumbnail: "abc",
-      sections: [
-        {
-          // "id": 1 //Uncomment this and provided a valid id to do update
-          title: "test section",
-          description: "test",
-          position: 1,
-          lectures: [
-            {
-              // "id": 1 //Uncomment this and provided a valid id to do update
-              title: "test lecture",
-              description: "test",
-              position: 1,
-              type: "video",
-              value: "a",
-              length: 400,
-            },
-            {
-              // "id": 1 //Uncomment this and provided a valid id to do update
-              title: "test lecture",
-              description: "test",
-              position: 2,
-              type: "video",
-              value: "b",
-              length: 400,
-            },
-          ],
-        },
-        {
-          // "id": 1 //Uncomment this and provided a valid id to do update
-          title: "test section",
-          description: "test",
-          position: 2,
-        },
-      ],
-    };
-
+    console.log(courseData);
     try {
       const res = await axios.post(
         "http://localhost:8081/api/course/save",
         courseData
       );
       if (res && res.data && res.data.message == "Success") {
+        toast.success("Create success!");
         setCourseForm("overview");
         setPopupDisplay("");
       } else {
-        console.log("khong thanh cong");
       }
-    } catch (e) {}
+    } catch (e) {
+      toast.error("Create failed!");
+      console.log(e);
+    }
   };
 
   // handle course overview
@@ -291,7 +261,7 @@ const ManagerTools = () => {
     const tmpLecture = {
       id: null,
       title: "",
-      type: "",
+      type: "video",
       value: "",
       length: null,
       position: null,
@@ -370,6 +340,17 @@ const ManagerTools = () => {
         setLectures(_lectures);
         break;
       case "type":
+        let _lec = _lecs.filter((lec) => lec.position === position)[0];
+        if (e.target.value === "text" && _lec.value.length > 0) {
+          try {
+            const deleteVideoRes = axios.delete(
+              `http://localhost:8080/videos/delete/${_lec.value}`
+            );
+            _lecs.map((lec) =>
+              lec.position == position ? (lec.value = "") : lec
+            );
+          } catch (error) {}
+        }
         _lecs.map((lec) =>
           lec.position == position ? (lec.type = e.target.value) : lec
         );
@@ -380,7 +361,19 @@ const ManagerTools = () => {
         );
         setLectures(_lectures);
         break;
+      case "value-text":
+        _lecs.map((lec) =>
+          lec.position == position ? (lec.value = e.target.value) : lec
+        );
+        _lectures.map((item) =>
+          item.section_position == section_position
+            ? (item.lectures = _lecs)
+            : item
+        );
+        setLectures(_lectures);
+        break;
       case "length":
+        console.log(lectures);
         _lecs.map((lec) =>
           lec.position == position
             ? (lec[`length`] = e.target.valueAsNumber)
@@ -398,12 +391,56 @@ const ManagerTools = () => {
   };
 
   //handle video iput
-  const handleVideoChange = async (e) => {
-    let formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    const res = await axios
-      .post("http://localhost:8080/videos/add", formData)
-      .then((res) => console.log(res));
+  const handleVideoChange = async (e, position) => {
+    let parent_node = e.target.parentNode;
+    for (let i = 0; i < 2; i++) {
+      parent_node = parent_node.parentNode;
+    }
+    let section_position = parent_node.title;
+
+    let _lectures = [...lectures];
+    let _lecs = _lectures.filter(
+      (item) => item.section_position == section_position
+    )[0].lectures;
+
+    try {
+      let _lec = _lecs.filter((lec) => lec.position === position)[0];
+      if (_lec.value.length > 0) {
+        const deleteVideoRes = await axios.delete(
+          `http://localhost:8080/videos/delete/${_lec.value}`
+        );
+        if (deleteVideoRes && deleteVideoRes.data) {
+          console.log(deleteVideoRes.data.message);
+          _lecs.map((lec) =>
+            lec.position == position ? (lec.value = "") : lec
+          );
+          _lectures.map((item) =>
+            item.section_position == section_position
+              ? (item.lectures = _lecs)
+              : item
+          );
+          setLectures(_lectures);
+        }
+      }
+      let formData = new FormData();
+      formData.append("file", e.target.files[0]);
+      const res = await axios.post(
+        "http://localhost:8080/videos/add",
+        formData
+      );
+      if (res && res.data) {
+        console.log(res);
+        _lecs.map((lec) =>
+          lec.position == position ? (lec.value = res.data.id) : lec
+        );
+        _lectures.map((item) =>
+          item.section_position == section_position
+            ? (item.lectures = _lecs)
+            : item
+        );
+        setLectures(_lectures);
+      }
+    } catch (error) {}
   };
 
   //----------------------------------
@@ -591,7 +628,7 @@ const ManagerTools = () => {
                   ? "Create course"
                   : "Edit course"}
               </div>
-              <form>
+              <form onSubmit={(e) => courseFormBtnDoneClick(e)}>
                 {/* overview form */}
                 <div
                   className="_course-form-overview"
@@ -738,6 +775,7 @@ const ManagerTools = () => {
                             <span>Title</span>
                             <input
                               type="text"
+                              required
                               placeholder="title"
                               value={lec.title}
                               onChange={(e) =>
@@ -758,18 +796,36 @@ const ManagerTools = () => {
                           </div>
                           <div>
                             <span>Source</span>
-                            <input
-                              type="file"
-                              name=""
-                              id="lecture-source"
-                              accept=".mp4,.pdf"
-                              onChange={(e) => handleVideoChange(e)}
-                            />
+                            {lec.type === "video" ? (
+                              <input
+                                required
+                                type="file"
+                                name=""
+                                id="lecture-source"
+                                accept=".mp4,.pdf"
+                                onChange={(e) =>
+                                  handleVideoChange(e, lec.position)
+                                }
+                              />
+                            ) : (
+                              <textarea
+                                required
+                                value={lec.value}
+                                onChange={(e) =>
+                                  handleLectureOnchange(
+                                    e,
+                                    lec.position,
+                                    "value-text"
+                                  )
+                                }
+                              />
+                            )}
                           </div>
                           <div>
                             <span>Length</span>
                             <input
                               type="number"
+                              required
                               min={0.05}
                               step={0.05}
                               onChange={(e) =>
@@ -803,9 +859,7 @@ const ManagerTools = () => {
                   {courseForm !== "lecture" ? (
                     <button onClick={(e) => courseFormBtnClick(e)}>Next</button>
                   ) : (
-                    <button onClick={(e) => courseFormBtnDoneClick(e)}>
-                      Done
-                    </button>
+                    <button type="submit">Done</button>
                   )}
                 </div>
               </form>

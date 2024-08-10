@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackageClasses = {VideoService.class, VideoController.class})
+@ComponentScan(basePackageClasses = { VideoService.class, VideoController.class })
 public class VideoApplication {
 
 	public static void main(String[] args) {
