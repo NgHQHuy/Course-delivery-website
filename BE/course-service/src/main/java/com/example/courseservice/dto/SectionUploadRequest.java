@@ -17,9 +17,6 @@ public class SectionUploadRequest {
     @NotBlank(message = "Missing title")
     private String title;
 
-    @NotBlank(message = "Missing description")
-    private String description;
-
     @NotNull(message = "Missing position")
     @Positive(message = "Invalid position")
     private int position;

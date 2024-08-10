@@ -11,8 +11,6 @@ import lombok.Setter;
 public class AddLectureRequest {
     @NotBlank(message = "Missing title")
     private String title;
-    @NotBlank(message = "Missing description")
-    private String description;
     @NotNull(message = "Missing length")
     @Positive(message = "Invalid length")
     private Long length;

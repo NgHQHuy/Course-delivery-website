@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
             response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
         } else if (exception instanceof HttpMessageNotReadableException) {
             response = new ResponseEntity<>(new BaseResponse("Missing request body or body is not format correctly"), HttpStatus.INTERNAL_SERVER_ERROR);
-        } else if (exception instanceof BodyParameterMissingException) {
+        } else if (exception instanceof BodyParameterMissingException || exception instanceof UserAlreadyReviewedException) {
             response = new ResponseEntity<>(new BaseResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
         } else if (exception instanceof MethodArgumentNotValidException) {
             String message = ((MethodArgumentNotValidException) exception).getAllErrors().get(0).getDefaultMessage();

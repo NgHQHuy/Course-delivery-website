@@ -26,7 +26,6 @@ public class CourseMapper {
         SectionDto sectionDto = new SectionDto();
         sectionDto.setId(section.getId());
         sectionDto.setTitle(section.getTitle());
-        sectionDto.setDescription(section.getDescription());
         sectionDto.setCreatedAt(section.getCreatedAt());
         sectionDto.setUpdatedAt(section.getUpdatedAt());
         sectionDto.setPosition(section.getPosition());
@@ -38,7 +37,6 @@ public class CourseMapper {
         lectureDto.setId(lecture.getId());
         lectureDto.setTitle(lecture.getTitle());
         lectureDto.setType(lecture.getType());
-        lectureDto.setDescription(lecture.getDescription());
         lectureDto.setCreatedAt(lecture.getCreatedAt());
         lectureDto.setUpdatedAt(lecture.getUpdatedAt());
         lectureDto.setPosition(lecture.getPosition());

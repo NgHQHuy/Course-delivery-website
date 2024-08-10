@@ -25,9 +25,6 @@ public class Section {
 
     private String title;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String description;
-
     @CreationTimestamp
     private Timestamp createdAt;
 

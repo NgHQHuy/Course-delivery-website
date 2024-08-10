@@ -15,7 +15,6 @@ public class SectionDto {
     @Positive(message = "Invalid section id")
     private Long id;
     private String title;
-    private String description;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private int position;

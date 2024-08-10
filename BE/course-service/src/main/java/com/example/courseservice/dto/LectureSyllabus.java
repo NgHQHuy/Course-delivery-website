@@ -8,6 +8,5 @@ import lombok.Setter;
 public class LectureSyllabus {
     private Long id;
     private String title;
-    private String description;
     private int position;
 }

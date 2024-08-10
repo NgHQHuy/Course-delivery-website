@@ -17,4 +17,5 @@ public class CourseNumber {
     private Long length = 0L;
 
     private Long numOfStudent = 0L;
+    private double rating = 0;
 }

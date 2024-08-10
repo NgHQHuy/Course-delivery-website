@@ -23,9 +23,6 @@ public class Lecture {
 
     private String title;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String description;
-
     @CreationTimestamp
     private Timestamp createdAt;
 

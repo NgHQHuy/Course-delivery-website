@@ -14,7 +14,6 @@ public class LectureDto {
     @NotNull(message = "Lecture id is mandatory")
     private Long id;
     private String title;
-    private String description;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private int position;

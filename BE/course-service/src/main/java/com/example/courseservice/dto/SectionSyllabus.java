@@ -10,7 +10,6 @@ import java.util.List;
 public class SectionSyllabus {
     private Long id;
     private String title;
-    private String description;
     private int position;
     private List<LectureSyllabus> lectures;
 }

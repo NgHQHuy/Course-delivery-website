@@ -71,7 +71,6 @@ public class CourseService {
                 section = new Section();
             }
             section.setTitle(sectionDto.getTitle());
-            section.setDescription(sectionDto.getDescription());
             section.setPosition(sectionDto.getPosition());
             section.setCourse(course);
 
@@ -89,7 +88,6 @@ public class CourseService {
                     lecture = new Lecture();
                 }
                 lecture.setTitle(lectureDto.getTitle());
-                lecture.setDescription(lectureDto.getDescription());
                 lecture.setPosition(lectureDto.getPosition());
                 lecture.setSection(section);
                 lecture.setType(lectureDto.getType());

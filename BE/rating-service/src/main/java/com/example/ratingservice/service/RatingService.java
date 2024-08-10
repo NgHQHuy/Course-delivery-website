@@ -5,6 +5,7 @@ import com.example.ratingservice.dto.ReviewDto;
 import com.example.ratingservice.entity.AvgRating;
 import com.example.ratingservice.entity.Review;
 import com.example.ratingservice.exception.SearchNotFoundException;
+import com.example.ratingservice.exception.UserAlreadyReviewedException;
 import com.example.ratingservice.repository.AvgRatingRepository;
 import com.example.ratingservice.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class RatingService {
         if (!userService.isValidUser(userId)) throw new SearchNotFoundException("User not found");
         if (!courseService.isValidCourse(courseId)) throw new SearchNotFoundException("Course not found");
 
+        if (reviewRepository.existsByUserIdAndCourseId(userId, courseId)) throw new UserAlreadyReviewedException("User already reviewed");
         AvgRating avgRating;
         Optional<AvgRating> optionalAvgRating = avgRatingRepository.findById(courseId);
         if (optionalAvgRating.isEmpty()) {
@@ -42,7 +44,9 @@ public class RatingService {
         review.setComment(reviewDto.getComment());
         review.setRating(reviewDto.getRating());
         avgRating.getReviews().add(review);
-        avgRating.setAvgRating(calculateAvgRating(avgRating.getReviews()));
+        double rating = calculateAvgRating(avgRating.getReviews());
+        avgRating.setAvgRating(rating);
+        courseService.setCourseRating(courseId, rating);
         avgRatingRepository.save(avgRating);
     }
 
@@ -60,6 +64,7 @@ public class RatingService {
                     review.setRating(request.getRating());
                     double newAverage = calculateAvgRating(reviews);
                     avgRating.setAvgRating(newAverage);
+                    courseService.setCourseRating(courseId, newAverage);
                 }
                 break;
             }
@@ -82,6 +87,7 @@ public class RatingService {
                     newAverage = calculateAvgRating(reviews);
                 }
                 avgRating.setAvgRating(newAverage);
+                courseService.setCourseRating(courseId, newAverage);
                 break;
             }
         }

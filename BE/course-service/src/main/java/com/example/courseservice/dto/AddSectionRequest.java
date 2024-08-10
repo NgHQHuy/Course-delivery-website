@@ -11,6 +11,4 @@ import lombok.Setter;
 public class AddSectionRequest {
     @NotBlank(message = "Missing title")
     private String title;
-    @NotBlank(message = "Missing description")
-    private String description;
 }
