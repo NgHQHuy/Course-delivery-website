@@ -32,7 +32,7 @@ const Navbar = () => {
   };
   const logout = () => {
     dispatch(cleanBaseLoad());
-    console.log(base_loader);
+    localStorage.removeItem("_uid");
     navigate("/");
   };
 

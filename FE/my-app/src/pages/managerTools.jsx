@@ -16,9 +16,13 @@ import {
   getAllCategories,
   getAllUsers,
 } from "../redux/systemLoader.slice";
+import { getBaseLoad } from "../redux/baseLoader.slice";
+import { useNavigate } from "react-router-dom";
 
 const ManagerTools = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const baseLoad = useSelector(getBaseLoad);
   const allCourses = useSelector(getAllCourses);
   const allCategories = useSelector(getAllCategories);
   const allUsers = useSelector(getAllUsers);
@@ -26,27 +30,21 @@ const ManagerTools = () => {
   const [toolSeleted, setToolSelected] = useState("course");
   const [popupDisplay, setPopupDisplay] = useState("");
   const [searchBy, setSearchBy] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [userForm, setUserForm] = useState({
     username: "",
     password: "",
     email: "",
-    role: "",
+    role: "USER",
   });
-  const [users, setUsers] = useState([]);
   const [courseForm, setCourseForm] = useState("overview");
   const [findInstructor, setFindInstructor] = useState([]);
   const [instructor, setInstructor] = useState({
     id: 1,
     name: "",
   });
-  const [categories, setCategories] = useState([
-    { id: 3, name: "name3" },
-    { id: 4, name: "name4" },
-  ]);
-  const [categoriesShow, setCategoriesShow] = useState([
-    { id: 1, name: "name1" },
-    { id: 2, name: "name2" },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [categoriesShow, setCategoriesShow] = useState([]);
   const [categorySelected, setCategorySelected] = useState();
   const [overview, setOverview] = useState({
     id: null,
@@ -65,54 +63,164 @@ const ManagerTools = () => {
   const [sections, setSections] = useState([]);
   const [lectures, setLectures] = useState([]);
 
-  const fetchData = async () => {
+  const fetchAllCourses = async () => {
     let data = { courses: [], categories: [], users: [] };
     try {
       const coursesRes = await axios.get("http://localhost:8081/api/course");
       coursesRes && coursesRes.data
         ? dispatch(setAllCourses(coursesRes.data))
         : toast.error("Something wrong!");
-      const categoriesRes = "";
-      const usersRes = await axios.get("http://localhost:8082/api/user");
-      if (usersRes.data) {
-        let _userIds = usersRes.data.map((item) => item.id);
-        let _allUsers = [];
-        _userIds.map(async (id) => {
-          let _user = [];
-          const _userRes = await axios.get(
-            `http://localhost:8082/api/user/${id}`
-          );
-          _user = _userRes.data;
-          let _role = _user.role.name;
-          delete _user.role;
-          delete _user.createdAt;
-          delete _user.updatedAt;
-          delete _user.authorities;
-          delete _user.accountNonExpired;
-          delete _user.accountNonLocked;
-          delete _user.credentialsNonExpired;
-          delete _user.enabled;
-          delete _user.locked;
-          _user.role = _role;
-          _allUsers = [..._allUsers, _user];
-          dispatch(setAllUsers(_allUsers));
-        });
-      } else {
-        console.log("fetch data khong thanh cong");
-      }
     } catch (error) {}
-    return data;
+  };
+  const fetchAllUsers = async () => {
+    const usersRes = await axios.get("http://localhost:8082/api/user");
+    if (usersRes.data) {
+      let _userIds = usersRes.data.map((item) => item.id);
+      let _allUsers = [];
+      _userIds.map(async (id) => {
+        let _user = [];
+        const _userRes = await axios.get(
+          `http://localhost:8082/api/user/${id}`
+        );
+        _user = _userRes.data;
+        let _role = _user.role.name;
+        delete _user.role;
+        delete _user.createdAt;
+        delete _user.updatedAt;
+        delete _user.authorities;
+        delete _user.accountNonExpired;
+        delete _user.accountNonLocked;
+        delete _user.credentialsNonExpired;
+        delete _user.enabled;
+        delete _user.locked;
+        _user.role = _role;
+        _allUsers = [..._allUsers, _user];
+        _allUsers.sort((a, b) => a.id - b.id);
+        dispatch(setAllUsers(_allUsers));
+      });
+    }
   };
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (baseLoad.user.userID && baseLoad.user.role == "USER") {
+      console.log(baseLoad.user.role);
+      navigate("/");
+    } else {
+      fetchAllCourses();
+      fetchAllUsers();
+    }
+  }, [baseLoad.user]);
+
   const toolClick = (tool) => {
     setToolSelected(tool);
+    if (toolSeleted != "course") {
+      setSearchBy("course-id");
+      setSearchInput("");
+    } else {
+      setSearchBy("user-id");
+      setSearchInput("");
+    }
   };
   const closePopup = () => {
     setPopupDisplay("");
     if (popupDisplay === "create-course") {
       setCourseForm("overview");
+    }
+  };
+  const searchToolsClick = async () => {
+    let res = null;
+    if (searchBy == "user-id") {
+      try {
+        res = await axios.get(
+          `http://localhost:8082/api/user/${parseInt(searchInput)}`
+        );
+      } catch (error) {}
+      if (res && res.data) {
+        let _user = res.data;
+        let _role = _user.role.name;
+        delete _user.role;
+        delete _user.createdAt;
+        delete _user.updatedAt;
+        delete _user.authorities;
+        delete _user.accountNonExpired;
+        delete _user.accountNonLocked;
+        delete _user.credentialsNonExpired;
+        delete _user.enabled;
+        delete _user.locked;
+        _user.role = _role;
+        dispatch(setAllUsers([_user]));
+        setSearchInput("");
+      } else {
+        toast.error("User does not exist!");
+      }
+    }
+    if (searchBy == "user-name") {
+      if (searchInput == "") {
+        toast.warn("Missing input!");
+      } else {
+        try {
+          res = await axios.get(`http://localhost:8088/api/search/user`, {
+            params: { keyword: searchInput },
+          });
+        } catch (error) {}
+        if (res.data.length > 0) {
+          let _users = [];
+          for (let i of res.data) {
+            allUsers.map((item) => {
+              if (item.id == i.userId) {
+                _users = [..._users, item];
+              }
+            });
+          }
+          dispatch(setAllUsers(_users));
+        } else {
+          toast.error("No matching result!");
+        }
+      }
+    }
+    if (searchBy == "course-id") {
+      if (searchInput == "") {
+        toast.warning("Missing course ID!");
+      } else {
+        let _course = allCourses.filter(
+          (item) => item.id == parseInt(searchInput)
+        );
+        dispatch(setAllCourses(_course));
+        setSearchInput("");
+      }
+    }
+    if (searchBy == "course-title") {
+      if (searchInput == "") {
+        toast.warning("Missing input!");
+      } else {
+        try {
+          res = await axios.get("http://localhost:8088/api/search/course", {
+            params: {
+              keyword: searchInput,
+            },
+          });
+        } catch (error) {}
+        if (res.data.length > 0) {
+          let _courses = [];
+          for (let i of res.data) {
+            allCourses.map((item) => {
+              if (item.id == i.courseId) {
+                _courses = [..._courses, item];
+              }
+            });
+          }
+          dispatch(setAllCourses(_courses));
+        } else {
+          toast.warn("No matching result!");
+        }
+      }
+    }
+  };
+  const filterByChange = (value) => {
+    if (value == "all") {
+      fetchAllUsers();
+    } else {
+      let _users = allUsers.filter((item) => item.role == value);
+      dispatch(setAllUsers(_users));
     }
   };
   const editBtnClick = (type) => {
@@ -158,7 +266,6 @@ const ManagerTools = () => {
       ) {
         toast.warn("Misssing course information!");
       } else {
-        console.log(overview);
         setCourseForm("section");
       }
     }
@@ -216,7 +323,6 @@ const ManagerTools = () => {
       let _overview = { ...overview, categoryIds: _categoryIds };
       delete _overview.instructorName;
       let courseData = { ..._overview, sections: _sections };
-      console.log(courseData);
       try {
         const res = await axios.post(
           "http://localhost:8081/api/course/save",
@@ -230,12 +336,27 @@ const ManagerTools = () => {
         }
       } catch (e) {
         toast.error("Create failed!");
-        console.log(e);
       }
-      console.log(courseData);
     }
   };
-
+  const userFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        "http://localhost:8082/api/user/create",
+        userForm,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (res.status == 200 && res.data.message == "Success") {
+        toast.success("Create success!");
+        fetchAllUsers();
+        setPopupDisplay("");
+        setUserForm({ username: "", password: "", email: "", role: "USER" });
+      }
+    } catch (e) {
+      toast.error(e.response.data.message + "!");
+    }
+  };
   const categorySelectedOnChange = (id) => {
     if (id == "none") {
       setCategorySelected("none");
@@ -483,7 +604,6 @@ const ManagerTools = () => {
         setLectures(_lectures);
         break;
       case "length":
-        console.log(lectures);
         _lecs.map((lec) =>
           lec.position == position
             ? (lec[`length`] = e.target.valueAsNumber)
@@ -520,7 +640,6 @@ const ManagerTools = () => {
           `http://localhost:8080/videos/delete/${_lec.value}`
         );
         if (deleteVideoRes && deleteVideoRes.data) {
-          console.log(deleteVideoRes.data.message);
           _lecs.map((lec) =>
             lec.position == position ? (lec.value = "") : lec
           );
@@ -539,7 +658,6 @@ const ManagerTools = () => {
         formData
       );
       if (res && res.data) {
-        console.log(res);
         _lecs.map((lec) =>
           lec.position == position ? (lec.value = res.data.id) : lec
         );
@@ -576,17 +694,7 @@ const ManagerTools = () => {
         break;
     }
   };
-  const userFormBtnOnClick = async () => {
-    try {
-      const res = await axios.post(
-        "http://localhost:8082/api/user/save",
-        userForm
-      );
-      res && res.message
-        ? console.log(res.message)
-        : console.log("khong thanh cong");
-    } catch (error) {}
-  };
+
   return (
     <div className="manager-page">
       <div className="tools-group">
@@ -611,14 +719,25 @@ const ManagerTools = () => {
                 <span>Search by</span>
                 <select
                   className="_search-by-selection"
+                  value={searchBy}
                   onChange={(e) => setSearchBy(e.target.value)}
                 >
                   <option value="course-id">ID</option>
-                  <option value="course-name">Name</option>
+                  <option value="course-title">Name</option>
                 </select>
               </div>
-              <input type="text" name="_search-box" placeholder="Input here" />
-              <div className="_btn-search">
+              <input
+                type="text"
+                name="_search-box"
+                placeholder="Input here"
+                value={searchInput.value}
+                onChange={(e) =>
+                  e.target.value == ""
+                    ? fetchAllCourses()
+                    : setSearchInput(e.target.value)
+                }
+              />
+              <div className="_btn-search" onClick={() => searchToolsClick()}>
                 <BsSearch />
               </div>
             </div>
@@ -667,23 +786,40 @@ const ManagerTools = () => {
             <div className="search-tool-container">
               <div className="_search-by">
                 <span>Search by</span>
-                <select className="_search-by-selection">
-                  <option value="_id">ID</option>
-                  <option value="_name">Name</option>
+                <select
+                  className="_search-by-selection"
+                  value={searchBy}
+                  onChange={(e) => setSearchBy(e.target.value)}
+                >
+                  <option value="user-id">ID</option>
+                  <option value="user-name">Name</option>
                 </select>
               </div>
-              <input type="text" name="_search-box" placeholder="Input here" />
-              <div className="_btn-search">
+              <input
+                type="text"
+                name="_search-box"
+                placeholder="Input here"
+                value={searchInput.value}
+                onChange={(e) =>
+                  e.target.value == ""
+                    ? fetchAllUsers()
+                    : setSearchInput(e.target.value)
+                }
+              />
+              <div className="_btn-search" onClick={() => searchToolsClick()}>
                 <BsSearch />
               </div>
             </div>
             <div className="role-selection">
               <span>Filter by</span>
-              <select className="_role-selection">
+              <select
+                className="_role-selection"
+                onChange={(e) => filterByChange(e.target.value)}
+              >
                 <option value="all">all</option>
-                <option value="client">client</option>
-                <option value="manager">manager</option>
-                <option value="admin">admin</option>
+                <option value="USER">client</option>
+                <option value="MANAGER">manager</option>
+                <option value="ADMIN">admin</option>
               </select>
             </div>
             <div className="board">
@@ -693,12 +829,31 @@ const ManagerTools = () => {
                     <div className="_item-id">
                       <span>{item.id}</span>
                     </div>
-                    <div className="_item-name">
-                      <span>
+                    <div
+                      className="_item-name"
+                      style={{ display: "flex", flexWrap: "wrap" }}
+                    >
+                      <div
+                        style={{
+                          height: "fit-content",
+                          width: "100%",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {item.username}
+                      </div>
+                      <div
+                        style={{
+                          height: "fit-content",
+                          width: "100%",
+                          fontStyle: "italic",
+                          fontSize: "0.9rem",
+                        }}
+                      >
                         {item.profile && item.profile.name
                           ? item.profile.name
                           : "Empty"}
-                      </span>
+                      </div>
                     </div>
                     <div className="_item-role">
                       <span>{item.role}</span>
@@ -1139,10 +1294,11 @@ const ManagerTools = () => {
               </span>
             </div>
             <div className="_popup-form-user">
-              <form action="">
+              <form onSubmit={(e) => userFormSubmit(e)}>
                 <div className="username">
                   <input
                     type="text"
+                    required
                     placeholder="username"
                     value={userForm.username}
                     onChange={(e) => userFormOnchange(e, "username")}
@@ -1151,6 +1307,7 @@ const ManagerTools = () => {
                 <div className="password">
                   <input
                     type="text"
+                    required
                     placeholder="password"
                     value={userForm.password}
                     onChange={(e) => userFormOnchange(e, "password")}
@@ -1159,6 +1316,7 @@ const ManagerTools = () => {
                 <div className="email">
                   <input
                     type="text"
+                    required
                     placeholder="email"
                     value={userForm.email}
                     onChange={(e) => userFormOnchange(e, "email")}
@@ -1171,8 +1329,10 @@ const ManagerTools = () => {
                     value={userForm.role}
                     onChange={(e) => userFormOnchange(e, "role")}
                   >
-                    <option value="manager">manager</option>
-                    <option value="admin">admin</option>
+                    {" "}
+                    <option value="USER">user</option>
+                    <option value="MANAGER">manager</option>
+                    <option value="ADMIN">admin</option>
                   </select>
                 </div>
                 <div className="_btn-popup-create">

@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: { userID: "1", role: "" },
+  user: { userID: null, role: "", username: "" },
   profile: {},
   learning: {
     courses: [],
     lists: [],
   },
   cart: {
-    cartID: "",
+    cartID: null,
     cartItems: [],
   },
 };
@@ -17,14 +17,7 @@ const baseLoaderSlice = createSlice({
   name: "baseLoader",
   initialState,
   reducers: {
-    setBaseLoad: (state, action) => {
-      if (action.payload.key == "entire") {
-        return action.payload;
-      } else {
-        let key = action.payload.key;
-        state[key] = action.payload.value;
-      }
-    },
+    setBaseLoad: (state, action) => action.payload,
     cleanBaseLoad: (state) => {
       const base = {
         user: {},
