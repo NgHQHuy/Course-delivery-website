@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/learning.css";
 import CourseCardEnroll from "../components/courseCardEnroll";
 import { MdEdit, MdDelete } from "react-icons/md";
@@ -14,19 +14,30 @@ const Learning = () => {
   const listInteraction = useSelector(getListInteraction);
 
   const [tabSelected, setTabSelected] = useState("all-courses");
-  const [creatListTitle, setCreateListTitle] = useState("");
-  const [creatListDes, setCreateListDes] = useState("");
+  const [listForm, setListForm] = useState({
+    id: null,
+    title: "",
+    description: "",
+  });
 
-  const createListSubmit = (e) => {
+  const fetchUserCourses = async () => {};
+  const fetchUserLists = async () => {};
+  useEffect(() => {
+    fetchUserCourses();
+    fetchUserLists();
+  }, []);
+  const listFormSubmit = (e) => {
     e.preventDefault();
+    console.log(listInteraction);
+    console.log("form: ", listForm);
     dispatch(setListInteraction({ status: "none", courseID: "" }));
-    setCreateListTitle("");
-    setCreateListDes("");
+    let _listForm = { ...listForm, title: "", description: "" };
+    setListForm(_listForm);
   };
   const listInteractionCancel = () => {
     if (listInteraction.status === "create") {
-      setCreateListTitle("");
-      setCreateListDes("");
+      let _listForm = { ...listForm, title: "", description: "" };
+      setListForm(_listForm);
     }
     dispatch(setListInteraction({ status: "none", courseID: "" }));
   };
@@ -127,9 +138,9 @@ const Learning = () => {
               placeholder="Title of list - max 30 characters"
               maxLength={30}
               required
-              value={creatListTitle}
+              value={listForm.title}
               onChange={(e) => {
-                setCreateListTitle(e.target.value);
+                setListForm({ ...listForm, title: e.target.value });
               }}
             />
           </div>
@@ -140,22 +151,15 @@ const Learning = () => {
               placeholder="Desciption - max 60 characters"
               maxLength={60}
               required
-              value={creatListDes}
+              value={listForm.description}
               onChange={(e) => {
-                setCreateListDes(e.target.value);
+                setListForm({ ...listForm, description: e.target.value });
               }}
             ></textarea>
           </div>
           <div className="create-list-btn-group">
             <span onClick={() => listInteractionCancel()}>Cancel</span>
-            <button
-              type="submit"
-              onClick={(e) =>
-                creatListTitle !== "" && creatListDes !== ""
-                  ? createListSubmit(e)
-                  : {}
-              }
-            >
+            <button type="submit" onClick={(e) => listFormSubmit(e)}>
               Create
             </button>
           </div>
