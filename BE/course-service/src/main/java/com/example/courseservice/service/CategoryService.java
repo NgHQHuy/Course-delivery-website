@@ -86,4 +86,8 @@ public class CategoryService {
         c.getCourses().clear();
         categoryRepository.delete(c);
     }
+
+    public List<Category> getAll() {
+        return categoryRepository.findAll();
+    }
 }

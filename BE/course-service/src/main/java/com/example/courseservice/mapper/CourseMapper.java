@@ -1,5 +1,6 @@
 package com.example.courseservice.mapper;
 
+import com.example.courseservice.dto.CourseDetail;
 import com.example.courseservice.dto.CourseDto;
 import com.example.courseservice.dto.LectureDto;
 import com.example.courseservice.dto.SectionDto;
@@ -44,5 +45,22 @@ public class CourseMapper {
         lectureDto.setValue(lecture.getValue());
         lectureDto.setLength(lecture.getLength());
         return lectureDto;
+    }
+
+    public static CourseDetail mappedToCourseDetail(Course course) {
+        CourseDetail detail = new CourseDetail();
+        detail.setCourseId(course.getId());
+        detail.setTitle(course.getTitle());
+        detail.setDescription(course.getDescription());
+        detail.setSummary(course.getSummary());
+        detail.setRequirements(course.getRequirements());
+        detail.setPrice(course.getPrice());
+        detail.setInstructorId(course.getInstructor().getId());
+        detail.setTotalLectures(course.getCourseNumber().getTotalLectures());
+        detail.setLength(course.getCourseNumber().getLength());
+        detail.setNumOfStudent(course.getCourseNumber().getNumOfStudent());
+        detail.setCreatedAt(course.getCreatedAt());
+        detail.setUpdatedAt(course.getUpdatedAt());
+        return detail;
     }
 }

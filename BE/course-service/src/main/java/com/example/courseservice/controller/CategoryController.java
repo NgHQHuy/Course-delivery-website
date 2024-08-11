@@ -79,6 +79,16 @@ public class CategoryController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAllCategory() {
+        List<Category> categories = categoryService.getAll();
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+        for (Category category : categories) {
+            categoryDtos.add(mapToCategoryDto(category));
+        }
+        return ResponseEntity.ok(categoryDtos);
+    }
+
     private CategoryDto mapToCategoryDto(Category c) {
         CategoryDto dto = new CategoryDto();
         dto.setId(c.getId());

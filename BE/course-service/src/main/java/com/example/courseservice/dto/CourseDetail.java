@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class CourseDetail {
-    private Long id;
+    private Long courseId;
     private String title;
     private String description;
     private String summary;

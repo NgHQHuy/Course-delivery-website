@@ -235,19 +235,7 @@ public class CourseController {
         Course course = courseService.getOne(courseId);
         if (course == null)
             throw new SearchNotFoundException("Course not found");
-        CourseDetail detail = new CourseDetail();
-        detail.setId(course.getId());
-        detail.setTitle(course.getTitle());
-        detail.setDescription(course.getDescription());
-        detail.setSummary(course.getSummary());
-        detail.setRequirements(course.getRequirements());
-        detail.setPrice(course.getPrice());
-        detail.setInstructorId(course.getInstructor().getId());
-        detail.setTotalLectures(course.getCourseNumber().getTotalLectures());
-        detail.setLength(course.getCourseNumber().getLength());
-        detail.setNumOfStudent(course.getCourseNumber().getNumOfStudent());
-        detail.setCreatedAt(course.getCreatedAt());
-        detail.setUpdatedAt(course.getUpdatedAt());
+        CourseDetail detail = mappedToCourseDetail(course);
         return ResponseEntity.ok(detail);
     }
 
@@ -288,8 +276,8 @@ public class CourseController {
     }
 
     @GetMapping("search")
-    public ResponseEntity<List<CourseSearchResponse>> search(@RequestParam("keyword") String keyword) {
-        List<CourseSearchResponse> responses = courseService.search(keyword);
+    public ResponseEntity<List<CourseDetail>> search(@RequestParam("keyword") String keyword) {
+        List<CourseDetail> responses = courseService.search(keyword);
         return ResponseEntity.ok(responses);
     }
 

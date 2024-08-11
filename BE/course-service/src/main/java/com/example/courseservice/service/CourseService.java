@@ -3,6 +3,7 @@ package com.example.courseservice.service;
 import com.example.courseservice.dto.*;
 import com.example.courseservice.entity.*;
 import com.example.courseservice.exception.SearchNotFoundException;
+import com.example.courseservice.mapper.CourseMapper;
 import com.example.courseservice.repository.CategoryRepository;
 import com.example.courseservice.repository.CourseRepository;
 import lombok.AllArgsConstructor;
@@ -198,13 +199,11 @@ public class CourseService {
         save(course);
     }
 
-    public List<CourseSearchResponse> search(String keyword) {
+    public List<CourseDetail> search(String keyword) {
         List<Course> courses = courseRepository.search(keyword);
-        List<CourseSearchResponse> responses = new ArrayList<>();
+        List<CourseDetail> responses = new ArrayList<>();
         for (Course course : courses) {
-            CourseSearchResponse response = new CourseSearchResponse();
-            response.setCourseId(course.getId());
-            response.setTitle(course.getTitle());
+            CourseDetail response = CourseMapper.mappedToCourseDetail(course);
             responses.add(response);
         }
         return responses;
