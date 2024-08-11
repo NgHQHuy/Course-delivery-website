@@ -3,14 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: { userID: null, role: "", username: "" },
   profile: {},
-  learning: {
-    courses: [],
-    lists: [],
-  },
-  cart: {
-    cartID: null,
-    cartItems: [],
-  },
 };
 
 const baseLoaderSlice = createSlice({
@@ -22,14 +14,6 @@ const baseLoaderSlice = createSlice({
       const base = {
         user: {},
         profile: {},
-        learning: {
-          courses: [],
-          lists: [],
-        },
-        cart: {
-          cartID: "",
-          cartItems: [],
-        },
       };
 
       return base;

@@ -4,14 +4,26 @@ import CourseCardEnroll from "../components/courseCardEnroll";
 import { MdEdit, MdDelete } from "react-icons/md";
 
 import {
+  setCourses,
+  setLists,
   setListInteraction,
   getListInteraction,
+  getCourses,
+  getLists,
 } from "../redux/learning.slice";
 import { useDispatch, useSelector } from "react-redux";
+import axios, { all } from "axios";
+import { getBaseLoad, setBaseLoad } from "../redux/baseLoader.slice";
+import { getListAllCourses } from "../redux/coursesLoader.slice";
+import { toast } from "react-toastify";
 
 const Learning = () => {
   const dispatch = useDispatch();
+  const baseLoad = useSelector(getBaseLoad);
+  const allCourses = useSelector(getListAllCourses);
   const listInteraction = useSelector(getListInteraction);
+  const userCourses = useSelector(getCourses);
+  const userLists = useSelector(getLists);
 
   const [tabSelected, setTabSelected] = useState("all-courses");
   const [listForm, setListForm] = useState({
@@ -20,19 +32,69 @@ const Learning = () => {
     description: "",
   });
 
-  const fetchUserCourses = async () => {};
-  const fetchUserLists = async () => {};
+  const fetchLearning = async () => {
+    let _courses = [];
+    let _lists = [];
+    try {
+      const coursesRes = await axios.get(
+        `http://localhost:8084/api/user-course/${baseLoad.user.userID}`
+      );
+      for (let i of coursesRes.data) {
+        let _course = await axios.get(
+          `http://localhost:8081/api/course/${i.courseId}/overview`
+        );
+        let { totalLectures, numOfStudent, length } = _course.data;
+        allCourses.map((i) =>
+          typeof i.thumbnails === Object ? (i.thumbnails = "") : i
+        );
+        _courses = [
+          ..._courses,
+          {
+            ...allCourses.find((item) => item.id == i.courseId),
+            totalLectures: totalLectures,
+            numOfStudent: numOfStudent,
+            length: length,
+          },
+        ];
+      }
+      dispatch(setCourses(_courses));
+      const listsRes = await axios
+        .get(`http://localhost:8084/api/user-list/${baseLoad.user.userID}`)
+        .then((res) => {
+          _lists = res.data.map((item) => ({ ...item, courses: [] }));
+        });
+      dispatch(setLists(_lists));
+    } catch (error) {
+      console.log("cmm", error);
+    }
+  };
   useEffect(() => {
-    fetchUserCourses();
-    fetchUserLists();
-  }, []);
-  const listFormSubmit = (e) => {
+    fetchLearning();
+  }, [baseLoad.user]);
+
+  const listFormSubmit = async (e) => {
     e.preventDefault();
-    console.log(listInteraction);
-    console.log("form: ", listForm);
-    dispatch(setListInteraction({ status: "none", courseID: "" }));
-    let _listForm = { ...listForm, title: "", description: "" };
-    setListForm(_listForm);
+    try {
+      let req = {
+        name: listForm.title,
+        description: listForm.description,
+        userId: baseLoad.user.userID,
+      };
+      const res = await axios
+        .post("http://localhost:8084/api/user-list/create", req)
+        .then((res) => {
+          console.log("base", baseLoad.learning);
+          let _lists = [...baseLoad.learning.lists, res.data.id];
+          let _learning = { ...baseLoad.learning, lists: _lists };
+          console.log("learng", _learning);
+          dispatch(setBaseLoad({ ...baseLoad, learning: _learning }));
+          dispatch(setListInteraction({ status: "none", courseID: "" }));
+          let _listForm = { ...listForm, title: "", description: "" };
+          setListForm(_listForm);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const listInteractionCancel = () => {
     if (listInteraction.status === "create") {
@@ -41,7 +103,20 @@ const Learning = () => {
     }
     dispatch(setListInteraction({ status: "none", courseID: "" }));
   };
-
+  const deleteListClicked = async (id) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8084/api/user-list/list/${id}/delete`
+      );
+      if (res.status == 200) {
+        toast.success("List deleted!");
+        let _lists = [...userLists];
+        dispatch(setLists(_lists.filter((item) => item.id != id)));
+      }
+    } catch (error) {
+      toast.error("Delete failed, something wrong!");
+    }
+  };
   return (
     <div className="my-learning-page">
       <div className="tab-selection-container">
@@ -81,43 +156,33 @@ const Learning = () => {
         <div className="tab-content">
           {tabSelected === "all-courses" ? (
             <div className="all-courses-content">
-              <CourseCardEnroll pageView={"all-courses"} courseID={1} />
-              <CourseCardEnroll pageView={"all-courses"} courseID={2} />
-              <CourseCardEnroll pageView={"all-courses"} />
-              <CourseCardEnroll pageView={"all-courses"} />
-              <CourseCardEnroll pageView={"all-courses"} />
+              {userCourses &&
+                userCourses.map((course) => (
+                  <CourseCardEnroll pageView={"all-courses"} course={course} />
+                ))}
             </div>
           ) : (
             <div className="my-lists-content">
-              <div className="list-container">
-                <div className="list-header">
-                  <span>list title here</span>
-                  <div className="btn-edit">
-                    <MdEdit className="edit-icon" size={18} />
+              {userLists &&
+                userLists.map((item) => (
+                  <div className="list-container" key={item.id}>
+                    <div className="list-header">
+                      <span>{item.name}</span>
+                      <div className="btn-edit">
+                        <MdEdit className="edit-icon" size={18} />
+                      </div>
+                      <div
+                        className="btn-delete"
+                        onClick={() => deleteListClicked(item.id)}
+                      >
+                        <MdDelete className="delete-icon" size={18} />
+                      </div>
+                    </div>
+                    <div className="list-body">
+                      {/* <CourseCardEnroll pageView={"my-lists"} courseID={""} /> */}
+                    </div>
                   </div>
-                  <div className="btn-delete">
-                    <MdDelete className="delete-icon" size={18} />
-                  </div>
-                </div>
-                <div className="list-body">
-                  <CourseCardEnroll pageView={"my-lists"} />
-                </div>
-              </div>
-
-              <div className="list-container">
-                <div className="list-header">
-                  <span>list title here</span>
-                  <div className="btn-edit">
-                    <MdEdit className="edit-icon" size={18} />
-                  </div>
-                  <div className="btn-delete">
-                    <MdDelete className="delete-icon" size={18} />
-                  </div>
-                </div>
-                <div className="list-body">
-                  <CourseCardEnroll pageView={"my-lists"} courseID={""} />
-                </div>
-              </div>
+                ))}
             </div>
           )}
         </div>
