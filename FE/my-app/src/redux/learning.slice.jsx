@@ -1,24 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  data: [],
-  listInteraction: { status: "none", courseID: "" },
+  courses: [],
+  lists: [],
+  listInteraction: { status: "none", courseID: null },
 };
 
 const learningSlice = createSlice({
   name: "learningLoader",
   initialState,
   reducers: {
+    setCourses: (state, action) => {
+      state.courses = action.payload;
+    },
+    setLists: (state, action) => {
+      state.lists = action.payload;
+    },
     setListInteraction: (state, action) => {
       state.listInteraction = action.payload;
     },
   },
   selectors: {
     getListInteraction: (state) => state.listInteraction,
+    getCourses: (state) => state.courses,
+    getLists: (state) => state.lists,
   },
 });
 
-export const { setListInteraction } = learningSlice.actions;
-export const { getListInteraction } = learningSlice.selectors;
+export const { setListInteraction, setCourses, setLists } =
+  learningSlice.actions;
+export const { getListInteraction, getCourses, getLists } =
+  learningSlice.selectors;
 
 export default learningSlice.reducer;
