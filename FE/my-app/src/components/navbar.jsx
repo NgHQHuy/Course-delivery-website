@@ -57,10 +57,19 @@ const Navbar = () => {
           <input type="text" placeholder="Search" />
         </div>
       </div>
-      <div className="my-learning" style={!logged ? { display: "none" } : {}}>
+      <div
+        className="my-learning"
+        style={
+          !logged || base_loader.user.role != "USER" ? { display: "none" } : {}
+        }
+      >
         <span onClick={() => learningClick()}>My learning</span>
       </div>
-      <div className="cart" onClick={() => openCart()}>
+      <div
+        className="cart"
+        onClick={() => openCart()}
+        style={base_loader.user.role == "USER" ? {} : { display: "none" }}
+      >
         <div className="cart-icon">
           <BsCart3 size={24} />
         </div>
@@ -105,7 +114,12 @@ const Navbar = () => {
                 <li>Edit profile</li>
                 <li>Account settings</li>
               </ul>
-              <ul className="learning-n-cart">
+              <ul
+                className="learning-n-cart"
+                style={
+                  base_loader.user.role == "USER" ? {} : { display: "none" }
+                }
+              >
                 <li onClick={() => learningClick()}>My learning</li>
                 <li onClick={() => openCart()}>Cart</li>
               </ul>
