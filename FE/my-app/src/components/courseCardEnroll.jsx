@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/course_card_enroll.css";
 import { SlOptionsVertical, SlPlus } from "react-icons/sl";
+import { IoIosClose, IoIosStar } from "react-icons/io";
 import { RiShareForwardFill, RiMenuAddFill } from "react-icons/ri";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -93,6 +94,13 @@ const CourseCardEnroll = (props) => {
           <div className="bar-percent" style={{ width: `${percent}%` }}></div>
         </div>
         <div className="course-progression-text">{percent}%</div>
+      </div>
+      <div className="course-rating" style={{ textAlign: "right" }}>
+        {
+          <div>
+            <IoIosStar />
+          </div>
+        }
       </div>
     </div>
   );

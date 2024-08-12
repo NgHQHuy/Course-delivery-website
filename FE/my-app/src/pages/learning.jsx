@@ -16,8 +16,10 @@ import axios, { all } from "axios";
 import { getBaseLoad, setBaseLoad } from "../redux/baseLoader.slice";
 import { getListAllCourses } from "../redux/coursesLoader.slice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Learning = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const baseLoad = useSelector(getBaseLoad);
   const allCourses = useSelector(getListAllCourses);
@@ -68,9 +70,15 @@ const Learning = () => {
       console.log("cmm", error);
     }
   };
+
   useEffect(() => {
-    fetchLearning();
-  }, [baseLoad.user]);
+    if (
+      window.sessionStorage.getItem("_uid") &&
+      window.sessionStorage.getItem("_role") == "USER"
+    )
+      fetchLearning();
+    else navigate("/");
+  }, []);
 
   const listFormSubmit = async (e) => {
     e.preventDefault();
@@ -83,11 +91,6 @@ const Learning = () => {
       const res = await axios
         .post("http://localhost:8084/api/user-list/create", req)
         .then((res) => {
-          console.log("base", baseLoad.learning);
-          let _lists = [...baseLoad.learning.lists, res.data.id];
-          let _learning = { ...baseLoad.learning, lists: _lists };
-          console.log("learng", _learning);
-          dispatch(setBaseLoad({ ...baseLoad, learning: _learning }));
           dispatch(setListInteraction({ status: "none", courseID: "" }));
           let _listForm = { ...listForm, title: "", description: "" };
           setListForm(_listForm);
@@ -102,6 +105,15 @@ const Learning = () => {
       setListForm(_listForm);
     }
     dispatch(setListInteraction({ status: "none", courseID: "" }));
+  };
+  const editListClicked = (list) => {
+    let _list = {
+      id: list.id,
+      title: list.name,
+      description: list.description,
+    };
+    setListForm(_list);
+    dispatch(setListInteraction({ status: "edit" }));
   };
   const deleteListClicked = async (id) => {
     try {
@@ -168,7 +180,10 @@ const Learning = () => {
                   <div className="list-container" key={item.id}>
                     <div className="list-header">
                       <span>{item.name}</span>
-                      <div className="btn-edit">
+                      <div
+                        className="btn-edit"
+                        onClick={() => editListClicked(item)}
+                      >
                         <MdEdit className="edit-icon" size={18} />
                       </div>
                       <div
@@ -191,10 +206,7 @@ const Learning = () => {
         className="list-interaction-container"
         style={listInteraction.status === "none" ? { display: "none" } : {}}
       >
-        <form
-          className="create-list-form"
-          style={listInteraction.status !== "create" ? { display: "none" } : {}}
-        >
+        <form className="create-list-form">
           <span>Create new list</span>
           <div className="input-list-title">
             <input
@@ -225,7 +237,7 @@ const Learning = () => {
           <div className="create-list-btn-group">
             <span onClick={() => listInteractionCancel()}>Cancel</span>
             <button type="submit" onClick={(e) => listFormSubmit(e)}>
-              Create
+              {listInteraction.status == "create" ? "Create" : "Edit"}
             </button>
           </div>
         </form>

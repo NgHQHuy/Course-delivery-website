@@ -33,6 +33,9 @@ const Navbar = () => {
   const logout = () => {
     dispatch(cleanBaseLoad());
     localStorage.removeItem("_uid");
+    window.sessionStorage.removeItem("_uid");
+    window.sessionStorage.removeItem("_role");
+    window.sessionStorage.removeItem("_uname");
     navigate("/");
   };
 
