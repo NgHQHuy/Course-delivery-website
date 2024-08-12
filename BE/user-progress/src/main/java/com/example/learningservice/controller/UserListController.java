@@ -27,9 +27,11 @@ public class UserListController {
 
     @PostMapping("create")
     public ResponseEntity<UserList> createList(@Valid @RequestBody CreateListRequest request) {
-        if (!userService.isValidUser(request.getUserId())) throw new SearchNotFoundException("User not found");
+        if (!userService.isValidUser(request.getUserId()))
+            throw new SearchNotFoundException("User not found");
 
-        UserList createdList = userListService.createList(request.getUserId(), request.getName(), request.getDescription());
+        UserList createdList = userListService.createList(request.getUserId(), request.getName(),
+                request.getDescription());
         return ResponseEntity.ok(createdList);
     }
 
@@ -57,7 +59,8 @@ public class UserListController {
 
     @PostMapping("addOne")
     public ResponseEntity<Set<ListCourseDto>> addOneCourse(@Valid @RequestBody AddOneCourseRequest request) {
-        if (!courseService.isValidCourse(request.getCourseId())) throw new SearchNotFoundException("Course not found");
+        if (!courseService.isValidCourse(request.getCourseId()))
+            throw new SearchNotFoundException("Course not found");
         Set<ListCourseDto> courses = userListService.addOne(request.getListId(), request.getCourseId());
         return ResponseEntity.ok(courses);
     }
@@ -69,6 +72,7 @@ public class UserListController {
     }
 
     @DeleteMapping("list/{listId}/delete")
+    @CrossOrigin
     public ResponseEntity<?> deleteOneList(@PathVariable Long listId) {
         userListService.deleteList(listId);
         return ResponseEntity.status(200).build();
@@ -76,7 +80,8 @@ public class UserListController {
 
     @DeleteMapping("deleteCourse")
     public ResponseEntity<?> deleteCourseFromList(@Valid @RequestBody AddOneCourseRequest request) {
-        if (!courseService.isValidCourse(request.getCourseId())) throw new SearchNotFoundException("Course not found");
+        if (!courseService.isValidCourse(request.getCourseId()))
+            throw new SearchNotFoundException("Course not found");
         userListService.removeOneCourse(request.getListId(), request.getCourseId());
         return ResponseEntity.status(200).build();
     }

@@ -15,22 +15,23 @@ const CourseCardEnroll = (props) => {
   const percent = 75;
 
   const courseClick = () => {
-    navigate(`/course/${props.courseID}`);
+    navigate(`/course/${props.course.id}`);
   };
   const optShareClick = (e) => {
     e.stopPropagation();
-    window.open(`/courses/${props.courseID}`, "_blank", "noopener,noreferrer");
+    let tmp = props.course.thumbnails === null;
+    console.log(tmp);
   };
   const optCreateListClick = (e) => {
     e.stopPropagation();
     dispatch(
-      setListInteraction({ status: "create", courseID: props.courseID })
+      setListInteraction({ status: "create", courseID: props.course.id })
     );
   };
   const optAddToListClick = (e) => {
     e.stopPropagation();
     dispatch(
-      setListInteraction({ status: "add-to-list", courseId: props.courseID })
+      setListInteraction({ status: "add-to-list", courseId: props.course.id })
     );
   };
   const removeCourseClick = (e) => {
@@ -39,7 +40,11 @@ const CourseCardEnroll = (props) => {
   };
 
   return (
-    <div className="course-card" onClick={() => courseClick()}>
+    <div
+      className="course-card"
+      onClick={() => courseClick()}
+      key={props.course.id}
+    >
       <div className="course-options">
         <SlOptionsVertical size={16} className="options-icon" />
         <div className="options-dropdown">
@@ -75,12 +80,14 @@ const CourseCardEnroll = (props) => {
           )}
         </div>
       </div>
-      <div className="course-thumnail"></div>
-      <div className="course-title">
-        course title here here here here here here here here here
-        hhhhereeeeeeeeee
+      <div className="course-thumnail">
+        {props.course.thumbnails !== null && (
+          // props.course.thumbnails.split("/")[0] == "data:image" && (
+          <img src={props.course.thumbnails} />
+        )}
       </div>
-      <div className="course-author">author name</div>
+      <div className="course-title">{props.course.title}</div>
+      <div className="course-author">{props.course.instructorName}</div>
       <div className="course-progression">
         <div className="course-progression-bar">
           <div className="bar-percent" style={{ width: `${percent}%` }}></div>

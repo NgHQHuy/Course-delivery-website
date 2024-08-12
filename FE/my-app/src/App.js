@@ -17,10 +17,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBaseLoad, setBaseLoad } from "./redux/baseLoader.slice";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import {
+  getListAllCourses,
+  setListAllCourses,
+} from "./redux/coursesLoader.slice";
 
 function App() {
   const dispatch = useDispatch();
   const baseLoad = useSelector(getBaseLoad);
+  const sysCourses = useSelector(getListAllCourses);
   const fetchUser = async (req) => {
     try {
       const res = await axios
@@ -38,66 +43,73 @@ function App() {
         });
     } catch (error) {}
   };
-  const fetchLearning = async () => {
-    let _courses = null;
-    let _lists = null;
+
+  // const fetchCart = async () => {
+  //   let _cart = null;
+  //   try {
+  //     const res = await axios
+  //       .get(`http://localhost:8083/api/cart/${baseLoad.user.userID}`)
+  //       .then((res) => {
+  //         if (res.status == 200 && res.data) {
+  //           _cart = res.data;
+  //         } else {
+  //           console.log("Cart not found!");
+  //         }
+  //       });
+  //     _cart != null
+  //       ? dispatch(
+  //           setBaseLoad({
+  //             ...baseLoad,
+  //             cart: { cartID: null, cartItems: _cart },
+  //           })
+  //         )
+  //       : console.log("Not found");
+  //   } catch (error) {}
+  // };
+  const fetchSysCourses = async () => {
+    let _sysCourses = [];
     try {
-      const coursesRes = await axios
-        .get(`http://localhost:8084/api/user-course/${baseLoad.user.userID}`)
-        .then((res) => {
-          if (res.status == 200 && res.data) {
-            _courses = res.data.map((item) => item.id);
+      const res = await axios.get("http://localhost:8081/api/course");
+      if (res.data) {
+        for (let i of res.data) {
+          try {
+            const _instructor = await axios.get(
+              `http://localhost:8081/api/instructor/${i.instructorId}`
+            );
+            if (_instructor) {
+              i = { ...i, instructorName: _instructor.data.name };
+            }
+          } catch (error) {
+            i = { ...i, instructorName: "Unknown" };
           }
-        });
-      const listsRes = await axios
-        .get(`http://localhost:8084/api/user-list/${baseLoad.user.userID}`)
-        .then((res) => {
-          if (res.status == 200 && res.data) {
-            _lists = res.data.map((item) => item.id);
+          try {
+            const _avgRating = await axios.get(
+              "http://localhost:8085/api/rating/getAverage",
+              {
+                params: { course: i.id },
+              }
+            );
+            if (_avgRating) {
+              i = { ...i, rating: _avgRating.data.average };
+            }
+          } catch (error) {
+            i = { ...i, rating: 0 };
           }
-        });
-      _courses != null && _lists != null
-        ? dispatch(
-            setBaseLoad({
-              ...baseLoad,
-              learning: { courses: _courses, lists: _lists },
-            })
-          )
-        : toast.warn("Something wrong!");
-    } catch (error) {}
-  };
-  const fetchCart = async () => {
-    let _cart = null;
-    try {
-      const res = await axios
-        .get(`http://localhost:8083/api/cart/${baseLoad.user.userID}`)
-        .then((res) => {
-          if (res.status == 200 && res.data) {
-            _cart = res.data;
-          } else {
-            console.log("Cart not found!");
-          }
-        });
-      _cart != null
-        ? dispatch(
-            setBaseLoad({
-              ...baseLoad,
-              cart: { cartID: null, cartItems: _cart },
-            })
-          )
-        : console.log("Not found");
+          _sysCourses = [..._sysCourses, i];
+        }
+        dispatch(setListAllCourses(_sysCourses));
+      }
     } catch (error) {}
   };
   useEffect(() => {
-    if (baseLoad.user.userID && baseLoad.user.userID != null) {
-      fetchLearning();
-      fetchCart();
+    if (baseLoad.user.userID && baseLoad.user.userID != "") {
     } else if (localStorage.getItem("_uid")) {
       let _token = localStorage.getItem("_uid");
       let _jwt = jwtDecode(_token.split(",")[0].split(":")[1]);
       fetchUser({ username: _jwt.sub });
     }
-  }, [baseLoad.user.userID]);
+    fetchSysCourses();
+  }, [baseLoad.user]);
   return (
     <BrowserRouter>
       <div className="App">
