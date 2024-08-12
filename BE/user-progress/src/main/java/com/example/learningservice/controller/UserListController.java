@@ -50,8 +50,8 @@ public class UserListController {
     }
 
     @GetMapping("list/{listId}/courses")
-    public ResponseEntity<Set<UserListCourse>> viewAllCourse(@PathVariable Long listId) {
-        Set<UserListCourse> courses = userListService.viewCourseList(listId);
+    public ResponseEntity<Set<ListCourseDto>> viewAllCourse(@PathVariable Long listId) {
+        Set<ListCourseDto> courses = userListService.viewCourseList(listId);
         return ResponseEntity.ok(courses);
     }
 

@@ -43,10 +43,12 @@ public class UserListService {
         return listDtos;
     }
 
-    public Set<UserListCourse> viewCourseList(Long listId) {
+    public Set<ListCourseDto> viewCourseList(Long listId) {
         Optional<UserList> optionalList = findById(listId);
         if (optionalList.isEmpty()) throw new SearchNotFoundException("List not found");
-        return optionalList.get().getCourses();
+        Set<UserListCourse> courses = optionalList.get().getCourses();
+        Set<ListCourseDto> dtos = UserListCourseMapper.mapAllToListCourseDto(courses);
+        return dtos;
     }
 
     public UserList updateList(UserList modifiedList) {
