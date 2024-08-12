@@ -26,7 +26,7 @@ function App() {
   const dispatch = useDispatch();
   const baseLoad = useSelector(getBaseLoad);
   const sysCourses = useSelector(getListAllCourses);
-  const fetchUser = async (req) => {
+  const fetchUser = async (_log, req) => {
     try {
       const res = await axios
         .post("http://localhost:8082/api/user/findUsername", req)
@@ -37,9 +37,11 @@ function App() {
             username: res.data.username,
           };
           let _profile = res.data.profile;
-          dispatch(
-            setBaseLoad({ ...baseLoad, user: _user, profile: _profile })
-          );
+          if (_log == "_lcstorage") {
+            dispatch(setBaseLoad({ user: _user, profile: _profile }));
+          } else {
+            dispatch(setBaseLoad({ ...baseLoad, profile: _profile }));
+          }
         });
     } catch (error) {}
   };
@@ -102,14 +104,31 @@ function App() {
     } catch (error) {}
   };
   useEffect(() => {
-    if (baseLoad.user.userID && baseLoad.user.userID != "") {
+    if (
+      window.sessionStorage.getItem("_uid") &&
+      window.sessionStorage.getItem("_role") &&
+      window.sessionStorage.getItem("_uname")
+    ) {
+      let _user = {
+        userID: parseInt(window.sessionStorage.getItem("_uid")),
+        role: window.sessionStorage.getItem("_role"),
+        username: window.sessionStorage.getItem("_uname"),
+      };
+      dispatch(setBaseLoad({ ...baseLoad, user: _user }));
+      fetchUser("_session", {
+        username: window.sessionStorage.getItem("_uid"),
+      });
+    }
+    console.log("befire", baseLoad);
+    if (baseLoad.user.userID && baseLoad.user.userID !== "") {
+      fetchUser("", { username: baseLoad.user.username });
     } else if (localStorage.getItem("_uid")) {
       let _token = localStorage.getItem("_uid");
       let _jwt = jwtDecode(_token.split(",")[0].split(":")[1]);
-      fetchUser({ username: _jwt.sub });
+      fetchUser("_lcstorage", { username: _jwt.sub });
     }
     fetchSysCourses();
-  }, [baseLoad.user]);
+  }, []);
   return (
     <BrowserRouter>
       <div className="App">

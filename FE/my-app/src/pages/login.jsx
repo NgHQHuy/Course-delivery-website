@@ -5,6 +5,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { getBaseLoad, setBaseLoad } from "../redux/baseLoader.slice";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,6 +54,9 @@ const Login = () => {
         disatch(
           setBaseLoad({ ...baseLoad, user: res.user, profile: res.profile })
         );
+        window.sessionStorage.setItem("_uid", res.user.userID);
+        window.sessionStorage.setItem("_role", res.user.role);
+        window.sessionStorage.setItem("_uname", res.user.username);
         navigate("/");
       } catch (error) {}
     }
@@ -70,7 +74,7 @@ const Login = () => {
           });
         });
     } catch (error) {
-      console.log("error: ", error);
+      toast.error("Login failed! ");
     }
   };
   return (
