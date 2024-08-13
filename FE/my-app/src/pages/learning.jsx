@@ -30,7 +30,7 @@ const Learning = () => {
   const [tabSelected, setTabSelected] = useState("all-courses");
   const [listForm, setListForm] = useState({
     id: null,
-    title: "",
+    name: "",
     description: "",
   });
 
@@ -63,14 +63,50 @@ const Learning = () => {
       const listsRes = await axios
         .get(`http://localhost:8084/api/user-list/${baseLoad.user.userID}`)
         .then((res) => {
-          _lists = res.data.map((item) => ({ ...item, courses: [] }));
+          let _tmpLists = res.data.map((item) => ({ ...item, courses: [] }));
+          _tmpLists.map((i, index) => {
+            const _courses = axios
+              .get(`http://localhost:8084/api/user-list/list/${i.id}/courses`)
+              .then((res) => {
+                if (res.data && res.data.length > 0) {
+                  let _tmpCourses = res.data.map((c) => c.courseId);
+                  i = { ...i, courses: _tmpCourses };
+                  _lists = [..._lists, i];
+                  dispatch(setLists(_lists));
+                } else {
+                  i = { ...i, courses: [] };
+                  dispatch(setLists([..._lists, i]));
+                }
+              });
+          });
         });
-      dispatch(setLists(_lists));
     } catch (error) {
       console.log("cmm", error);
     }
   };
-
+  const deleteCourseFromList = async (listId, courseId) => {
+    try {
+      let req = { listId: listId, courseId: courseId };
+      const res = await axios.delete(
+        "http://localhost:8084/api/user-list/deleteCourse",
+        { data: req }
+      );
+      if (res && res.status == 200) {
+        let _userlist = [...userLists];
+        let _courses = _userlist.find((item) => item.id == listId).courses;
+        _courses = _courses.filter((id) => id != courseId);
+        _userlist = _userlist.map((item) =>
+          item.id == listId ? { ...item, courses: _courses } : item
+        );
+        dispatch(setLists(_userlist));
+        dispatch(
+          setListInteraction({ status: "none", listId: null, courseId: null })
+        );
+      }
+    } catch (error) {
+      toast.error("Delete failed!");
+    }
+  };
   useEffect(() => {
     if (
       window.sessionStorage.getItem("_uid") &&
@@ -78,42 +114,72 @@ const Learning = () => {
     )
       fetchLearning();
     else navigate("/");
-  }, []);
+    if (listInteraction.status == "delete-course-from-list") {
+      deleteCourseFromList(listInteraction.listId, listInteraction.courseId);
+    }
+  }, [listInteraction]);
 
-  const listFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      let req = {
-        name: listForm.title,
-        description: listForm.description,
-        userId: baseLoad.user.userID,
-      };
-      const res = await axios
-        .post("http://localhost:8084/api/user-list/create", req)
-        .then((res) => {
-          dispatch(setListInteraction({ status: "none", courseID: "" }));
-          let _listForm = { ...listForm, title: "", description: "" };
-          setListForm(_listForm);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const listInteractionCancel = () => {
-    if (listInteraction.status === "create") {
-      let _listForm = { ...listForm, title: "", description: "" };
-      setListForm(_listForm);
-    }
-    dispatch(setListInteraction({ status: "none", courseID: "" }));
+    let _listForm = { id: null, name: "", description: "" };
+    setListForm(_listForm);
+    dispatch(setListInteraction({ status: "none" }));
   };
   const editListClicked = (list) => {
-    let _list = {
-      id: list.id,
-      title: list.name,
-      description: list.description,
-    };
-    setListForm(_list);
+    setListForm(list);
     dispatch(setListInteraction({ status: "edit" }));
+  };
+  const listFormSubmit = async (e) => {
+    e.preventDefault();
+    if (listInteraction.status == "create") {
+      try {
+        let req = {
+          name: listForm.name,
+          description: listForm.description,
+          userId: baseLoad.user.userID,
+        };
+        const res = await axios
+          .post("http://localhost:8084/api/user-list/create", req)
+          .then((res) => {
+            dispatch(setListInteraction({ status: "none", courseID: "" }));
+            let _listForm = { ...listForm, name: "", description: "" };
+            setListForm(_listForm);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (listInteraction.status == "edit") {
+      console.log("rea", typeof listForm.id);
+      let _l = {
+        listId: listForm.id,
+        name: listForm.name,
+        description: listForm.description,
+      };
+      try {
+        const res = await axios.post(
+          "http://localhost:8084/api/user-list/update",
+          _l
+        );
+        if (res.status == 200) {
+          let _listUpdated = userLists.map((item) =>
+            item.id == listForm.id
+              ? {
+                  ...item,
+                  name: listForm.name,
+                  description: listForm.description,
+                }
+              : item
+          );
+          toast.success("Edit success!");
+          dispatch(setLists(_listUpdated));
+          setListForm({ id: null, name: "", description: "" });
+          dispatch(setListInteraction({ status: "none" }));
+        }
+      } catch (error) {
+        console.log("edit errr", error);
+      }
+    }
   };
   const deleteListClicked = async (id) => {
     try {
@@ -182,7 +248,13 @@ const Learning = () => {
                       <span>{item.name}</span>
                       <div
                         className="btn-edit"
-                        onClick={() => editListClicked(item)}
+                        onClick={() =>
+                          editListClicked({
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                          })
+                        }
                       >
                         <MdEdit className="edit-icon" size={18} />
                       </div>
@@ -194,7 +266,19 @@ const Learning = () => {
                       </div>
                     </div>
                     <div className="list-body">
-                      {/* <CourseCardEnroll pageView={"my-lists"} courseID={""} /> */}
+                      {item.courses.length > 0 ? (
+                        item.courses.map((course) => (
+                          <CourseCardEnroll
+                            pageView={"my-lists"}
+                            course={userCourses.find((i) => i.id == course)}
+                            listId={item.id}
+                          />
+                        ))
+                      ) : (
+                        <span style={{ fontStyle: "italic" }}>
+                          This list is empty.
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -204,7 +288,12 @@ const Learning = () => {
       </div>
       <div
         className="list-interaction-container"
-        style={listInteraction.status === "none" ? { display: "none" } : {}}
+        style={
+          listInteraction.status === "create" ||
+          listInteraction.status === "edit"
+            ? {}
+            : { display: "none" }
+        }
       >
         <form className="create-list-form">
           <span>Create new list</span>
@@ -215,9 +304,9 @@ const Learning = () => {
               placeholder="Title of list - max 30 characters"
               maxLength={30}
               required
-              value={listForm.title}
+              value={listForm.name}
               onChange={(e) => {
-                setListForm({ ...listForm, title: e.target.value });
+                setListForm({ ...listForm, name: e.target.value });
               }}
             />
           </div>

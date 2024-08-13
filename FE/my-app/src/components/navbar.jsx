@@ -25,7 +25,7 @@ const Navbar = () => {
   };
   const openCart = () => {
     if (logged) {
-      window.open("/cart", "_blank", "noopener,noreferrer");
+      navigate("/cart");
     } else {
       toast.warn("Sign-in or Sign-up first!");
     }

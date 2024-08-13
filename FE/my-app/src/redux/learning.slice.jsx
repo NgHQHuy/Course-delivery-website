@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   courses: [],
   lists: [],
-  listInteraction: { status: "none", courseID: null },
+  listInteraction: { status: "none" },
 };
 
 const learningSlice = createSlice({
