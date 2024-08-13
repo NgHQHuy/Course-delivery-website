@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>course-management</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>BE/user-service</module>
+        <module>BE/cart-service</module>
+        <module>BE/course-service</module>
+        <module>BE/rating-service</module>
+        <module>BE/user-progress</module>
+        <module>BE/search-service</module>
+        <module>BE/video</module>
+    </modules>
+
+</project>
