@@ -1,0 +1,112 @@
+version: "3.8"
+services:
+  mysql:
+    container_name: mysql
+    restart: on-failure:3
+    environment:
+      # - MYSQL_USER=root
+      # - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    image: mysql
+    volumes:
+      - db:/var/lib/mysql
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "3306:3306"
+  mongo:
+    container_name: mongo
+    restart: on-failure:5
+    command: mongod --port 27017
+    logging:
+      driver: none
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - "db-mongodb-data:/data/db"
+  video-service:
+    container_name: video-service
+    restart: on-failure:3
+    build:
+      context: BE/video
+      dockerfile: Dockerfile
+      target: build
+    depends_on:
+      mongo:
+        condition: "service_started"
+    ports:
+      - "8080:8080"
+  user-service:
+    container_name: user-service
+    restart: on-failure:3
+    build:
+      context: BE/user-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+  course-service:
+    container_name: course-service
+    restart: on-failure:3
+    build:
+      context: BE/course-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+  learning-service:
+    container_name: learning-service
+    restart: on-failure:3
+    build:
+      context: BE/learning-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+  rating-service:
+    container_name: rating-service
+    restart: on-failure:3
+    build:
+      context: BE/rating-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+  cart-service:
+    container_name: cart-service
+    restart: on-failure:3
+    build:
+      context: BE/cart-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+  search-service:
+    container_name: search-service
+    restart: on-failure:3
+    build:
+      context: BE/search-service
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: "service_healthy"
+    ports:
+      - "8082:8082"
+volumes:
+  db-mongodb-data:
+  db:
+    driver: local
