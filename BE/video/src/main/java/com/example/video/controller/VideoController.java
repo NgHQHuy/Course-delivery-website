@@ -31,6 +31,7 @@ public class VideoController {
 
     @Operation(summary = "Upload video")
     @PostMapping("/videos/add")
+    @CrossOrigin
     public ResponseEntity<BasicDto> addVideos(
             @Parameter(description = "Tựa đề của video") @RequestBody(description = "File video. VD dưới bị sai. File phải được up dưới dạng Multipart") @RequestParam("file") MultipartFile file) {
         try {

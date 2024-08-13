@@ -46,28 +46,6 @@ function App() {
     } catch (error) {}
   };
 
-  // const fetchCart = async () => {
-  //   let _cart = null;
-  //   try {
-  //     const res = await axios
-  //       .get(`http://localhost:8083/api/cart/${baseLoad.user.userID}`)
-  //       .then((res) => {
-  //         if (res.status == 200 && res.data) {
-  //           _cart = res.data;
-  //         } else {
-  //           console.log("Cart not found!");
-  //         }
-  //       });
-  //     _cart != null
-  //       ? dispatch(
-  //           setBaseLoad({
-  //             ...baseLoad,
-  //             cart: { cartID: null, cartItems: _cart },
-  //           })
-  //         )
-  //       : console.log("Not found");
-  //   } catch (error) {}
-  // };
   const fetchSysCourses = async () => {
     let _sysCourses = [];
     try {
@@ -97,6 +75,9 @@ function App() {
           } catch (error) {
             i = { ...i, rating: 0 };
           }
+
+          try {
+          } catch (error) {}
           _sysCourses = [..._sysCourses, i];
         }
         dispatch(setListAllCourses(_sysCourses));

@@ -79,6 +79,7 @@ public class UserListController {
     }
 
     @DeleteMapping("deleteCourse")
+    @CrossOrigin
     public ResponseEntity<?> deleteCourseFromList(@Valid @RequestBody AddOneCourseRequest request) {
         if (!courseService.isValidCourse(request.getCourseId()))
             throw new SearchNotFoundException("Course not found");

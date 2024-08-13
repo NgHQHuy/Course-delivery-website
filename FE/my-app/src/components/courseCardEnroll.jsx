@@ -35,9 +35,15 @@ const CourseCardEnroll = (props) => {
       setListInteraction({ status: "add-to-list", courseId: props.course.id })
     );
   };
-  const removeCourseClick = (e) => {
+  const removeCourseClick = (e, courseId) => {
     e.stopPropagation();
-    alert("remove");
+    dispatch(
+      setListInteraction({
+        status: "delete-course-from-list",
+        listId: props.listId,
+        courseId: courseId,
+      })
+    );
   };
 
   return (
@@ -73,7 +79,7 @@ const CourseCardEnroll = (props) => {
           ) : (
             <div
               className="remove-course-from-list"
-              onClick={(e) => removeCourseClick(e)}
+              onClick={(e) => removeCourseClick(e, props.course.id)}
             >
               <MdOutlineRemoveCircleOutline />
               <span>Remove course</span>
@@ -82,8 +88,7 @@ const CourseCardEnroll = (props) => {
         </div>
       </div>
       <div className="course-thumnail">
-        {props.course.thumbnails !== null && (
-          // props.course.thumbnails.split("/")[0] == "data:image" && (
+        {props.course && typeof props.course.thumbnails !== Object && (
           <img src={props.course.thumbnails} />
         )}
       </div>

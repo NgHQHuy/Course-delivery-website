@@ -43,7 +43,6 @@ const ManagerTools = () => {
     id: 1,
     name: "",
   });
-  const [categories, setCategories] = useState([]);
   const [categoriesShow, setCategoriesShow] = useState([]);
   const [categorySelected, setCategorySelected] = useState();
   const [overview, setOverview] = useState({
@@ -54,7 +53,7 @@ const ManagerTools = () => {
     instructorId: null,
     instructorName: "",
     thumbnail: "",
-    categoryIds: [1],
+    categoryIds: [],
     requirements: "",
     summary: "",
     updateAt: "",
@@ -63,6 +62,14 @@ const ManagerTools = () => {
   const [sections, setSections] = useState([]);
   const [lectures, setLectures] = useState([]);
 
+  const fetchAllCategories = async () => {
+    try {
+      const res = await axios.get("http://localhost:8081/api/category");
+      res.status == 200 &&
+        res.data.length > 0 &&
+        dispatch(setAllCategories(res.data));
+    } catch (error) {}
+  };
   const fetchAllCourses = async () => {
     let data = { courses: [], categories: [], users: [] };
     try {
@@ -105,6 +112,7 @@ const ManagerTools = () => {
       console.log(baseLoad.user.role);
       navigate("/");
     } else {
+      fetchAllCategories();
       fetchAllCourses();
       fetchAllUsers();
     }
@@ -323,6 +331,7 @@ const ManagerTools = () => {
       let _overview = { ...overview, categoryIds: _categoryIds };
       delete _overview.instructorName;
       let courseData = { ..._overview, sections: _sections };
+      console.log(courseData);
       try {
         const res = await axios.post(
           "http://localhost:8081/api/course/save",
@@ -331,6 +340,23 @@ const ManagerTools = () => {
         if (res && res.data && res.data.message == "Success") {
           toast.success("Create success!");
           setCourseForm("overview");
+          setOverview({
+            id: null,
+            title: "",
+            description: "",
+            price: 0,
+            instructorId: null,
+            instructorName: "",
+            thumbnail: "",
+            categoryIds: [],
+            requirements: "",
+            summary: "",
+            updateAt: "",
+            createAt: "",
+          });
+          setSections([]);
+          setLectures([]);
+          fetchAllCourses();
           setPopupDisplay("");
         } else {
         }
@@ -361,7 +387,7 @@ const ManagerTools = () => {
     if (id == "none") {
       setCategorySelected("none");
     } else {
-      let _cate = categories.filter((item) => item.id == id)[0];
+      let _cate = allCategories.filter((item) => item.id == id)[0];
       setCategorySelected(_cate);
     }
   };
@@ -384,11 +410,13 @@ const ManagerTools = () => {
       case "instructor":
         try {
           setOverview({ ...overview, instructorName: e.target.value });
-          const instructorRes = await axios.get(
-            `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
-          );
-          if (instructorRes && instructorRes.data) {
-            setFindInstructor(instructorRes.data);
+          if (e.target.value !== "") {
+            const instructorRes = await axios.get(
+              `http://localhost:8088/api/search/instructor?keyword=${e.target.value}`
+            );
+            if (instructorRes && instructorRes.data) {
+              setFindInstructor(instructorRes.data);
+            }
           }
         } catch (error) {}
 
@@ -666,6 +694,7 @@ const ManagerTools = () => {
             ? (item.lectures = _lecs)
             : item
         );
+
         setLectures(_lectures);
       }
     } catch (error) {}
@@ -965,16 +994,19 @@ const ManagerTools = () => {
                       />
                       <div
                         style={
-                          findInstructor.length > 0
+                          findInstructor.length > 0 &&
+                          overview.instructorName !== ""
                             ? {
-                                maxWidth: "375px",
+                                maxWidth: "250px",
                                 marginTop: "3px",
                                 height: "fit-content !important",
+                                maxHeight: "250px !important",
                                 position: "absolute",
                                 zIndex: "1",
                                 top: "20px",
-                                display: "flex",
-                                flexWrap: "wrap",
+                                display: "block",
+                                overflowY: "auto",
+                                overflowX: "hidden",
                                 backgroundColor: "white",
                                 border: "1px solid grey",
                               }
@@ -1045,7 +1077,7 @@ const ManagerTools = () => {
                           </div>
                         ))
                       ) : (
-                        <span>none</span>
+                        <></>
                       )}
                       <div>
                         <select
@@ -1055,8 +1087,8 @@ const ManagerTools = () => {
                           }}
                         >
                           <option value={"none"}>none</option>
-                          {categories && categories.length > 0 ? (
-                            categories.map((category) => (
+                          {allCategories && allCategories.length > 0 ? (
+                            allCategories.map((category) => (
                               <option key={category.id} value={category.id}>
                                 {category.name}
                               </option>
