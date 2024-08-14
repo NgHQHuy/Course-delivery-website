@@ -3,6 +3,7 @@ package com.example.courseservice.controller;
 import com.example.courseservice.dto.*;
 import com.example.courseservice.entity.*;
 import com.example.courseservice.exception.SearchNotFoundException;
+import com.example.courseservice.mapper.CategoryMapper;
 import com.example.courseservice.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -237,6 +238,18 @@ public class CourseController {
             throw new SearchNotFoundException("Course not found");
         CourseDetail detail = mappedToCourseDetail(course);
         return ResponseEntity.ok(detail);
+    }
+
+    @GetMapping("{courseId}/category")
+    public ResponseEntity<Set<CategoryDto>> getCategory(@PathVariable Long courseId) {
+        Course course = courseService.getOne(courseId);
+        if (course == null)
+            throw new SearchNotFoundException("Course not found");
+        Set<CategoryDto> categoryDtos = new HashSet<>();
+        for (Category category : course.getCategories()) {
+            categoryDtos.add(CategoryMapper.mapToCategoryDto(category));
+        }
+        return ResponseEntity.ok(categoryDtos);
     }
 
     @DeleteMapping("{courseId}/{sectionId}/delete")
