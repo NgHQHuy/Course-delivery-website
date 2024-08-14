@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.courseservice.mapper.CategoryMapper.mapToCategoryDto;
+
 @RestController
 @RequestMapping("api/category")
 @AllArgsConstructor
@@ -24,11 +26,7 @@ public class CategoryController {
         Category category = new Category();
         category.setName(dto.getName());
         Category saved = categoryService.save(category);
-
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(saved.getId());
-        categoryDto.setName(saved.getName());
-        return ResponseEntity.ok(categoryDto);
+        return ResponseEntity.ok(mapToCategoryDto(saved));
     }
 
     @PostMapping("addCourse")
@@ -87,12 +85,5 @@ public class CategoryController {
             categoryDtos.add(mapToCategoryDto(category));
         }
         return ResponseEntity.ok(categoryDtos);
-    }
-
-    private CategoryDto mapToCategoryDto(Category c) {
-        CategoryDto dto = new CategoryDto();
-        dto.setId(c.getId());
-        dto.setName(c.getName());
-        return dto;
     }
 }
