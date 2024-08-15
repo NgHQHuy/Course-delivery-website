@@ -18,6 +18,8 @@ public class CourseDetail {
     private int totalLectures;
     private Long length;
     private Long numOfStudent;
+    private String thumbnail;
+    private double rating;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;

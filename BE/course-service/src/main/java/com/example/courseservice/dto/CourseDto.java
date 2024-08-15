@@ -31,7 +31,7 @@ public class CourseDto {
     @Positive(message = "Invalid instructorId")
     private Long instructorId;
     @NotBlank(message = "Missing thumbnail")
-    private String thumbnails;
+    private String thumbnail;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;

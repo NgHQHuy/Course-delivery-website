@@ -20,6 +20,7 @@ public class CourseMapper {
         dto.setSummary(course.getSummary());
         dto.setRequirements(course.getRequirements());
         dto.setInstructorId(course.getInstructor().getId());
+        dto.setThumbnail(course.getThumbnail());
         return dto;
     }
 
@@ -61,6 +62,8 @@ public class CourseMapper {
         detail.setNumOfStudent(course.getCourseNumber().getNumOfStudent());
         detail.setCreatedAt(course.getCreatedAt());
         detail.setUpdatedAt(course.getUpdatedAt());
+        detail.setThumbnail(course.getThumbnail());
+        detail.setRating(course.getCourseNumber().getRating());
         return detail;
     }
 }
