@@ -48,6 +48,47 @@
     font-weight: bold;
     font-size: 28px;
 }
+.content-container{
+    width: 75%;
+    height: fit-content;
+    margin: auto;
+    margin-top: 20px;
+    border: 1px solid rgb(190,190,190);
+}
+.content-container div:not(:first-child){
+    border-top: 1px solid rgb(190,190,190);
+}
+._content-section{
+    width: 100%;
+}
+._content-section-title{
+    text-align: left;
+    font-weight: 500;
+    height: 40px;
+    background-color: rgb(215,215,215);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+._content-section-title svg{
+    width: 40px;
+}
+._content-section-title span{
+    line-height: 40px;
+}
+._content-lectures-group{
+    text-align: left;
+}
+._content-lectures-group div{
+    margin: auto;
+    width: 95%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+._content-lectures-group div:not(:first-child){
+    border-top: 1px solid rgb(215,215,215);
+}
 
 .description{
     width: 100%;
@@ -55,6 +96,16 @@
     padding: 20px;
 }
 .description .description-header{
+    text-align: left;
+    font-weight: bold;
+    font-size: 28px;
+}
+.requirements{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+}
+.requirements .requirements-header{
     text-align: left;
     font-weight: bold;
     font-size: 28px;
