@@ -80,9 +80,7 @@ const Learning = () => {
               });
           });
         });
-    } catch (error) {
-      console.log("cmm", error);
-    }
+    } catch (error) {}
   };
   const deleteCourseFromList = async (listId, courseId) => {
     try {

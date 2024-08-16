@@ -5,7 +5,7 @@ const CourseCard = (props) => {
   const navigate = useNavigate();
 
   const handleCourseClicked = (title) => {
-    navigate(`/courses/${title}`, { state: 5 });
+    navigate(`/courses/${title}`, { state: props.course.id });
   };
   return (
     <div

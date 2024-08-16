@@ -26,7 +26,8 @@ public class CourseService {
     }
 
     public Course saveCourse(CourseUploadRequest requestBody) {
-        Set<SectionUploadRequest> sections = requestBody.getSections() == null ? new HashSet<>() : requestBody.getSections();
+        Set<SectionUploadRequest> sections = requestBody.getSections() == null ? new HashSet<>()
+                : requestBody.getSections();
 
         Course course = null;
         if (requestBody.getId() != null) {
@@ -76,7 +77,8 @@ public class CourseService {
             section.setCourse(course);
 
             Set<Lecture> lectureSet = new HashSet<>();
-            Set<LectureUploadRequest> lectureDtos = sectionDto.getLectures() == null ? new HashSet<>() : sectionDto.getLectures();
+            Set<LectureUploadRequest> lectureDtos = sectionDto.getLectures() == null ? new HashSet<>()
+                    : sectionDto.getLectures();
             Long sectionLength = 0L;
             section.setTotalLectures(lectureDtos.size());
             totalLectures += lectureDtos.size();
@@ -110,24 +112,26 @@ public class CourseService {
 
     public void updateCourse(CourseDto dto) {
         Course course = getOne(dto.getId());
-        if (course == null) throw new SearchNotFoundException("Course not found");
+        if (course == null)
+            throw new SearchNotFoundException("Course not found");
         course.setTitle(dto.getTitle());
         course.setDescription(dto.getDescription());
         course.setPrice(dto.getPrice());
         course.setRequirements(dto.getRequirements());
         course.setSummary(dto.getSummary());
-        course.setThumbnail(dto.getThumbnails());
+        course.setThumbnail(dto.getThumbnail());
 
         Optional<Instructor> optionalInstructor = instructorService.findOne(dto.getInstructorId());
-        if (optionalInstructor.isEmpty()) throw new SearchNotFoundException("Instructor not found");
+        if (optionalInstructor.isEmpty())
+            throw new SearchNotFoundException("Instructor not found");
         Instructor instructor = optionalInstructor.get();
         course.setInstructor(instructor);
         save(course);
     }
 
-
     public Course getOne(Long id) {
-        if (courseRepository.findById(id).isPresent()) return courseRepository.findById(id).get();
+        if (courseRepository.findById(id).isPresent())
+            return courseRepository.findById(id).get();
         return null;
     }
 
@@ -141,7 +145,8 @@ public class CourseService {
 
     public Section getSection(Long courseId, Long sectionId) {
         Course course = getOne(courseId);
-        if (course == null) throw new SearchNotFoundException("Course not found");
+        if (course == null)
+            throw new SearchNotFoundException("Course not found");
 
         for (Section section : course.getSections()) {
             if (sectionId.equals(section.getId())) {
@@ -153,7 +158,8 @@ public class CourseService {
 
     public Lecture getLecture(Long courseId, Long sectionId, Long lectureId) {
         Section section = getSection(courseId, sectionId);
-        if (section == null) throw new SearchNotFoundException("Section is not found or not belong to course");
+        if (section == null)
+            throw new SearchNotFoundException("Section is not found or not belong to course");
 
         for (Lecture lecture : section.getLectures()) {
             if (lectureId.equals(lecture.getId())) {
@@ -167,7 +173,8 @@ public class CourseService {
         Course course = getOne(courseId);
         for (Section s : course.getSections()) {
             if (s.getId().equals(sectionId)) {
-                course.getCourseNumber().setTotalLectures(course.getCourseNumber().getTotalLectures() - s.getTotalLectures());
+                course.getCourseNumber()
+                        .setTotalLectures(course.getCourseNumber().getTotalLectures() - s.getTotalLectures());
                 course.getCourseNumber().setLength(course.getCourseNumber().getLength() - s.getLength());
                 course.getSections().remove(s);
                 break;

@@ -100,7 +100,6 @@ function App() {
         username: window.sessionStorage.getItem("_uid"),
       });
     }
-    console.log("befire", baseLoad);
     if (baseLoad.user.userID && baseLoad.user.userID !== "") {
       fetchUser("", { username: baseLoad.user.username });
     } else if (localStorage.getItem("_uid")) {
