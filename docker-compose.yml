@@ -34,7 +34,6 @@ services:
     build:
       context: BE/video
       dockerfile: Dockerfile
-      target: build
     depends_on:
       mongo:
         condition: "service_started"
@@ -61,18 +60,18 @@ services:
       mysql:
         condition: "service_healthy"
     ports:
-      - "8082:8082"
+      - "8081:8081"
   learning-service:
     container_name: learning-service
     restart: on-failure:3
     build:
-      context: BE/learning-service
+      context: BE/user-progress
       dockerfile: Dockerfile
     depends_on:
       mysql:
         condition: "service_healthy"
     ports:
-      - "8082:8082"
+      - "8084:8084"
   rating-service:
     container_name: rating-service
     restart: on-failure:3
@@ -83,7 +82,7 @@ services:
       mysql:
         condition: "service_healthy"
     ports:
-      - "8082:8082"
+      - "8085:8085"
   cart-service:
     container_name: cart-service
     restart: on-failure:3
@@ -94,7 +93,7 @@ services:
       mysql:
         condition: "service_healthy"
     ports:
-      - "8082:8082"
+      - "8083:8083"
   search-service:
     container_name: search-service
     restart: on-failure:3
@@ -105,7 +104,7 @@ services:
       mysql:
         condition: "service_healthy"
     ports:
-      - "8082:8082"
+      - "8088:8088"
 volumes:
   db-mongodb-data:
   db:
