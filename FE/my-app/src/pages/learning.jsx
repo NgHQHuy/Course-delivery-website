@@ -62,21 +62,21 @@ const Learning = () => {
       dispatch(setCourses(_courses));
       const listsRes = await axios
         .get(`http://localhost:8084/api/user-list/${baseLoad.user.userID}`)
-        .then((res) => {
-          let _tmpLists = res.data.map((item) => ({ ...item, courses: [] }));
-          _tmpLists.map((i, index) => {
+        .then((lres) => {
+          let _tmpLists = lres.data.map((item) => ({ ...item, courses: [] }));
+          _lists = [..._tmpLists];
+          _tmpLists.map((i) => {
             const _courses = axios
               .get(`http://localhost:8084/api/user-list/list/${i.id}/courses`)
               .then((res) => {
                 if (res.data && res.data.length > 0) {
                   let _tmpCourses = res.data.map((c) => c.courseId);
-                  i = { ...i, courses: _tmpCourses };
-                  _lists = [..._lists, i];
-                  dispatch(setLists(_lists));
-                } else {
-                  i = { ...i, courses: [] };
-                  dispatch(setLists([..._lists, i]));
+                  _lists = _lists.map((list) =>
+                    list.id == i.id ? { ...list, courses: _tmpCourses } : list
+                  );
+                  console.log("list", _lists);
                 }
+                dispatch(setLists(_lists));
               });
           });
         });
@@ -141,6 +141,14 @@ const Learning = () => {
             dispatch(setListInteraction({ status: "none", courseID: "" }));
             let _listForm = { ...listForm, name: "", description: "" };
             setListForm(_listForm);
+
+            if (res && res.data) {
+              const addCourse2List = axios.post(
+                "http://localhost:8084/api/user-list/addOne",
+                { listId: res.data.id, courseId: listInteraction.courseID }
+              );
+              toast.success("List created!");
+            }
           });
       } catch (error) {
         console.log(error);

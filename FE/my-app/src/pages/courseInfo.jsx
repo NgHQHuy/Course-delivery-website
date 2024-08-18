@@ -56,7 +56,7 @@ const CourseInfo = () => {
   const addToCartClicked = async () => {
     if (baseLoad.user.userID === null) navigate("/login");
     else {
-      if (baseLoad.user.role == "ADMIN" || "MANAGER") {
+      if (baseLoad.user.role == "ADMIN" || baseLoad.user.role == "MANAGER") {
         toast.warn("Your role has no access");
       } else {
         try {
@@ -70,15 +70,20 @@ const CourseInfo = () => {
       }
     }
   };
-  const buyNowClicked = () => {
+  const buyNowClicked = async () => {
     if (baseLoad.user.userID === null) navigate("/login");
     else {
-      if (baseLoad.user.role == "ADMIN" || "MANAGER") {
+      if (baseLoad.user.role == "ADMIN" || baseLoad.user.role == "MANAGER") {
         toast.warn("Your role has no access");
       } else {
         try {
+          const res = await axios.post(
+            "http://localhost:8084/api/user-course/add",
+            { userId: baseLoad.user.userID, courseId: overview.id }
+          );
+          res && toast("Buy success!");
         } catch (error) {
-          toast.warn("Add failed, try again!");
+          toast.warn("Buy failed, try again!");
         }
       }
     }
