@@ -1,22 +1,24 @@
 version: "3.8"
 services:
-  mysql:
-    container_name: mysql
+  user_db:
+    container_name: user_db
     restart: on-failure:3
     environment:
-      # - MYSQL_USER=root
-      # - MYSQL_ROOT_PASSWORD=
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=user-db
+      # - MYSQL_USER=sa
+      # - MYSQL_PASSWORD=abc123
+      - MYSQL_ROOT_PASSWORD=abc123
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=true
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
     image: mysql
     volumes:
-      - db:/var/lib/mysql
+      - user_db:/var/lib/mysql
       - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
     ports:
-      - "3306:3306"
+      - "7000:3306"
   mongo:
     container_name: mongo
     restart: on-failure:5
@@ -37,6 +39,13 @@ services:
     depends_on:
       mongo:
         condition: "service_started"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=video-test
+      # - SPRING_DATA_MONGODB_USERNAME=sa
+      # - SPRING_DATA_MONGODB_PASSWORD=abc123
+      # - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
     ports:
       - "8080:8080"
   user-service:
@@ -46,21 +55,68 @@ services:
       context: BE/user-service
       dockerfile: Dockerfile
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - user_db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://user_db:3306/user_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abc123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8082:8082"
+
+  course_db:
+    container_name: course_db
+    restart: on-failure:3
+    environment:
+      - MYSQL_DATABASE=course_db
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=abc123
+      - MYSQL_ROOT_PASSWORD=abc123
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    image: mysql
+    volumes:
+      - course_db:/var/lib/mysql
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "7001:3306"
   course-service:
     container_name: course-service
     restart: on-failure:3
     build:
       context: BE/course-service
       dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://course_db:3306/course_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abc123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - course_db
     ports:
       - "8081:8081"
+  learning_db:
+    container_name: learning_db
+    restart: on-failure:3
+    environment:
+      - MYSQL_DATABASE=learning_db
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=abc123
+      - MYSQL_ROOT_PASSWORD=abc123
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    image: mysql
+    volumes:
+      - learning_db:/var/lib/mysql
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "7002:3306"
   learning-service:
     container_name: learning-service
     restart: on-failure:3
@@ -68,10 +124,35 @@ services:
       context: BE/user-progress
       dockerfile: Dockerfile
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - learning_db
+      - course-service
+      - user-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://learning_db:3306/learning_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abc123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8084:8084"
+  rating_db:
+    container_name: rating_db
+    restart: on-failure:3
+    environment:
+      - MYSQL_DATABASE=rating_db
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=abc123
+      - MYSQL_ROOT_PASSWORD=abc123
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    image: mysql
+    volumes:
+      - rating_db:/var/lib/mysql
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "7003:3306"
   rating-service:
     container_name: rating-service
     restart: on-failure:3
@@ -79,10 +160,35 @@ services:
       context: BE/rating-service
       dockerfile: Dockerfile
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - rating_db
+      - course-service
+      - user-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://rating_db:3306/rating_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abc123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8085:8085"
+  cart_db:
+    container_name: cart_db
+    restart: on-failure:3
+    environment:
+      - MYSQL_DATABASE=cart_db
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=abc123
+      - MYSQL_ROOT_PASSWORD=abc123
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    image: mysql
+    volumes:
+      - cart_db:/var/lib/mysql
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "7004:3306"
   cart-service:
     container_name: cart-service
     restart: on-failure:3
@@ -90,8 +196,14 @@ services:
       context: BE/cart-service
       dockerfile: Dockerfile
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - cart_db
+      - course-service
+      - user-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://cart_db:3306/cart_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abc123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8083:8083"
   search-service:
@@ -101,11 +213,14 @@ services:
       context: BE/search-service
       dockerfile: Dockerfile
     depends_on:
-      mysql:
-        condition: "service_healthy"
+      - user-service
+      - course-service
     ports:
       - "8088:8088"
 volumes:
   db-mongodb-data:
-  db:
-    driver: local
+  user_db:
+  course_db:
+  learning_db:
+  rating_db:
+  cart_db:
