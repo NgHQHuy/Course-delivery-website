@@ -64,8 +64,9 @@ const CourseInfo = () => {
             userId: baseLoad.user.userID,
             courseId: overview.id,
           });
+          res && res.data && toast.success("Added success, check your cart!");
         } catch (error) {
-          toast.warn("Add failed, try again!");
+          toast.warn("Add failed or this course is already in cart!");
         }
       }
     }
@@ -81,7 +82,7 @@ const CourseInfo = () => {
             "http://localhost:8084/api/user-course/add",
             { userId: baseLoad.user.userID, courseId: overview.id }
           );
-          res && toast("Buy success!");
+          res && toast("Buy success!") && navigate(`/course/${overview.id}`);
         } catch (error) {
           toast.warn("Buy failed, try again!");
         }
@@ -212,7 +213,6 @@ const CourseInfo = () => {
                     objectFit: "cover",
                     borderRadius: "50%",
                   }}
-                  onClick={() => console.log(instructor)}
                 />
               </div>
               <span style={{ lineHeight: "50px" }}>

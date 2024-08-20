@@ -1,11 +1,25 @@
+import axios from "axios";
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getBaseLoad } from "../redux/baseLoader.slice";
 
 const CourseCard = (props) => {
   const navigate = useNavigate();
+  const baseLoad = useSelector(getBaseLoad);
 
-  const handleCourseClicked = (title) => {
-    navigate(`/courses/${title}`, { state: props.course.id });
+  const handleCourseClicked = async (title) => {
+    try {
+      const checkRes = await axios.post(
+        "http://localhost:8084/api/user-course/checkRegistered",
+        { courseId: props.course.id, userId: baseLoad.user.userID }
+      );
+      if (checkRes && checkRes.data) {
+        navigate(`course/${props.course.id}`);
+      } else {
+        navigate(`/courses/${title}`, { state: props.course.id });
+      }
+    } catch (error) {}
   };
   return (
     <div

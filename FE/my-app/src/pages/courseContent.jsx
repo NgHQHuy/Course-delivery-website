@@ -20,7 +20,7 @@ const CourseContent = () => {
   const [sectionShow, setSectionShow] = useState([]);
   const [tabSelected, setTabSelected] = useState("overview");
 
-  const _courseId = window.location.href.split("/")[4];
+  const _courseId = parseInt(window.location.href.split("/")[4]);
   const [overview, setOverview] = useState({});
   const [syllabus, setSyllabus] = useState([]);
   const [progress, setProgress] = useState();
@@ -64,7 +64,6 @@ const CourseContent = () => {
           sec.id == item.id ? { ...sec, lectures: _tmpLecDetails } : sec
         );
       }
-      console.log("syllabus", _syllabus);
       _currentLecture = {
         section: _syllabus.find((item) => item.position == 1).id,
         lecture: _syllabus
@@ -84,7 +83,6 @@ const CourseContent = () => {
         `http://localhost:8084/api/user-progress/${baseLoad.user.userID}/${_courseId}`
       );
       if (_progressRes && _progressRes.data) {
-        console.log("progress", _progressRes.data);
         _progress = _progressRes.data;
         setProgress(_progress);
         let _onGoingLec = _progressRes.data.find(
@@ -112,7 +110,18 @@ const CourseContent = () => {
               .timestamp
           : "",
     };
+    try {
+      const res = await axios.post("http://localhost:8084/api/user-progress", {
+        userId: baseLoad.user.userID,
+        courseId: _courseId,
+        lectureId: _currentLecture.lecture,
+        status: "ON_GOING",
+      });
+    } catch (error) {}
     setCurrentLecture(_currentLecture);
+    let video = document.getElementById("video-player");
+    video.load();
+    video.play();
   };
 
   useEffect(() => {
@@ -127,7 +136,8 @@ const CourseContent = () => {
     setTabSelected(tab);
   };
 
-  const lectureCheckBoxClicked = async (lecture) => {
+  const lectureCheckBoxClicked = async (e, lecture) => {
+    e.stopPropagation();
     const req = {
       userId: baseLoad.user.userID,
       courseId: _courseId,
@@ -153,65 +163,113 @@ const CourseContent = () => {
     } catch (error) {}
   };
 
-  const lectureOnClick = (section, lecture, type, value) => {
-    if (currentLecture.type == "video") {
-      let video = document.getElementById("video-player");
-      if (video.currentTime) {
-        video.currentTime != video.duration
-          ? setProgress([
+  const lectureOnClick = async (section, lecture, type, value) => {
+    if (lecture !== currentLecture.lecture) {
+      if (currentLecture.type == "video") {
+        let video = document.getElementById("video-player");
+        if (video.currentTime) {
+          if (video.currentTime != video.duration) {
+            setProgress([
               ...progress.map((item) =>
                 item.lectureId == currentLecture.lecture
                   ? { ...item, timestamp: video.currentTime }
                   : item
               ),
-            ])
-          : setProgress([
+            ]);
+            try {
+              const res = await axios.post(
+                "http://localhost:8084/api/user-progress",
+                {
+                  userId: baseLoad.user.userID,
+                  courseId: _courseId,
+                  lectureId: currentLecture.lecture,
+                  timestamp: video.currentTime,
+                  status: "DONE",
+                }
+              );
+            } catch (error) {}
+          } else {
+            setProgress([
               ...progress.map((item) =>
                 item.lectureId == currentLecture.lecture
                   ? { ...item, timestamp: 0 }
                   : item
               ),
             ]);
+            try {
+              const res = await axios.post(
+                "http://localhost:8084/api/user-progress",
+                {
+                  userId: baseLoad.user.userID,
+                  courseId: _courseId,
+                  lectureId: currentLecture.lecture,
+                  timestamp: 0,
+                  status: "DONE",
+                }
+              );
+            } catch (error) {}
+          }
+        }
+      } else {
+        try {
+          const updateStt = await axios.post(
+            "http://localhost:8084/api/user-progress",
+            {
+              userId: baseLoad.user.userID,
+              courseId: _courseId,
+              lectureId: currentLecture.lecture,
+              timestamp: 0,
+              status: "DONE",
+            }
+          );
+        } catch (error) {}
       }
-      console.log("video", video);
-    }
-    console.log("current", currentLecture);
-    if (type == "video") {
-      let video = document.getElementById("video-player");
-      let _timestamp = progress.find(
-        (item) => item.lectureId == lecture
-      ).timestamp;
-      setCurrentLecture({
-        section: section,
-        lecture: lecture,
-        type: type,
-        value: value,
-        timestamp: _timestamp,
-      });
-      video.load();
-      video.play();
-      // document
-      //   .getElementById("video-source")
-      //   .setAttribute(
-      //     "src",
-      //     `http://localhost:8080/videos/stream/${value}.mp4`
-      //   );
-      // video.load();
-      // video.currentTime = _timestamp;
-      // video.play();
-    } else {
-      if (currentLecture.type == "video") {
+      if (type == "video") {
         let video = document.getElementById("video-player");
-        video.pause();
-      }
+        let _timestamp = progress.find(
+          (item) => item.lectureId == lecture
+        ).timestamp;
+        setCurrentLecture({
+          section: section,
+          lecture: lecture,
+          type: type,
+          value: value,
+          timestamp: _timestamp,
+        });
+        video.load();
+        video.play();
+      } else {
+        if (currentLecture.type == "video") {
+          let video = document.getElementById("video-player");
+          video.pause();
+        }
 
-      setCurrentLecture({
-        section: section,
-        lecture: lecture,
-        type: type,
-        value: value,
-        timestamp: 0,
-      });
+        setCurrentLecture({
+          section: section,
+          lecture: lecture,
+          type: type,
+          value: value,
+          timestamp: 0,
+        });
+      }
+      let _progress = [...progress];
+      _progress = _progress.map((item) =>
+        item.lectureId == lecture ? { ...item, status: "ON_GOING" } : item
+      );
+      setProgress(_progress);
+      try {
+        const updateStt = await axios.post(
+          "http://localhost:8084/api/user-progress",
+          {
+            userId: baseLoad.user.userID,
+            courseId: _courseId,
+            lectureId: lecture,
+            timestamp: progress.find((item) => item.lectureId == lecture)
+              .timestamp,
+            status: "ON_GOING",
+          }
+        );
+      } catch (error) {}
     }
   };
 
@@ -323,11 +381,11 @@ const CourseContent = () => {
                   <div className="last-updated">
                     <IoIosAlert size={20} />{" "}
                     <span>
-                      {overview && overview.updatedAt}
-                      {/* {overview &&
+                      {overview &&
+                        overview.updatedAt &&
                         new Intl.DateTimeFormat(["ban", "id"]).format(
                           new Date(overview.updatedAt)
-                        )} */}
+                        )}
                     </span>
                   </div>
                 </div>
@@ -345,7 +403,57 @@ const CourseContent = () => {
                 </div>
               </div>
             ) : (
-              <div className="reviews-content"></div>
+              <div className="reviews-content">
+                <div>
+                  <span>
+                    {overview && overview.rating
+                      ? overview.rating
+                      : "No reaviews yet"}
+                  </span>
+                  <div>
+                    <IoIosStar
+                      size={48}
+                      style={
+                        overview.rating && overview.rating.toFixed() < 1
+                          ? { color: "grey" }
+                          : {}
+                      }
+                    />
+                    <IoIosStar
+                      size={48}
+                      style={
+                        overview.rating && overview.rating.toFixed() < 2
+                          ? { color: "grey" }
+                          : {}
+                      }
+                    />
+                    <IoIosStar
+                      size={48}
+                      style={
+                        overview.rating && overview.rating.toFixed() < 3
+                          ? { color: "grey" }
+                          : {}
+                      }
+                    />
+                    <IoIosStar
+                      size={48}
+                      style={
+                        overview.rating && overview.rating.toFixed() < 4
+                          ? { color: "grey" }
+                          : {}
+                      }
+                    />
+                    <IoIosStar
+                      size={48}
+                      style={
+                        overview.rating && overview.rating.toFixed() < 5
+                          ? { color: "grey" }
+                          : {}
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -358,7 +466,7 @@ const CourseContent = () => {
               <IoIosClose size={32} className="btn-close-menu-icon" />
             </div>
           </div>
-          <div className="menu-bogy">
+          <div className="menu-body">
             {syllabus &&
               syllabus.map((item) => (
                 <div className="section" key={item.id}>
@@ -392,11 +500,7 @@ const CourseContent = () => {
                       </div>
                     )}
                   </div>
-                  {/* {sectionShow === "" ?
-                                <div className="section-body"></div>
-                                :
-                                <div className="section-body" style={{display: "none"}}></div>
-                            }  */}
+
                   <div
                     className="section-body"
                     style={
@@ -430,8 +534,8 @@ const CourseContent = () => {
                             <div className="lecture-checkbox">
                               <div
                                 className="_checkbox"
-                                onClick={() =>
-                                  lectureCheckBoxClicked(lecture.id)
+                                onClick={(e) =>
+                                  lectureCheckBoxClicked(e, lecture.id)
                                 }
                               >
                                 {progress.find(

@@ -109,7 +109,6 @@ const ManagerTools = () => {
   };
   useEffect(() => {
     if (baseLoad.user.userID && baseLoad.user.role == "USER") {
-      console.log(baseLoad.user.role);
       navigate("/");
     } else {
       fetchAllCategories();
@@ -331,7 +330,6 @@ const ManagerTools = () => {
       let _overview = { ...overview, categoryIds: _categoryIds };
       delete _overview.instructorName;
       let courseData = { ..._overview, sections: _sections };
-      console.log(courseData);
       try {
         const res = await axios.post(
           "http://localhost:8081/api/course/save",

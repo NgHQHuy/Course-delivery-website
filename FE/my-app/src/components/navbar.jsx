@@ -4,6 +4,7 @@ import { HiOutlineQueueList } from "react-icons/hi2";
 import { BsSearch, BsCart3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import d_avatar from "../assets/default_avatar.jpg";
 
 import { getBaseLoad, cleanBaseLoad } from "../redux/baseLoader.slice";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,11 +91,27 @@ const Navbar = () => {
       </div>
       {logged ? (
         <div className="user">
-          <div className="user-avatar"></div>
+          <div className="user-avatar" onClick={() => navigate("/profile")}>
+            <img
+              src={
+                base_loader.profile && base_loader.profile.avatar
+                  ? base_loader.profile.avatar
+                  : d_avatar
+              }
+              alt="nav-user-avatar"
+              style={{
+                width: "30px",
+                height: "30px",
+                objectFit: "cover",
+                borderRadius: "50%",
+              }}
+            />
+          </div>
           <div className="dropdown-menu">
             <ul className="profile-n-account">
-              <li>Edit profile</li>
-              <li>Account settings</li>
+              <li onClick={() => navigate("/account#edit")}>
+                Account settings
+              </li>
             </ul>
             <ul className="logout">
               <li onClick={() => logout()}>Log out</li>
@@ -125,8 +142,10 @@ const Navbar = () => {
           {logged ? (
             <>
               <ul className="profile-n-account">
-                <li>Edit profile</li>
-                <li>Account settings</li>
+                <li onClick={() => navigate("/profile")}>Edit profile</li>
+                <li onClick={() => navigate("account#edit")}>
+                  Account settings
+                </li>
               </ul>
               <ul>
                 <li

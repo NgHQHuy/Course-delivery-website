@@ -1,0 +1,31 @@
+.profile-container{
+    width: 30%;
+    min-width: 374px;
+    background-color: white;
+    height: fit-content;
+    margin-top: 50px;
+    border-radius: 10px;
+    padding: 10px;
+}
+.profile-container div:not(:first-child) {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-left: 10px;
+}
+.profile-container div span:first-child{
+    width: 60px;
+    text-align: left;
+    padding-right: 10px;
+    font-weight: 500;
+}
+.profile-container button{
+    cursor: pointer;
+}
+.profile-avatar{
+    width: 150px;
+    height: 150px;
+    border: 1px solid rgb(200,200,200);
+    margin: 10px 10px;
+}

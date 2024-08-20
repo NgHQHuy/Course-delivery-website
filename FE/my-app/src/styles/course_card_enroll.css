@@ -101,3 +101,14 @@
 .course-progression-text{
     font-size: 0.8rem;
 }
+.card-btn-edit-rating{
+    line-height: 18px;
+    color: black;
+    font-size: 0.7rem;
+    margin-right: 5px;
+}
+.card-btn-edit-rating:hover{
+    color: blueviolet;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}

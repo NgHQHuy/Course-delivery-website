@@ -302,3 +302,26 @@
     width: 100%;
     height: 100%;
 }
+
+/* review */
+.reviews-content{
+    display: flex;
+    justify-content: center;
+}
+.reviews-content div:first-child{
+    display: flex;
+    margin: 20px 0;
+}
+.reviews-content div:first-child span{
+    line-height: 50px;
+    font-size: 48px;
+    font-weight: 500;
+    margin-right: 10px;
+    color: orange;
+}
+.reviews-content div:first-child div{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    color: orange;
+}

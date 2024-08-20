@@ -74,7 +74,6 @@ const Learning = () => {
                   _lists = _lists.map((list) =>
                     list.id == i.id ? { ...list, courses: _tmpCourses } : list
                   );
-                  console.log("list", _lists);
                 }
                 dispatch(setLists(_lists));
               });
@@ -150,13 +149,10 @@ const Learning = () => {
               toast.success("List created!");
             }
           });
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
 
     if (listInteraction.status == "edit") {
-      console.log("rea", typeof listForm.id);
       let _l = {
         listId: listForm.id,
         name: listForm.name,
@@ -182,9 +178,7 @@ const Learning = () => {
           setListForm({ id: null, name: "", description: "" });
           dispatch(setListInteraction({ status: "none" }));
         }
-      } catch (error) {
-        console.log("edit errr", error);
-      }
+      } catch (error) {}
     }
   };
   const deleteListClicked = async (id) => {
