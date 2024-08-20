@@ -165,46 +165,56 @@ const CourseContent = () => {
                   : item
               ),
             ])
-          : console.log("ket thuc");
-        // : setProgress([
-        //     ...progress.map((item) =>
-        //       item.lectureId == currentLecture.lecture
-        //         ? { ...item, timestamp: 0 }
-        //         : item
-        //     ),
-        //   ]);
-      } else {
-        console.log("not time");
+          : setProgress([
+              ...progress.map((item) =>
+                item.lectureId == currentLecture.lecture
+                  ? { ...item, timestamp: 0 }
+                  : item
+              ),
+            ]);
       }
-      if (type == "video") {
-        let _timestamp = progress.find(
-          (item) => item.lectureId == lecture
-        ).timestamp;
-        console.log("ti", _timestamp);
-        document
-          .getElementById("video-source")
-          .setAttribute(
-            "src",
-            `http://localhost:8080/videos/stream/${value}.mp4`
-          );
-        video.load();
-        video.currentTime = _timestamp;
-        video.play();
-        setCurrentLecture({
-          section: section,
-          lecture: lecture,
-          type: type,
-          value: value,
-          timestamp: _timestamp,
-        });
-      }
+      console.log("video", video);
     }
-    console.log(
-      "time",
-      progress.find((item) => item.lectureId == lecture).timestamp
-    );
+    console.log("current", currentLecture);
+    if (type == "video") {
+      let video = document.getElementById("video-player");
+      let _timestamp = progress.find(
+        (item) => item.lectureId == lecture
+      ).timestamp;
+      setCurrentLecture({
+        section: section,
+        lecture: lecture,
+        type: type,
+        value: value,
+        timestamp: _timestamp,
+      });
+      video.load();
+      video.play();
+      // document
+      //   .getElementById("video-source")
+      //   .setAttribute(
+      //     "src",
+      //     `http://localhost:8080/videos/stream/${value}.mp4`
+      //   );
+      // video.load();
+      // video.currentTime = _timestamp;
+      // video.play();
+    } else {
+      if (currentLecture.type == "video") {
+        let video = document.getElementById("video-player");
+        video.pause();
+      }
+
+      setCurrentLecture({
+        section: section,
+        lecture: lecture,
+        type: type,
+        value: value,
+        timestamp: 0,
+      });
+    }
   };
-  const filterProgress = (lec) => lec.lectureId == currentLecture.lecture;
+
   return (
     <div className="course-content">
       <div className="column-display">
@@ -226,30 +236,37 @@ const CourseContent = () => {
             e.preventDefault();
           }}
         >
-          {currentLecture && currentLecture.type == "video" ? (
-            <video
-              id="video-player"
-              autoPlay
-              controls
-              controlsList="nodownload"
-            >
-              <source
-                id="video-source"
-                src={`http://localhost:8080/videos/stream/${currentLecture.value}.mp4#t=${currentLecture.timestamp}`}
-                type="video/mp4"
-              />
-            </video>
-          ) : (
-            <div
-              style={{
-                height: "100%",
-                backgroundColor: "white",
-                padding: "10px 20px",
-              }}
-            >
-              <div style={{ textAlign: "left" }}>{currentLecture.value}</div>
-            </div>
-          )}
+          <video
+            id="video-player"
+            autoPlay
+            controls
+            controlsList="nodownload"
+            style={
+              currentLecture && currentLecture.type != "video"
+                ? { display: "none" }
+                : {}
+            }
+          >
+            <source
+              id="video-source"
+              src={`http://localhost:8080/videos/stream/${currentLecture.value}.mp4#t=${currentLecture.timestamp}`}
+              type="video/mp4"
+            />
+          </video>
+
+          <div
+            style={
+              currentLecture && currentLecture.type != "text"
+                ? { display: "none" }
+                : {
+                    height: "100%",
+                    backgroundColor: "white",
+                    padding: "10px 20px",
+                  }
+            }
+          >
+            <div style={{ textAlign: "left" }}>{currentLecture.value}</div>
+          </div>
         </div>
         <div className="course-content-other">
           <div className="tab-selection">
