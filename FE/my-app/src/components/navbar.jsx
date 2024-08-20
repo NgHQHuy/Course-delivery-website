@@ -77,6 +77,17 @@ const Navbar = () => {
           <BsCart3 size={24} />
         </div>
       </div>
+      <div
+        className="nav-manager-tools"
+        style={
+          base_loader.user.role == "ADMIN" || base_loader.user.role == "MANAGER"
+            ? { cursor: "pointer" }
+            : { display: "none" }
+        }
+        onClick={() => navigate("/manager-tools")}
+      >
+        Manager tools
+      </div>
       {logged ? (
         <div className="user">
           <div className="user-avatar"></div>
@@ -116,6 +127,19 @@ const Navbar = () => {
               <ul className="profile-n-account">
                 <li>Edit profile</li>
                 <li>Account settings</li>
+              </ul>
+              <ul>
+                <li
+                  style={
+                    base_loader.user.role == "ADMIN" ||
+                    base_loader.user.role == "MANAGER"
+                      ? {}
+                      : { display: "none" }
+                  }
+                  onClick={() => navigate("/manager-tools")}
+                >
+                  Manager tools
+                </li>
               </ul>
               <ul
                 className="learning-n-cart"

@@ -50,7 +50,9 @@ nav{
 .cart:hover{
     color: rgb(55, 0, 255);
 }
-
+.nav-manager-tools:hover{
+    color: rgb(55, 0, 255);
+}
 .user{
     height: 100%;
     display: flex;
@@ -159,6 +161,9 @@ nav{
         display: none;
     }
     .cart{
+        display: none;
+    }
+    .nav-manager-tools{
         display: none;
     }
     .user{

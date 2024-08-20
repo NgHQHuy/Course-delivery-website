@@ -21,6 +21,8 @@ import {
   getListAllCourses,
   setListAllCourses,
 } from "./redux/coursesLoader.slice";
+import Profile from "./pages/profile";
+import Account from "./pages/account";
 
 function App() {
   const dispatch = useDispatch();
@@ -124,6 +126,9 @@ function App() {
             <Route path="course/*" element={<CourseContent />} />
             <Route path="learning" element={<Learning />} />
             <Route path="cart/*" element={<Cart />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/account" element={<Account />} />
+
             <Route path="login" element={<Login />} />
             <Route path="sign-up" element={<Signup />} />
             <Route path="manager-tools" element={<ManagerTools />} />
